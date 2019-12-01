@@ -10,10 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -87,6 +84,12 @@ public class SelectablePainting extends SelectablePaintingBaseItem {
 					world.addEntity( selectablePaintingEntity );
 				}
 				stack.shrink( 1 );
+			} else {
+				if( !world.isRemote && player != null ) {
+					player.sendMessage( new TranslationTextComponent( Util.makeTranslationKey( "message",
+						new ResourceLocation( SelectablePaintingMod.MODID,
+							"selectable_painting_painting_to_big_error" ) ) ) );
+				}
 			}
 			return ActionResultType.SUCCESS;
 		}

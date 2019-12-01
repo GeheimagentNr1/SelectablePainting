@@ -10,6 +10,7 @@
 			"selectable_painting_messages_selectable_painting": "Messages: Selectable Painting",
 				"message.selectable_painting.selectable_painting_size": "Size",
 				"message.selectable_painting.selectable_painting_painting": "Painting",
+				"message.selectable_painting.selectable_painting_painting_to_big_error": "Painting can't be placed: Painting is too big.",
 		"selectable_painting_paintings": "Paintings",
 			"selectable_painting_paintings_vanilla_paintings": "Paintings: Vanilla Paintings",
 				"painting.minecraft.kebab": "Kebab",
