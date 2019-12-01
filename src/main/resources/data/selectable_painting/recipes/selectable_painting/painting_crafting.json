@@ -1,0 +1,11 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "manyideas:selectable_painting"
+		}
+	],
+	"result": {
+		"item": "minecraft:painting"
+	}
+}
