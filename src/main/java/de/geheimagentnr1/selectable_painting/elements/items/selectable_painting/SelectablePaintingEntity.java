@@ -1,6 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
+import de.geheimagentnr1.selectable_painting.network.ModNetworkManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -10,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
@@ -148,7 +150,9 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public IPacket<?> createSpawnPacket() {
 		
-		return new SSpawnSelectablePaintingPacket( this );
+		ModNetworkManager.sendSSpawnSelectablePaintingPacket( new SSpawnSelectablePaintingPacket( this ),
+			world.getChunkAt( getPosition() ) );
+		return new SSpawnObjectPacket( this );
 	}
 	
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {

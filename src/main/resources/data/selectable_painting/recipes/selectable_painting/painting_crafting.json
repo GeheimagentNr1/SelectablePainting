@@ -2,7 +2,7 @@
 	"type": "minecraft:crafting_shapeless",
 	"ingredients": [
 		{
-			"item": "manyideas:selectable_painting"
+			"item": "selectable_painting:selectable_painting"
 		}
 	],
 	"result": {

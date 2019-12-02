@@ -3,6 +3,7 @@ package de.geheimagentnr1.selectable_painting.handlers;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingEntity;
+import de.geheimagentnr1.selectable_painting.network.ModNetworkManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
@@ -19,6 +20,7 @@ public class RegistryEventHandler {
 	@SubscribeEvent
 	public static void setup( FMLCommonSetupEvent event ) {
 		
+		ModNetworkManager.registerPackets();
 		SelectablePaintingMod.proxy.init();
 	}
 	
