@@ -10,7 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -30,8 +33,8 @@ public class SelectablePainting extends SelectablePaintingBaseItem {
 	}
 	
 	@Override
-	public void addInformation( ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
-		ITooltipFlag flagIn ) {
+	public void addInformation( @Nonnull ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
+		@Nonnull ITooltipFlag flagIn ) {
 		
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey( "message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" ) ) ).appendText( ": " )
@@ -43,7 +46,8 @@ public class SelectablePainting extends SelectablePaintingBaseItem {
 	
 	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick( World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn ) {
+	public ActionResult<ItemStack> onItemRightClick( @Nonnull World worldIn, PlayerEntity playerIn,
+		@Nonnull Hand handIn ) {
 		
 		ItemStack stack = playerIn.getHeldItem( handIn );
 		TextComponent message;
