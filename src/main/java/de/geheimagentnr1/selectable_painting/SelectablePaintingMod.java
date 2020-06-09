@@ -15,7 +15,7 @@ public class SelectablePaintingMod {
 	
 	public static final String MODID = "selectable_painting";
 	
-	public static final IProxy proxy = DistExecutor.runForDist( () -> ClientProxy::new, () -> ServerProxy::new );
+	public static final IProxy proxy = DistExecutor.safeRunForDist( () -> ClientProxy::new, () -> ServerProxy::new );
 	
 	public static final ModSetup setup = new ModSetup();
 }

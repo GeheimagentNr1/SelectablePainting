@@ -1,25 +1,26 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
-import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.PaintingSpriteUploader;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 
+@OnlyIn( Dist.CLIENT )
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity> {
 	
 	
@@ -29,154 +30,119 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	}
 	
 	@Override
-	public void doRender( @Nonnull SelectablePaintingEntity entity, double x, double y, double z, float entityYaw,
-		float partialTicks ) {
+	public void render( SelectablePaintingEntity entityIn, float entityYaw, float partialTicks,
+		MatrixStack matrixStackIn,
+		IRenderTypeBuffer bufferIn, int packedLightIn ) {
 		
-		GlStateManager.pushMatrix();
-		GlStateManager.translated( x, y, z );
-		GlStateManager.rotatef( 180.0F - entityYaw, 0.0F, 1.0F, 0.0F );
-		GlStateManager.enableRescaleNormal();
-		bindEntityTexture( entity );
-		PaintingType paintingtype = entity.art;
-		GlStateManager.scalef( 0.0625F, 0.0625F, 0.0625F );
-		if( renderOutlines ) {
-			GlStateManager.enableColorMaterial();
-			GlStateManager.setupSolidRenderingTextureCombine( getTeamColor( entity ) );
-		}
+		matrixStackIn.push();
+		matrixStackIn.rotate( Vector3f.YP.rotationDegrees( 180.0F - entityYaw ) );
+		PaintingType paintingtype = entityIn.art;
+		matrixStackIn.scale( 0.0625F, 0.0625F, 0.0625F );
+		IVertexBuilder ivertexbuilder =
+			bufferIn.getBuffer( RenderType.getEntitySolid( getEntityTexture( entityIn ) ) );
 		PaintingSpriteUploader paintingspriteuploader = Minecraft.getInstance().getPaintingSpriteUploader();
-		renderPainting( entity, paintingtype.getWidth(), paintingtype.getHeight(),
-			paintingspriteuploader.getSpriteForPainting( paintingtype ), paintingspriteuploader.func_215286_b() );
-		if( renderOutlines ) {
-			GlStateManager.tearDownSolidRenderingTextureCombine();
-			GlStateManager.disableColorMaterial();
-		}
-		GlStateManager.disableRescaleNormal();
-		GlStateManager.popMatrix();
-		super.doRender( entity, x, y, z, entityYaw, partialTicks );
+		render( matrixStackIn, ivertexbuilder, entityIn, paintingtype.getWidth(), paintingtype.getHeight(),
+			paintingspriteuploader.getSpriteForPainting( paintingtype ), paintingspriteuploader.getBackSprite() );
+		matrixStackIn.pop();
+		super.render( entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn );
 	}
 	
+	/**
+	 * Returns the location of an entity's texture.
+	 */
+	@Nonnull
 	@Override
-	protected ResourceLocation getEntityTexture( @Nonnull SelectablePaintingEntity entity ) {
+	public ResourceLocation getEntityTexture( @Nonnull SelectablePaintingEntity entity ) {
 		
-		return AtlasTexture.LOCATION_PAINTINGS_TEXTURE;
+		return Minecraft.getInstance().getPaintingSpriteUploader().getBackSprite().getAtlasTexture()
+			.getTextureLocation();
 	}
 	
-	private void renderPainting( SelectablePaintingEntity entity, int width, int height,
-		TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite ) {
+	private void render( MatrixStack matrixStack, IVertexBuilder vertexBuilder, SelectablePaintingEntity entity,
+		int weidth, int height, TextureAtlasSprite paintingAtlas, TextureAtlasSprite backSpriteAtlas ) {
 		
-		float width_start = -width / 2.0F;
-		float height_start = -height / 2.0F;
-		float minU = backSprite.getMinU();
-		float maxU = backSprite.getMaxU();
-		float minV = backSprite.getMinV();
-		float maxV = backSprite.getMaxV();
-		float minU1 = backSprite.getMinU();
-		float maxU1 = backSprite.getMaxU();
-		float minV1 = backSprite.getMinV();
-		float interpolatedV = backSprite.getInterpolatedV( 1.0D );
-		float minU2 = backSprite.getMinU();
-		float interpolatedU = backSprite.getInterpolatedU( 1.0D );
-		float minV2 = backSprite.getMinV();
-		float maxV1 = backSprite.getMaxV();
-		int block_width = width / 16;
-		int block_height = height / 16;
-		double width_double = 16.0D / block_width;
-		double height_double = 16.0D / block_height;
+		MatrixStack.Entry matrixstack_entry = matrixStack.getLast();
+		Matrix4f matrix1 = matrixstack_entry.getMatrix();
+		Matrix3f matrix2 = matrixstack_entry.getNormal();
+		float negativHalfWeidth = -weidth / 2.0F;
+		float negativHalfHeight = -height / 2.0F;
+		float minU1 = backSpriteAtlas.getMinU();
+		float maxU1 = backSpriteAtlas.getMaxU();
+		float minV1 = backSpriteAtlas.getMinV();
+		float maxV1 = backSpriteAtlas.getMaxV();
+		float minU2 = backSpriteAtlas.getMinU();
+		float maxU2 = backSpriteAtlas.getMaxU();
+		float minV2 = backSpriteAtlas.getMinV();
+		float interpoladedV = backSpriteAtlas.getInterpolatedV( 1.0D );
+		float minU3 = backSpriteAtlas.getMinU();
+		float interpolatedU = backSpriteAtlas.getInterpolatedU( 1.0D );
+		float minV3 = backSpriteAtlas.getMinV();
+		float maxV2 = backSpriteAtlas.getMaxV();
+		int i = weidth / 16;
+		int j = height / 16;
+		double d0 = 16.0D / i;
+		double d1 = 16.0D / j;
 		
-		for( int i = 0; i < block_width; ++i ) {
-			for( int j = 0; j < block_height; ++j ) {
-				float width_from = width_start + ( i + 1 << 4 );
-				float width_to = width_start + ( i << 4 );
-				float height_from = height_start + ( j + 1 << 4 );
-				float height_to = height_start + ( j << 4 );
-				setLightmap( entity, ( width_from + width_to ) / 2.0F, ( height_from + height_to ) / 2.0F );
-				float interpolatedU1 = paintingSprite.getInterpolatedU( width_double * ( block_width - i ) );
-				float interpolatedU2 = paintingSprite.getInterpolatedU( width_double * ( block_width - ( i + 1 ) ) );
-				float interpolatedV1 = paintingSprite.getInterpolatedV( height_double * ( block_height - j ) );
-				float interpolatedV2 = paintingSprite.getInterpolatedV( height_double * ( block_height - ( j + 1 ) ) );
-				Tessellator tessellator = Tessellator.getInstance();
-				BufferBuilder bufferbuilder = tessellator.getBuffer();
-				bufferbuilder.begin( 7, DefaultVertexFormats.POSITION_TEX_NORMAL );
-				bufferbuilder.pos( width_from, height_to, -0.5D ).tex( interpolatedU2, interpolatedV1 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_to, height_to, -0.5D ).tex( interpolatedU1, interpolatedV1 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_to, height_from, -0.5D ).tex( interpolatedU1, interpolatedV2 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_from, -0.5D ).tex( interpolatedU2, interpolatedV2 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_from, 0.5D ).tex( minU, minV ).normal( 0.0F, 0.0F, 1.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_from, 0.5D ).tex( maxU, minV ).normal( 0.0F, 0.0F, 1.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_to, 0.5D ).tex( maxU, maxV ).normal( 0.0F, 0.0F, 1.0F )
-					.endVertex();
-				bufferbuilder.pos( width_from, height_to, 0.5D ).tex( minU, maxV ).normal( 0.0F, 0.0F, 1.0F )
-					.endVertex();
-				bufferbuilder.pos( width_from, height_from, -0.5D ).tex( minU1, minV1 ).normal( 0.0F, 1.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_from, -0.5D ).tex( maxU1, minV1 ).normal( 0.0F, 1.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_from, 0.5D ).tex( maxU1, interpolatedV ).normal( 0.0F, 1.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_from, height_from, 0.5D ).tex( minU1, interpolatedV )
-					.normal( 0.0F, 1.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_to, 0.5D ).tex( minU1, minV1 ).normal( 0.0F, -1.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_to, 0.5D ).tex( maxU1, minV1 ).normal( 0.0F, -1.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_to, -0.5D ).tex( maxU1, interpolatedV ).normal( 0.0F, -1.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_from, height_to, -0.5D ).tex( minU1, interpolatedV )
-					.normal( 0.0F, -1.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_from, 0.5D ).tex( interpolatedU, minV2 )
-					.normal( -1.0F, 0.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_to, 0.5D ).tex( interpolatedU, maxV1 )
-					.normal( -1.0F, 0.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_to, -0.5D ).tex( minU2, maxV1 ).normal( -1.0F, 0.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_from, height_from, -0.5D ).tex( minU2, minV2 ).normal( -1.0F, 0.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_from, -0.5D ).tex( interpolatedU, minV2 )
-					.normal( 1.0F, 0.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_to, height_to, -0.5D ).tex( interpolatedU, maxV1 ).normal( 1.0F, 0.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_to, 0.5D ).tex( minU2, maxV1 ).normal( 1.0F, 0.0F, 0.0F )
-					.endVertex();
-				bufferbuilder.pos( width_to, height_from, 0.5D ).tex( minU2, minV2 ).normal( 1.0F, 0.0F, 0.0F )
-					.endVertex();
-				tessellator.draw();
+		for( int k = 0; k < i; ++k ) {
+			for( int l = 0; l < j; ++l ) {
+				float f15 = negativHalfWeidth + ( k + 1 << 4 );
+				float f16 = negativHalfWeidth + ( k << 4 );
+				float f17 = negativHalfHeight + ( l + 1 << 4 );
+				float f18 = negativHalfHeight + ( l << 4 );
+				int i1 = MathHelper.floor( entity.getPosX() );
+				int j1 = MathHelper.floor( entity.getPosY() + ( f17 + f18 ) / 2.0F / 16.0F );
+				int k1 = MathHelper.floor( entity.getPosZ() );
+				Direction direction = entity.getHorizontalFacing();
+				if( direction == Direction.NORTH ) {
+					i1 = MathHelper.floor( entity.getPosX() + ( f15 + f16 ) / 2.0F / 16.0F );
+				}
+				if( direction == Direction.WEST ) {
+					k1 = MathHelper.floor( entity.getPosZ() - ( f15 + f16 ) / 2.0F / 16.0F );
+				}
+				if( direction == Direction.SOUTH ) {
+					i1 = MathHelper.floor( entity.getPosX() - ( f15 + f16 ) / 2.0F / 16.0F );
+				}
+				if( direction == Direction.EAST ) {
+					k1 = MathHelper.floor( entity.getPosZ() + ( f15 + f16 ) / 2.0F / 16.0F );
+				}
+				int l1 = WorldRenderer.getCombinedLight( entity.world, new BlockPos( i1, j1, k1 ) );
+				float f19 = paintingAtlas.getInterpolatedU( d0 * ( i - k ) );
+				float f20 = paintingAtlas.getInterpolatedU( d0 * ( i - ( k + 1 ) ) );
+				float f21 = paintingAtlas.getInterpolatedV( d1 * ( j - l ) );
+				float f22 = paintingAtlas.getInterpolatedV( d1 * ( j - ( l + 1 ) ) );
+				render( matrix1, matrix2, vertexBuilder, f15, f18, f20, f21, -0.5F, 0, 0, -1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f18, f19, f21, -0.5F, 0, 0, -1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f17, f19, f22, -0.5F, 0, 0, -1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f17, f20, f22, -0.5F, 0, 0, -1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f17, minU1, minV1, 0.5F, 0, 0, 1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f17, maxU1, minV1, 0.5F, 0, 0, 1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f18, maxU1, maxV1, 0.5F, 0, 0, 1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f18, minU1, maxV1, 0.5F, 0, 0, 1, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f17, minU2, minV2, -0.5F, 0, 1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f17, maxU2, minV2, -0.5F, 0, 1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f17, maxU2, interpoladedV, 0.5F, 0, 1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f17, minU2, interpoladedV, 0.5F, 0, 1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f18, minU2, minV2, 0.5F, 0, -1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f18, maxU2, minV2, 0.5F, 0, -1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f18, maxU2, interpoladedV, -0.5F, 0, -1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f18, minU2, interpoladedV, -0.5F, 0, -1, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f17, interpolatedU, minV3, 0.5F, -1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f18, interpolatedU, maxV2, 0.5F, -1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f18, minU3, maxV2, -0.5F, -1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f15, f17, minU3, minV3, -0.5F, -1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f17, interpolatedU, minV3, -0.5F, 1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f18, interpolatedU, maxV2, -0.5F, 1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f18, minU3, maxV2, 0.5F, 1, 0, 0, l1 );
+				render( matrix1, matrix2, vertexBuilder, f16, f17, minU3, minV3, 0.5F, 1, 0, 0, l1 );
 			}
 		}
 		
 	}
 	
-	private void setLightmap( SelectablePaintingEntity painting, float width, float height ) {
+	private void render( Matrix4f matrix1, Matrix3f matrix2, IVertexBuilder vertexBuilder, float x1, float y1, float u,
+		float v, float z1, int x2, int y2, int z2, int lightmapUV ) {
 		
-		int x = MathHelper.floor( painting.posX );
-		int y = MathHelper.floor( painting.posY + height / 16.0F );
-		int z = MathHelper.floor( painting.posZ );
-		Direction direction = painting.getHorizontalFacing();
-		if( direction == Direction.NORTH ) {
-			x = MathHelper.floor( painting.posX + width / 16.0F );
-		}
-		
-		if( direction == Direction.WEST ) {
-			z = MathHelper.floor( painting.posZ - width / 16.0F );
-		}
-		
-		if( direction == Direction.SOUTH ) {
-			x = MathHelper.floor( painting.posX - width / 16.0F );
-		}
-		
-		if( direction == Direction.EAST ) {
-			z = MathHelper.floor( painting.posZ + width / 16.0F );
-		}
-		
-		int light_level = renderManager.world.getCombinedLight( new BlockPos( x, y, z ), 0 );
-		int level_rest = light_level % 65536;
-		int level = light_level / 65536;
-		GLX.glMultiTexCoord2f( GLX.GL_TEXTURE1, level_rest, level );
-		GlStateManager.color3f( 1.0F, 1.0F, 1.0F );
+		vertexBuilder.pos( matrix1, x1, y1, z1 ).color( 255, 255, 255, 255 ).tex( u, v )
+			.overlay( OverlayTexture.NO_OVERLAY ).lightmap( lightmapUV ).normal( matrix2, x2, y2, z2 ).endVertex();
 	}
 }

@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkEvent;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -85,6 +86,6 @@ public class SSpawnSelectablePaintingPacket {
 			facing, getPaintingType(), size_index, painting_index );
 		selectablePaintingEntity.setEntityId( entityID );
 		selectablePaintingEntity.setUniqueId( uniqueId );
-		Minecraft.getInstance().world.addEntity( entityID, selectablePaintingEntity );
+		Objects.requireNonNull( Minecraft.getInstance().world ).addEntity( entityID, selectablePaintingEntity );
 	}
 }
