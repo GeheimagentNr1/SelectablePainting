@@ -29,7 +29,7 @@ displayName="Selectable Painting" #mandatory
 authors="GeheimagentNr1" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Item that can select the Painting, that should be placed.
+Mod adds the Selectable Painting, that can select the painting, that should be placed.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.selectable_painting]] #optional
