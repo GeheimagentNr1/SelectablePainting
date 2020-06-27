@@ -151,7 +151,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	public IPacket<?> createSpawnPacket() {
 		
 		ModNetworkManager.sendSSpawnSelectablePaintingPacket( new SSpawnSelectablePaintingPacket( this ),
-			world.getChunkAt( getPosition() ) );
+			world.getChunkAt( getOnPosition() ) );
 		return new SSpawnObjectPacket( this );
 	}
 	

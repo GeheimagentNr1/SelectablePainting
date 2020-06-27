@@ -37,11 +37,11 @@ public class SelectablePainting extends SelectablePaintingBaseItem {
 		@Nonnull ITooltipFlag flagIn ) {
 		
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey( "message",
-			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" ) ) ).appendText( ": " )
-			.appendText( PaintingSelectionHelper.getSizeName( stack ) ) );
+			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" ) ) ).func_240702_b_( ": " )
+			.func_240702_b_( PaintingSelectionHelper.getSizeName( stack ) ) );
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey( "message",
-			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" ) ) ).appendText( ": " )
-			.appendSibling( PaintingSelectionHelper.getPaintingName( stack ) ) );
+			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" ) ) )
+			.func_240702_b_( ": " ).func_230529_a_( PaintingSelectionHelper.getPaintingName( stack ) ) );
 	}
 	
 	@Nonnull
@@ -58,7 +58,7 @@ public class SelectablePainting extends SelectablePaintingBaseItem {
 			message = PaintingSelectionHelper.nextPainting( stack );
 		}
 		if( worldIn.isRemote ) {
-			playerIn.sendMessage( message );
+			playerIn.sendMessage( message, Util.field_240973_b_ );
 		}
 		return new ActionResult<>( ActionResultType.SUCCESS, stack );
 	}
@@ -92,7 +92,7 @@ public class SelectablePainting extends SelectablePaintingBaseItem {
 				if( !world.isRemote && player != null ) {
 					player.sendMessage( new TranslationTextComponent( Util.makeTranslationKey( "message",
 						new ResourceLocation( SelectablePaintingMod.MODID,
-							"selectable_painting_painting_to_big_error" ) ) ) );
+							"selectable_painting_painting_to_big_error" ) ) ), Util.field_240973_b_ );
 				}
 			}
 			return ActionResultType.SUCCESS;
