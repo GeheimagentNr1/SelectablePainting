@@ -24,7 +24,7 @@ import java.util.List;
 public class SelectablePainting extends SelectablePaintingBaseItem {
 	
 	
-	public final static String registry_name = "selectable_painting";
+	public static final String registry_name = "selectable_painting";
 	
 	public SelectablePainting() {
 		
