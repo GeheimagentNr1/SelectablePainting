@@ -24,9 +24,10 @@ import javax.annotation.Nonnull;
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity> {
 	
 	
-	public SelectablePaintingRenderer( EntityRendererManager renderManagerIn ) {
+	@SuppressWarnings( "ParameterNameDiffersFromOverriddenParameter" )
+	public SelectablePaintingRenderer( EntityRendererManager _renderManager ) {
 		
-		super( renderManagerIn );
+		super( _renderManager );
 	}
 	
 	@Override

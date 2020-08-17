@@ -16,9 +16,9 @@ import java.util.function.Supplier;
 public class ModNetworkManager {
 	
 	
-	private final static String PROTOCOL_VERSION = "1";
+	private static final String PROTOCOL_VERSION = "1";
 	
-	private final static SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
+	private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
 		new ResourceLocation( SelectablePaintingMod.MODID, "main" ),
 		() -> PROTOCOL_VERSION,
 		PROTOCOL_VERSION::equals,
