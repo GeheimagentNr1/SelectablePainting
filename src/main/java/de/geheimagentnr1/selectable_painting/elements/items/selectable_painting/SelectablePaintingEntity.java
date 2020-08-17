@@ -85,6 +85,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	public void writeAdditional( CompoundNBT compound ) {
 		
 		compound.putString( "Motive", Registry.MOTIVE.getKey( art ).toString() );
+		compound.putByte( "Facing", (byte)facingDirection.getHorizontalIndex() );
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", painting_index );
 		super.writeAdditional( compound );
@@ -95,6 +96,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	public void readAdditional( CompoundNBT compound ) {
 		
 		art = Registry.MOTIVE.getOrDefault( ResourceLocation.tryCreate( compound.getString( "Motive" ) ) );
+		facingDirection = Direction.byHorizontalIndex( compound.getByte( "Facing" ) );
 		size_index = compound.getInt( "size_index" );
 		painting_index = compound.getInt( "painting_index" );
 		super.readAdditional( compound );
