@@ -18,7 +18,7 @@ public class ModItems {
 	// R - Rezept fertig
 	// T - Tags fertig
 	
-	public final static Item[] ITEMS = {
+	public static final Item[] ITEMS = {
 		//Selectable Painting
 		new SelectablePainting(),//FINRT
 	};
