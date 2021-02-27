@@ -29,7 +29,12 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	}
 	
 	@Override
-	public void doRender( @Nonnull SelectablePaintingEntity entity, double x, double y, double z, float entityYaw,
+	public void doRender(
+		@Nonnull SelectablePaintingEntity entity,
+		double x,
+		double y,
+		double z,
+		float entityYaw,
 		float partialTicks ) {
 		
 		GlStateManager.pushMatrix();
@@ -44,8 +49,13 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 			GlStateManager.setupSolidRenderingTextureCombine( getTeamColor( entity ) );
 		}
 		PaintingSpriteUploader paintingspriteuploader = Minecraft.getInstance().getPaintingSpriteUploader();
-		renderPainting( entity, paintingtype.getWidth(), paintingtype.getHeight(),
-			paintingspriteuploader.getSpriteForPainting( paintingtype ), paintingspriteuploader.func_215286_b() );
+		renderPainting(
+			entity,
+			paintingtype.getWidth(),
+			paintingtype.getHeight(),
+			paintingspriteuploader.getSpriteForPainting( paintingtype ),
+			paintingspriteuploader.func_215286_b()
+		);
 		if( renderOutlines ) {
 			GlStateManager.tearDownSolidRenderingTextureCombine();
 			GlStateManager.disableColorMaterial();
@@ -61,8 +71,12 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		return AtlasTexture.LOCATION_PAINTINGS_TEXTURE;
 	}
 	
-	private void renderPainting( SelectablePaintingEntity entity, int width, int height,
-		TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite ) {
+	private void renderPainting(
+		SelectablePaintingEntity entity,
+		int width,
+		int height,
+		TextureAtlasSprite paintingSprite,
+		TextureAtlasSprite backSprite ) {
 		
 		float width_start = -width / 2.0F;
 		float height_start = -height / 2.0F;
@@ -97,53 +111,101 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 				Tessellator tessellator = Tessellator.getInstance();
 				BufferBuilder bufferbuilder = tessellator.getBuffer();
 				bufferbuilder.begin( 7, DefaultVertexFormats.POSITION_TEX_NORMAL );
-				bufferbuilder.pos( width_from, height_to, -0.5D ).tex( interpolatedU2, interpolatedV1 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_to, height_to, -0.5D ).tex( interpolatedU1, interpolatedV1 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_to, height_from, -0.5D ).tex( interpolatedU1, interpolatedV2 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_from, -0.5D ).tex( interpolatedU2, interpolatedV2 )
-					.normal( 0.0F, 0.0F, -1.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_from, 0.5D ).tex( minU, minV ).normal( 0.0F, 0.0F, 1.0F )
+				bufferbuilder.pos( width_from, height_to, -0.5D )
+					.tex( interpolatedU2, interpolatedV1 )
+					.normal( 0.0F, 0.0F, -1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_from, 0.5D ).tex( maxU, minV ).normal( 0.0F, 0.0F, 1.0F )
+				bufferbuilder.pos( width_to, height_to, -0.5D )
+					.tex( interpolatedU1, interpolatedV1 )
+					.normal( 0.0F, 0.0F, -1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_to, 0.5D ).tex( maxU, maxV ).normal( 0.0F, 0.0F, 1.0F )
+				bufferbuilder.pos( width_to, height_from, -0.5D )
+					.tex( interpolatedU1, interpolatedV2 )
+					.normal( 0.0F, 0.0F, -1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_from, height_to, 0.5D ).tex( minU, maxV ).normal( 0.0F, 0.0F, 1.0F )
+				bufferbuilder.pos( width_from, height_from, -0.5D )
+					.tex( interpolatedU2, interpolatedV2 )
+					.normal( 0.0F, 0.0F, -1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_from, height_from, -0.5D ).tex( minU1, minV1 ).normal( 0.0F, 1.0F, 0.0F )
+				bufferbuilder.pos( width_from, height_from, 0.5D )
+					.tex( minU, minV )
+					.normal( 0.0F, 0.0F, 1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_from, -0.5D ).tex( maxU1, minV1 ).normal( 0.0F, 1.0F, 0.0F )
+				bufferbuilder.pos( width_to, height_from, 0.5D )
+					.tex( maxU, minV )
+					.normal( 0.0F, 0.0F, 1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_from, 0.5D ).tex( maxU1, interpolatedV ).normal( 0.0F, 1.0F, 0.0F )
+				bufferbuilder.pos( width_to, height_to, 0.5D )
+					.tex( maxU, maxV )
+					.normal( 0.0F, 0.0F, 1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_from, height_from, 0.5D ).tex( minU1, interpolatedV )
-					.normal( 0.0F, 1.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_to, 0.5D ).tex( minU1, minV1 ).normal( 0.0F, -1.0F, 0.0F )
+				bufferbuilder.pos( width_from, height_to, 0.5D )
+					.tex( minU, maxV )
+					.normal( 0.0F, 0.0F, 1.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_to, 0.5D ).tex( maxU1, minV1 ).normal( 0.0F, -1.0F, 0.0F )
+				bufferbuilder.pos( width_from, height_from, -0.5D )
+					.tex( minU1, minV1 )
+					.normal( 0.0F, 1.0F, 0.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_to, -0.5D ).tex( maxU1, interpolatedV ).normal( 0.0F, -1.0F, 0.0F )
+				bufferbuilder.pos( width_to, height_from, -0.5D )
+					.tex( maxU1, minV1 )
+					.normal( 0.0F, 1.0F, 0.0F )
 					.endVertex();
-				bufferbuilder.pos( width_from, height_to, -0.5D ).tex( minU1, interpolatedV )
-					.normal( 0.0F, -1.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_from, 0.5D ).tex( interpolatedU, minV2 )
-					.normal( -1.0F, 0.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_to, 0.5D ).tex( interpolatedU, maxV1 )
-					.normal( -1.0F, 0.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_from, height_to, -0.5D ).tex( minU2, maxV1 ).normal( -1.0F, 0.0F, 0.0F )
+				bufferbuilder.pos( width_to, height_from, 0.5D )
+					.tex( maxU1, interpolatedV )
+					.normal( 0.0F, 1.0F, 0.0F )
 					.endVertex();
-				bufferbuilder.pos( width_from, height_from, -0.5D ).tex( minU2, minV2 ).normal( -1.0F, 0.0F, 0.0F )
+				bufferbuilder.pos( width_from, height_from, 0.5D )
+					.tex( minU1, interpolatedV )
+					.normal( 0.0F, 1.0F, 0.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_from, -0.5D ).tex( interpolatedU, minV2 )
-					.normal( 1.0F, 0.0F, 0.0F ).endVertex();
-				bufferbuilder.pos( width_to, height_to, -0.5D ).tex( interpolatedU, maxV1 ).normal( 1.0F, 0.0F, 0.0F )
+				bufferbuilder.pos( width_from, height_to, 0.5D )
+					.tex( minU1, minV1 )
+					.normal( 0.0F, -1.0F, 0.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_to, 0.5D ).tex( minU2, maxV1 ).normal( 1.0F, 0.0F, 0.0F )
+				bufferbuilder.pos( width_to, height_to, 0.5D )
+					.tex( maxU1, minV1 )
+					.normal( 0.0F, -1.0F, 0.0F )
 					.endVertex();
-				bufferbuilder.pos( width_to, height_from, 0.5D ).tex( minU2, minV2 ).normal( 1.0F, 0.0F, 0.0F )
+				bufferbuilder.pos( width_to, height_to, -0.5D )
+					.tex( maxU1, interpolatedV )
+					.normal( 0.0F, -1.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_from, height_to, -0.5D )
+					.tex( minU1, interpolatedV )
+					.normal( 0.0F, -1.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_from, height_from, 0.5D )
+					.tex( interpolatedU, minV2 )
+					.normal( -1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_from, height_to, 0.5D )
+					.tex( interpolatedU, maxV1 )
+					.normal( -1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_from, height_to, -0.5D )
+					.tex( minU2, maxV1 )
+					.normal( -1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_from, height_from, -0.5D )
+					.tex( minU2, minV2 )
+					.normal( -1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_to, height_from, -0.5D )
+					.tex( interpolatedU, minV2 )
+					.normal( 1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_to, height_to, -0.5D )
+					.tex( interpolatedU, maxV1 )
+					.normal( 1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_to, height_to, 0.5D )
+					.tex( minU2, maxV1 )
+					.normal( 1.0F, 0.0F, 0.0F )
+					.endVertex();
+				bufferbuilder.pos( width_to, height_from, 0.5D )
+					.tex( minU2, minV2 )
+					.normal( 1.0F, 0.0F, 0.0F )
 					.endVertex();
 				tessellator.draw();
 			}

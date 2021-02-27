@@ -27,8 +27,13 @@ public class ModNetworkManager {
 	
 	public static void registerPackets() {
 		
-		CHANNEL.registerMessage( 0, SSpawnSelectablePaintingPacket.class, SSpawnSelectablePaintingPacket::encode,
-			ModNetworkManager::decode, ModNetworkManager::handleSpawnSelectablePainting );
+		CHANNEL.registerMessage(
+			0,
+			SSpawnSelectablePaintingPacket.class,
+			SSpawnSelectablePaintingPacket::encode,
+			ModNetworkManager::decode,
+			ModNetworkManager::handleSpawnSelectablePainting
+		);
 	}
 	
 	private static SSpawnSelectablePaintingPacket decode( PacketBuffer buffer ) {
@@ -36,7 +41,8 @@ public class ModNetworkManager {
 		return new SSpawnSelectablePaintingPacket( buffer );
 	}
 	
-	private static void handleSpawnSelectablePainting( SSpawnSelectablePaintingPacket packet,
+	private static void handleSpawnSelectablePainting(
+		SSpawnSelectablePaintingPacket packet,
 		Supplier<NetworkEvent.Context> context ) {
 		
 		context.get().enqueueWork( () -> packet.handle( context ) );

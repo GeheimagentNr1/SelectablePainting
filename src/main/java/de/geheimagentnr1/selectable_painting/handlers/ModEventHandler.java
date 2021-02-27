@@ -30,8 +30,10 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
 		
-		Minecraft.getInstance().getRenderManager().register( SelectablePaintingEntity.class,
-			new SelectablePaintingRenderer( Minecraft.getInstance().getRenderManager() ) );
+		Minecraft.getInstance().getRenderManager().register(
+			SelectablePaintingEntity.class,
+			new SelectablePaintingRenderer( Minecraft.getInstance().getRenderManager() )
+		);
 	}
 	
 	@SubscribeEvent

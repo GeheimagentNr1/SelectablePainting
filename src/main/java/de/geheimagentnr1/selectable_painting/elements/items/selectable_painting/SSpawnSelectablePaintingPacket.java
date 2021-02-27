@@ -75,12 +75,19 @@ public class SSpawnSelectablePaintingPacket {
 	public void handle( Supplier<NetworkEvent.Context> context ) {
 		
 		Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(
-			context.get().getDirection().getReceptionSide() );
+			context.get().getDirection().getReceptionSide()
+		);
 		if( !world.isPresent() || !( world.get() instanceof ClientWorld ) ) {
 			return;
 		}
-		SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity( world.get(), position,
-			facing, getPaintingType(), size_index, painting_index );
+		SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
+			world.get(),
+			position,
+			facing,
+			getPaintingType(),
+			size_index,
+			painting_index
+		);
 		selectablePaintingEntity.setEntityId( entityID );
 		selectablePaintingEntity.setUniqueId( uniqueId );
 		Minecraft.getInstance().world.addEntity( entityID, selectablePaintingEntity );

@@ -46,8 +46,13 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	//package-private
-	SelectablePaintingEntity( World _world, BlockPos pos, Direction direction, PaintingType paintingType,
-		int _size_index, int _painting_index ) {
+	SelectablePaintingEntity(
+		World _world,
+		BlockPos pos,
+		Direction direction,
+		PaintingType paintingType,
+		int _size_index,
+		int _painting_index ) {
 		
 		super( ModItems.SELECTABLE_PAINTING_ENTITY, _world, pos );
 		art = paintingType;
@@ -56,7 +61,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		painting_index = _painting_index;
 	}
 	
-	private void init(Direction direction) {
+	private void init( Direction direction ) {
 		
 		updateFacingWithBoundingBox( direction );
 	}
@@ -76,13 +81,17 @@ public class SelectablePaintingEntity extends HangingEntity {
 	private ItemStack getItemStackOfEntity() {
 		
 		return SelectablePaintingItemStackHelper.writeIndexesToStack( new ItemStack( ModItems.SELECTABLE_PAINTING ),
-			size_index, painting_index );
+			size_index, painting_index
+		);
 	}
 	
 	@Override
 	public void writeAdditional( CompoundNBT compound ) {
 		
-		compound.putString( "Motive", Objects.requireNonNull( RegistryHelper.getMotiveRegistry().getKey( art ) ).toString() );
+		compound.putString(
+			"Motive",
+			Objects.requireNonNull( RegistryHelper.getMotiveRegistry().getKey( art ) ).toString()
+		);
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", painting_index );
 		super.writeAdditional( compound );
@@ -91,7 +100,8 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void readAdditional( CompoundNBT compound ) {
 		
-		art =RegistryHelper.getMotiveRegistry().getOrDefault( ResourceLocation.tryCreate( compound.getString( "Motive" ) ) );
+		art = RegistryHelper.getMotiveRegistry()
+			.getOrDefault( ResourceLocation.tryCreate( compound.getString( "Motive" ) ) );
 		size_index = compound.getInt( "size_index" );
 		painting_index = compound.getInt( "painting_index" );
 		super.readAdditional( compound );
@@ -136,7 +146,8 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void setPositionAndRotationDirect( double x, double y, double z, float yaw, float pitch,
+	public void setPositionAndRotationDirect(
+		double x, double y, double z, float yaw, float pitch,
 		int posRotationIncrements, boolean teleport ) {
 		
 		/*BlockPos pos = hangingPosition.add( posX - x, posY - y, posZ - z );
@@ -147,16 +158,19 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public IPacket<?> createSpawnPacket() {
 		
-		ModNetworkManager.sendSSpawnSelectablePaintingPacket( new SSpawnSelectablePaintingPacket( this ),
-			world.getChunkAt( getPosition() ) );
+		ModNetworkManager.sendSSpawnSelectablePaintingPacket(
+			new SSpawnSelectablePaintingPacket( this ),
+			world.getChunkAt( getPosition() )
+		);
 		return new SSpawnObjectPacket( this );
 	}
 	
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
 		
-		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder.<SelectablePaintingEntity>
-			create( SelectablePaintingEntity::new, EntityClassification.MISC ).size( 0.5F, 0.5F )
-			.build( SelectablePainting.registry_name );
+		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder.<SelectablePaintingEntity> create(
+			SelectablePaintingEntity::new,
+			EntityClassification.MISC
+		).size( 0.5F, 0.5F ).build( SelectablePainting.registry_name );
 		entityType.setRegistryName( SelectablePainting.registry_name );
 		return entityType;
 	}

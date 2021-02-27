@@ -34,20 +34,26 @@ public class SelectablePainting extends Item {
 	}
 	
 	@Override
-	public void addInformation( @Nonnull ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip,
+	public void addInformation(
+		@Nonnull ItemStack stack,
+		@Nullable World worldIn,
+		List<ITextComponent> tooltip,
 		@Nonnull ITooltipFlag flagIn ) {
 		
-		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey( "message",
-			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" ) ) ).appendText( ": " )
-			.appendText( PaintingSelectionHelper.getSizeName( stack ) ) );
-		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey( "message",
-			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" ) ) ).appendText( ": " )
-			.appendSibling( PaintingSelectionHelper.getPaintingName( stack ) ) );
+		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
+			"message",
+			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
+		) ).appendText( ": " ).appendText( PaintingSelectionHelper.getSizeName( stack ) ) );
+		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
+			"message",
+			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
+		) ).appendText( ": " ).appendSibling( PaintingSelectionHelper.getPaintingName( stack ) ) );
 	}
 	
 	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick( @Nonnull World worldIn, PlayerEntity playerIn,
+	public ActionResult<ItemStack> onItemRightClick(
+		@Nonnull World worldIn, PlayerEntity playerIn,
 		@Nonnull Hand handIn ) {
 		
 		ItemStack stack = playerIn.getHeldItem( handIn );
@@ -77,10 +83,14 @@ public class SelectablePainting extends Item {
 		if( direction.getAxis().isVertical() || player != null && !player.canPlayerEdit( pos, direction, stack ) ) {
 			return ActionResultType.FAIL;
 		} else {
-			SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity( world, pos,
-				direction, PaintingSelectionHelper.getPaintingType( stack ),
+			SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
+				world,
+				pos,
+				direction,
+				PaintingSelectionHelper.getPaintingType( stack ),
 				SelectablePaintingItemStackHelper.getSizeIndex( stack ),
-				SelectablePaintingItemStackHelper.getPaintingIndex( stack ) );
+				SelectablePaintingItemStackHelper.getPaintingIndex( stack )
+			);
 			
 			EntityType.applyItemNBT( world, player, selectablePaintingEntity, stack.getTag() );
 			if( selectablePaintingEntity.onValidSurface() ) {
@@ -91,9 +101,13 @@ public class SelectablePainting extends Item {
 				stack.shrink( 1 );
 			} else {
 				if( !world.isRemote && player != null ) {
-					player.sendMessage( new TranslationTextComponent( Util.makeTranslationKey( "message",
-						new ResourceLocation( SelectablePaintingMod.MODID,
-							"selectable_painting_painting_to_big_error" ) ) ) );
+					player.sendMessage( new TranslationTextComponent( Util.makeTranslationKey(
+						"message",
+						new ResourceLocation(
+							SelectablePaintingMod.MODID,
+							"selectable_painting_painting_to_big_error"
+						)
+					) ) );
 				}
 			}
 			return ActionResultType.SUCCESS;

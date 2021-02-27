@@ -42,8 +42,12 @@ class PaintingSelectionHelper {
 				String paintingSize = widthSize + "x" + heightSize;
 				if( sizes.add( paintingSize ) ) {
 					paintingNames.put( paintingSize, new TreeSet<>() );
-					paintingTypes.put( paintingSize, new TreeSet<>( Comparator.comparing( paintingType2 ->
-						Objects.requireNonNull( paintingType2.getRegistryName() ).getPath() ) ) );
+					paintingTypes.put(
+						paintingSize,
+						new TreeSet<>( Comparator.comparing( paintingType2 ->
+							Objects.requireNonNull( paintingType2.getRegistryName() ).getPath() )
+						)
+					);
 				}
 				paintingNames.get( paintingSize ).add( Objects.requireNonNull( paintingType.getRegistryName() )
 					.getPath() );
@@ -92,14 +96,18 @@ class PaintingSelectionHelper {
 	//package-private
 	static TranslationTextComponent getPaintingName( ItemStack stack ) {
 		
-		return getPaintingName( SelectablePaintingItemStackHelper.getSizeIndex( stack ),
-			SelectablePaintingItemStackHelper.getPaintingIndex( stack ) );
+		return getPaintingName(
+			SelectablePaintingItemStackHelper.getSizeIndex( stack ),
+			SelectablePaintingItemStackHelper.getPaintingIndex( stack )
+		);
 	}
 	
 	private static TranslationTextComponent getPaintingName( int size_index, int painting_index ) {
 		
-		return new TranslationTextComponent( Util.makeTranslationKey( "painting", painting_types.get( size_index )
-			.get( painting_index ).getRegistryName() ) );
+		return new TranslationTextComponent( Util.makeTranslationKey(
+			"painting",
+			painting_types.get( size_index ).get( painting_index ).getRegistryName()
+		) );
 	}
 	
 	//package-private
