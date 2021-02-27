@@ -1,5 +1,6 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
+import de.geheimagentnr1.selectable_painting.helpers.RegistryHelper;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Util;
@@ -22,12 +23,13 @@ class PaintingSelectionHelper {
 	private static ArrayList<ArrayList<PaintingType>> painting_types;
 	
 	//package-private
-	@SuppressWarnings( "deprecation" )
 	static void init() {
 		
-		if( painting_count != Registry.MOTIVE.stream().count() ) {
-			painting_count = Registry.MOTIVE.stream().count();
-			Iterator<PaintingType> iterator = Registry.MOTIVE.iterator();
+		Registry<PaintingType> motiveRegistry = RegistryHelper.getMotiveRegistry();
+		long current_painting_count = motiveRegistry.stream().count();
+		if( painting_count != current_painting_count ) {
+			painting_count = current_painting_count;
+			Iterator<PaintingType> iterator = motiveRegistry.iterator();
 			TreeSet<String> sizes = new TreeSet<>();
 			TreeMap<String, TreeSet<String>> paintingNames = new TreeMap<>();
 			TreeMap<String, TreeSet<PaintingType>> paintingTypes = new TreeMap<>();

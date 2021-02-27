@@ -1,7 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import de.geheimagentnr1.selectable_painting.elements.items.SelectablePaintingBaseItem;
+import de.geheimagentnr1.selectable_painting.elements.item_groups.ModItemGroups;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,14 +21,15 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 
-public class SelectablePainting extends SelectablePaintingBaseItem {
+public class SelectablePainting extends Item {
 	
 	
 	public static final String registry_name = "selectable_painting";
 	
 	public SelectablePainting() {
 		
-		super( new Item.Properties(), registry_name );
+		super( new Item.Properties().group( ModItemGroups.SELECTABLE_PAINTING ) );
+		setRegistryName( registry_name );
 		PaintingSelectionHelper.init();
 	}
 	

@@ -8,7 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 
 
-@SuppressWarnings( { "StaticNonFinalField", "unused", "PublicField", "PublicStaticArrayField" } )
+@SuppressWarnings( { "PublicStaticArrayField", "StaticNonFinalField" } )
 public class ModItems {
 	
 	//TODO:
@@ -23,7 +23,7 @@ public class ModItems {
 		new SelectablePainting(),//FINRT
 	};
 	
-	//Plank
+	//Selectable Painting
 	
 	@ObjectHolder( SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
 	public static SelectablePainting SELECTABLE_PAINTING;

@@ -1,12 +1,12 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
+import de.geheimagentnr1.selectable_painting.helpers.RegistryHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.item.PaintingType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -45,22 +45,20 @@ public class SSpawnSelectablePaintingPacket {
 	}
 	
 	//package-private
-	@SuppressWarnings( "deprecation" )
 	SSpawnSelectablePaintingPacket( SelectablePaintingEntity selectablePaintingEntity ) {
 		
 		entityID = selectablePaintingEntity.getEntityId();
 		uniqueId = selectablePaintingEntity.getUniqueID();
 		position = selectablePaintingEntity.getHangingPosition();
 		facing = selectablePaintingEntity.getHorizontalFacing();
-		title = Registry.MOTIVE.getId( selectablePaintingEntity.art );
+		title = RegistryHelper.getMotiveRegistry().getId( selectablePaintingEntity.art );
 		size_index = selectablePaintingEntity.size_index;
 		painting_index = selectablePaintingEntity.painting_index;
 	}
 	
-	@SuppressWarnings( "deprecation" )
 	private PaintingType getPaintingType() {
 		
-		return Registry.MOTIVE.getByValue( title );
+		return RegistryHelper.getMotiveRegistry().getByValue( title );
 	}
 	
 	public void encode( PacketBuffer buffer ) {
