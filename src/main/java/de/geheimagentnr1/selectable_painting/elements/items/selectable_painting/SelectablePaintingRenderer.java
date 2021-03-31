@@ -42,7 +42,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		GlStateManager.rotatef( 180.0F - entityYaw, 0.0F, 1.0F, 0.0F );
 		GlStateManager.enableRescaleNormal();
 		bindEntityTexture( entity );
-		PaintingType paintingtype = entity.art;
+		PaintingType paintingtype = entity.getArt();
 		GlStateManager.scalef( 0.0625F, 0.0625F, 0.0625F );
 		if( renderOutlines ) {
 			GlStateManager.enableColorMaterial();

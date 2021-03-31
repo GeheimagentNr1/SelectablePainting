@@ -2,19 +2,20 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.item_groups.ModItemGroups;
+import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingNamedContainerProvider;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,25 +48,30 @@ public class SelectablePainting extends Item {
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
-		) ).appendText( ": " ).appendSibling( PaintingSelectionHelper.getPaintingName( stack ) ) );
+		) ).appendText( ": " )
+			.appendSibling( SelectablePaintingItemStackHelper.getRandom( stack )
+				? new TranslationTextComponent( Util.makeTranslationKey(
+				"message",
+				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
+			) )
+				: PaintingSelectionHelper.getPaintingName( stack ) ) );
 	}
 	
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(
-		@Nonnull World worldIn, PlayerEntity playerIn,
+		@Nonnull World worldIn,
+		PlayerEntity playerIn,
 		@Nonnull Hand handIn ) {
 		
 		ItemStack stack = playerIn.getHeldItem( handIn );
-		TextComponent message;
 		
-		if( playerIn.isSneaking() ) {
-			message = new StringTextComponent( PaintingSelectionHelper.nextSize( stack ) );
-		} else {
-			message = PaintingSelectionHelper.nextPainting( stack );
-		}
-		if( worldIn.isRemote ) {
-			playerIn.sendMessage( message );
+		if( !worldIn.isRemote ) {
+			NetworkHooks.openGui(
+				(ServerPlayerEntity)playerIn,
+				new SelectablePaintingNamedContainerProvider( stack ),
+				packetBuffer -> packetBuffer.writeItemStack( stack )
+			);
 		}
 		return new ActionResult<>( ActionResultType.SUCCESS, stack );
 	}
@@ -87,9 +93,10 @@ public class SelectablePainting extends Item {
 				world,
 				pos,
 				direction,
-				PaintingSelectionHelper.getPaintingType( stack ),
+				PaintingSelectionHelper.getPaintingType( stack, world ),
 				SelectablePaintingItemStackHelper.getSizeIndex( stack ),
-				SelectablePaintingItemStackHelper.getPaintingIndex( stack )
+				SelectablePaintingItemStackHelper.getPaintingIndex( stack ),
+				SelectablePaintingItemStackHelper.getRandom( stack )
 			);
 			
 			EntityType.applyItemNBT( world, player, selectablePaintingEntity, stack.getTag() );
