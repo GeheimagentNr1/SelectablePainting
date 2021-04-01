@@ -5,12 +5,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
 import java.util.*;
 
 
-//package-private
-class PaintingSelectionHelper {
+public class PaintingSelectionHelper {
 	
 	
 	private static long painting_count = 0;
@@ -22,11 +22,11 @@ class PaintingSelectionHelper {
 	private static ArrayList<ArrayList<PaintingType>> painting_types;
 	
 	//package-private
-	@SuppressWarnings( "deprecation" )
 	static void init() {
 		
-		if( painting_count != Registry.MOTIVE.stream().count() ) {
-			painting_count = Registry.MOTIVE.stream().count();
+		long current_painting_count = Registry.MOTIVE.stream().count();
+		if( painting_count != current_painting_count ) {
+			painting_count = current_painting_count;
 			Iterator<PaintingType> iterator = Registry.MOTIVE.iterator();
 			TreeSet<String> sizes = new TreeSet<>();
 			TreeMap<String, TreeSet<String>> paintingNames = new TreeMap<>();
@@ -40,8 +40,12 @@ class PaintingSelectionHelper {
 				String paintingSize = widthSize + "x" + heightSize;
 				if( sizes.add( paintingSize ) ) {
 					paintingNames.put( paintingSize, new TreeSet<>() );
-					paintingTypes.put( paintingSize, new TreeSet<>( Comparator.comparing( paintingType2 ->
-						Objects.requireNonNull( paintingType2.getRegistryName() ).getPath() ) ) );
+					paintingTypes.put(
+						paintingSize,
+						new TreeSet<>( Comparator.comparing( paintingType2 ->
+							Objects.requireNonNull( paintingType2.getRegistryName() ).getPath() )
+						)
+					);
 				}
 				paintingNames.get( paintingSize ).add( Objects.requireNonNull( paintingType.getRegistryName() )
 					.getPath() );
@@ -59,52 +63,80 @@ class PaintingSelectionHelper {
 		}
 	}
 	
-	//package-private
-	static String nextSize( ItemStack stack ) {
+	public static void previousSize( ItemStack stack ) {
+		
+		init();
+		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack ) - 1;
+		size_index = size_index < 0 ? painting_sizes.length - 1 : size_index;
+		SelectablePaintingItemStackHelper.setSizeIndex( stack, size_index );
+		SelectablePaintingItemStackHelper.setPaintingIndex( stack, 0 );
+	}
+	
+	public static void nextSize( ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack ) + 1;
 		size_index = size_index >= painting_sizes.length ? 0 : size_index;
 		SelectablePaintingItemStackHelper.setSizeIndex( stack, size_index );
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, 0 );
-		return painting_sizes[size_index];
 	}
 	
-	//package-private
-	static TranslationTextComponent nextPainting( ItemStack stack ) {
+	public static void previousPainting( ItemStack stack ) {
+		
+		init();
+		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
+		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack ) - 1;
+		painting_index = painting_index < 0 ? painting_names.get( size_index ).size() - 1 : painting_index;
+		SelectablePaintingItemStackHelper.setPaintingIndex( stack, painting_index );
+	}
+	
+	public static void nextPainting( ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack ) + 1;
 		painting_index = painting_index >= painting_names.get( size_index ).size() ? 0 : painting_index;
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, painting_index );
-		return getPaintingName( size_index, painting_index );
 	}
 	
-	//package-private
-	static String getSizeName( ItemStack stack ) {
+	public static String getSizeName( ItemStack stack ) {
 		
 		return painting_sizes[SelectablePaintingItemStackHelper.getSizeIndex( stack )];
 	}
 	
-	//package-private
-	static TranslationTextComponent getPaintingName( ItemStack stack ) {
+	public static TranslationTextComponent getPaintingName( ItemStack stack ) {
 		
-		return getPaintingName( SelectablePaintingItemStackHelper.getSizeIndex( stack ),
-			SelectablePaintingItemStackHelper.getPaintingIndex( stack ) );
+		return getPaintingName(
+			SelectablePaintingItemStackHelper.getSizeIndex( stack ),
+			SelectablePaintingItemStackHelper.getPaintingIndex( stack )
+		);
 	}
 	
 	private static TranslationTextComponent getPaintingName( int size_index, int painting_index ) {
 		
-		return new TranslationTextComponent( Util.makeTranslationKey( "painting", painting_types.get( size_index )
-			.get( painting_index ).getRegistryName() ) );
+		return new TranslationTextComponent( Util.makeTranslationKey(
+			"painting",
+			painting_types.get( size_index ).get( painting_index ).getRegistryName()
+		) );
 	}
 	
-	//package-private
-	static PaintingType getPaintingType( ItemStack stack ) {
+	public static PaintingType getCurrentPaintingType( ItemStack stack ) {
 		
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
+		return painting_types.get( size_index ).get( painting_index );
+	}
+	
+	//package-private
+	static PaintingType getPaintingType( ItemStack stack, World world ) {
+		
+		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
+		int painting_index;
+		if( SelectablePaintingItemStackHelper.getRandom( stack ) ) {
+			painting_index = world.getRandom().nextInt( painting_types.get( size_index ).size() );
+		} else {
+			painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
+		}
 		return painting_types.get( size_index ).get( painting_index );
 	}
 }
