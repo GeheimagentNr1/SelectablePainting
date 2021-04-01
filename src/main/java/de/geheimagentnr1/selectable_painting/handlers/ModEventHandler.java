@@ -37,7 +37,7 @@ public class ModEventHandler {
 	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
 		
 		Minecraft.getInstance().getRenderManager().register(
-			SelectablePaintingEntity.class,
+			ModItems.SELECTABLE_PAINTING_ENTITY,
 			new SelectablePaintingRenderer( Minecraft.getInstance().getRenderManager() )
 		);
 		ScreenManager.registerFactory( ModItems.SELECTABLE_PAINTING_CONTAINER, SelectablePaintingScreen::new );
