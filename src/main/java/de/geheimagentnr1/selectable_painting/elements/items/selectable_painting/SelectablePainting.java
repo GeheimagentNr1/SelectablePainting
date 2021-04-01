@@ -44,12 +44,12 @@ public class SelectablePainting extends Item {
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
-		) ).func_240702_b_( ": " ).func_240702_b_( PaintingSelectionHelper.getSizeName( stack ) ) );
+		) ).appendString( ": " ).appendString( PaintingSelectionHelper.getSizeName( stack ) ) );
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
 		) )
-			.func_240702_b_( ": " ).func_230529_a_( SelectablePaintingItemStackHelper.getRandom( stack )
+			.appendString( ": " ).append( SelectablePaintingItemStackHelper.getRandom( stack )
 				? new TranslationTextComponent( Util.makeTranslationKey(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
@@ -114,7 +114,7 @@ public class SelectablePainting extends Item {
 							SelectablePaintingMod.MODID,
 							"selectable_painting_painting_to_big_error"
 						)
-					) ), Util.field_240973_b_ );
+					) ), Util.DUMMY_UUID );
 				}
 			}
 			return ActionResultType.SUCCESS;

@@ -26,17 +26,13 @@ class LeftButton extends Button {
 	}
 	
 	@Override
-	public void func_230431_b_(
-		@Nonnull MatrixStack matrixStack,
-		int p_renderButton_1_,
-		int p_renderButton_2_,
-		float p_renderButton_3_ ) {
+	public void renderButton( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
 		
 		Minecraft.getInstance().getTextureManager().bindTexture( DIRECTION_BUTTONS_TEXTURE );
-		if( func_230449_g_() ) {
-			func_238463_a_( matrixStack, field_230690_l_, field_230691_m_, 13, 21, 10, 15, 64, 64 );
+		if( isHovered() ) {
+			blit( matrixStack, x, y, 13, 21, 10, 15, 64, 64 );
 		} else {
-			func_238463_a_( matrixStack, field_230690_l_, field_230691_m_, 1, 21, 10, 15, 64, 64 );
+			blit( matrixStack, x, y, 1, 21, 10, 15, 64, 64 );
 		}
 	}
 }

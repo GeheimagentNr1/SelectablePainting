@@ -31,31 +31,27 @@ class RandomCheckBoxButton extends CheckboxButton {
 	}
 	
 	@Override
-	public void func_230930_b_() {
+	public void onPress() {
 		
-		super.func_230930_b_();
+		super.onPress();
 		onPress.accept( this );
 		
 	}
 	
 	@Override
-	public void func_230431_b_(
-		@Nonnull MatrixStack matrixStack,
-		int p_renderButton_1_,
-		int p_renderButton_2_,
-		float p_renderButton_3_ ) {
+	public void renderButton( @Nonnull MatrixStack matrixStack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_ ) {
 		
 		Minecraft.getInstance().getTextureManager().bindTexture( SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( isChecked() ) {
-			func_238463_a_( matrixStack, field_230690_l_, field_230691_m_, 0, 10, 10, 10, 16, 32 );
+			blit( matrixStack, x, y, 0, 10, 10, 10, 16, 32 );
 		} else {
-			func_238463_a_( matrixStack, field_230690_l_, field_230691_m_, 0, 0, 10, 10, 16, 32 );
+			blit( matrixStack, x, y, 0, 0, 10, 10, 16, 32 );
 		}
-		Minecraft.getInstance().fontRenderer.func_238421_b_(
+		Minecraft.getInstance().fontRenderer.drawString(
 			matrixStack,
-			func_230458_i_().getString(),
-			field_230690_l_ + 14,
-			field_230691_m_ + 2,
+			getMessage().getString(),
+			x + 14,
+			y + 2,
 			4210752
 		);
 	}
