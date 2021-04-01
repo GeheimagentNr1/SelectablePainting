@@ -29,26 +29,30 @@ import javax.annotation.Nonnull;
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity> {
 	
 	
-	@SuppressWarnings( "ParameterNameDiffersFromOverriddenParameter" )
-	public SelectablePaintingRenderer( EntityRendererManager _renderManager ) {
+	public SelectablePaintingRenderer( EntityRendererManager renderManager ) {
 		
-		super( _renderManager );
+		super( renderManager );
 	}
 	
 	@Override
-	public void render( SelectablePaintingEntity entityIn, float entityYaw, float partialTicks,
+	public void render(
+		SelectablePaintingEntity entityIn, float entityYaw, float partialTicks,
 		MatrixStack matrixStackIn,
 		IRenderTypeBuffer bufferIn, int packedLightIn ) {
 		
 		matrixStackIn.push();
 		matrixStackIn.rotate( Vector3f.YP.rotationDegrees( 180.0F - entityYaw ) );
-		PaintingType paintingtype = entityIn.art;
+		PaintingType paintingtype = entityIn.getArt();
 		matrixStackIn.scale( 0.0625F, 0.0625F, 0.0625F );
 		IVertexBuilder ivertexbuilder =
 			bufferIn.getBuffer( RenderType.getEntitySolid( getEntityTexture( entityIn ) ) );
 		PaintingSpriteUploader paintingspriteuploader = Minecraft.getInstance().getPaintingSpriteUploader();
-		render( matrixStackIn, ivertexbuilder, entityIn, paintingtype.getWidth(), paintingtype.getHeight(),
-			paintingspriteuploader.getSpriteForPainting( paintingtype ), paintingspriteuploader.getBackSprite() );
+		render( matrixStackIn, ivertexbuilder, entityIn,
+			paintingtype.getWidth(),
+			paintingtype.getHeight(),
+			paintingspriteuploader.getSpriteForPainting( paintingtype ),
+			paintingspriteuploader.getBackSprite()
+		);
 		matrixStackIn.pop();
 		super.render( entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn );
 	}
@@ -64,7 +68,8 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 			.getTextureLocation();
 	}
 	
-	private void render( MatrixStack matrixStack, IVertexBuilder vertexBuilder, SelectablePaintingEntity entity,
+	private void render(
+		MatrixStack matrixStack, IVertexBuilder vertexBuilder, SelectablePaintingEntity entity,
 		int weidth, int height, TextureAtlasSprite paintingAtlas, TextureAtlasSprite backSpriteAtlas ) {
 		
 		MatrixStack.Entry matrixstack_entry = matrixStack.getLast();
@@ -145,7 +150,8 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		
 	}
 	
-	private void render( Matrix4f matrix1, Matrix3f matrix2, IVertexBuilder vertexBuilder, float x1, float y1, float u,
+	private void render(
+		Matrix4f matrix1, Matrix3f matrix2, IVertexBuilder vertexBuilder, float x1, float y1, float u,
 		float v, float z1, int x2, int y2, int z2, int lightmapUV ) {
 		
 		vertexBuilder.pos( matrix1, x1, y1, z1 ).color( 255, 255, 255, 255 ).tex( u, v )
