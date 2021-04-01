@@ -8,10 +8,12 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 
-public class SelectablePaintingItemGroup extends ItemGroup {
+//package-private
+class SelectablePaintingItemGroup extends ItemGroup {
 	
 	
-	public SelectablePaintingItemGroup() {
+	//package-private
+	SelectablePaintingItemGroup() {
 		
 		super( SelectablePaintingMod.MODID );
 	}

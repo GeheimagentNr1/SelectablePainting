@@ -1,7 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
-import de.geheimagentnr1.selectable_painting.network.ModNetworkManager;
+import de.geheimagentnr1.selectable_painting.network.SpawnSelectablePaintingMsg;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -28,14 +28,13 @@ import javax.annotation.Nullable;
 public class SelectablePaintingEntity extends HangingEntity {
 	
 	
-	//package-private
-	PaintingType art;
+	private PaintingType art;
 	
-	//package-private
-	int size_index;
+	private int size_index;
 	
-	//package-private
-	int painting_index;
+	private int painting_index;
+	
+	private boolean random;
 	
 	@SuppressWarnings( "unused" )
 	public SelectablePaintingEntity( World _world ) {
@@ -50,16 +49,26 @@ public class SelectablePaintingEntity extends HangingEntity {
 		painting_index = 0;
 	}
 	
-	//package-private
-	@SuppressWarnings( "OverridableMethodCallDuringObjectConstruction" )
-	SelectablePaintingEntity( World _world, BlockPos pos, Direction direction, PaintingType paintingType,
-		int _size_index, int _painting_index ) {
+	public SelectablePaintingEntity(
+		World _world,
+		BlockPos pos,
+		Direction direction,
+		PaintingType paintingType,
+		int _size_index,
+		int _painting_index,
+		boolean _random ) {
 		
 		super( ModItems.SELECTABLE_PAINTING_ENTITY, _world, pos );
 		art = paintingType;
-		updateFacingWithBoundingBox( direction );
+		init( direction );
 		size_index = _size_index;
 		painting_index = _painting_index;
+		random = _random;
+	}
+	
+	private void init( Direction direction ) {
+		
+		updateFacingWithBoundingBox( direction );
 	}
 	
 	/**
@@ -76,8 +85,12 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	private ItemStack getItemStackOfEntity() {
 		
-		return SelectablePaintingItemStackHelper.writeIndexesToStack( new ItemStack( ModItems.SELECTABLE_PAINTING ),
-			size_index, painting_index );
+		return SelectablePaintingItemStackHelper.writeDataToStack(
+			new ItemStack( ModItems.SELECTABLE_PAINTING ),
+			size_index,
+			painting_index,
+			random
+		);
 	}
 	
 	@SuppressWarnings( "deprecation" )
@@ -88,6 +101,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		compound.putByte( "Facing", (byte)facingDirection.getHorizontalIndex() );
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", painting_index );
+		compound.putBoolean( "random", random );
 		super.writeAdditional( compound );
 	}
 	
@@ -99,6 +113,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		facingDirection = Direction.byHorizontalIndex( compound.getByte( "Facing" ) );
 		size_index = compound.getInt( "size_index" );
 		painting_index = compound.getInt( "painting_index" );
+		random = compound.getBoolean( "random" );
 		super.readAdditional( compound );
 	}
 	
@@ -141,8 +156,14 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void setPositionAndRotationDirect( double x, double y, double z, float yaw, float pitch,
-		int posRotationIncrements, boolean teleport ) {
+	public void setPositionAndRotationDirect(
+		double x,
+		double y,
+		double z,
+		float yaw,
+		float pitch,
+		int posRotationIncrements,
+		boolean teleport ) {
 		
 		/*BlockPos pos = hangingPosition.add( posX - x, posY - y, posZ - z );
 		setPosition( pos.getX(), pos.getY(), pos.getZ() );*/
@@ -152,17 +173,37 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public IPacket<?> createSpawnPacket() {
 		
-		ModNetworkManager.sendSSpawnSelectablePaintingPacket( new SSpawnSelectablePaintingPacket( this ),
-			world.getChunkAt( getOnPosition() ) );
+		SpawnSelectablePaintingMsg.sendToChunkTrackers( world.getChunkAt( getOnPosition() ), this );
 		return new SSpawnObjectPacket( this );
 	}
 	
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
 		
-		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder.<SelectablePaintingEntity>
-			create( SelectablePaintingEntity::new, EntityClassification.MISC ).size( 0.5F, 0.5F )
+		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder
+			.<SelectablePaintingEntity> create( SelectablePaintingEntity::new, EntityClassification.MISC )
+			.size( 0.5F, 0.5F )
 			.build( SelectablePainting.registry_name );
 		entityType.setRegistryName( SelectablePainting.registry_name );
 		return entityType;
+	}
+	
+	public PaintingType getArt() {
+		
+		return art;
+	}
+	
+	public int getSizeIndex() {
+		
+		return size_index;
+	}
+	
+	public int getPaintingIndex() {
+		
+		return painting_index;
+	}
+	
+	public boolean isRandom() {
+		
+		return random;
 	}
 }
