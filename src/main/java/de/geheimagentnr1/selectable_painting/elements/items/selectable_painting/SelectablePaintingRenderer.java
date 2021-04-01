@@ -27,10 +27,9 @@ import javax.annotation.Nonnull;
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity> {
 	
 	
-	@SuppressWarnings( "ParameterNameDiffersFromOverriddenParameter" )
-	public SelectablePaintingRenderer( EntityRendererManager _renderManager ) {
+	public SelectablePaintingRenderer( EntityRendererManager renderManager ) {
 		
-		super( _renderManager );
+		super( renderManager );
 	}
 	
 	@Override
@@ -40,13 +39,16 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		
 		matrixStackIn.push();
 		matrixStackIn.rotate( Vector3f.YP.rotationDegrees( 180.0F - entityYaw ) );
-		PaintingType paintingtype = entityIn.art;
+		PaintingType paintingtype = entityIn.getArt();
 		matrixStackIn.scale( 0.0625F, 0.0625F, 0.0625F );
 		IVertexBuilder ivertexbuilder =
 			bufferIn.getBuffer( RenderType.getEntitySolid( getEntityTexture( entityIn ) ) );
 		PaintingSpriteUploader paintingspriteuploader = Minecraft.getInstance().getPaintingSpriteUploader();
-		render( matrixStackIn, ivertexbuilder, entityIn, paintingtype.getWidth(), paintingtype.getHeight(),
-			paintingspriteuploader.getSpriteForPainting( paintingtype ), paintingspriteuploader.getBackSprite() );
+		render( matrixStackIn, ivertexbuilder, entityIn,
+			paintingtype.getWidth(),
+			paintingtype.getHeight(),
+			paintingspriteuploader.getSpriteForPainting( paintingtype ),
+			paintingspriteuploader.getBackSprite() );
 		matrixStackIn.pop();
 		super.render( entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn );
 	}
