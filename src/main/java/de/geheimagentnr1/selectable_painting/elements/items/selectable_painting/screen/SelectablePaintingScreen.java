@@ -38,19 +38,19 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	public void init( @Nonnull Minecraft _minecraft, int _width, int _height ) {
 		
 		super.init( _minecraft, _width, _height );
-		addButton( new LeftButton( guiLeft + 6, guiTop + 15, button -> container.previousSize() ) );
-		addButton( new RightButton( guiLeft + 160, guiTop + 15, button -> container.nextSize() ) );
-		addButton( new LeftButton( guiLeft + 6, guiTop + 33, button -> container.previousPainting() ) );
-		addButton( new RightButton( guiLeft + 160, guiTop + 33, button -> container.nextPainting() ) );
+		addButton( new LeftButton( leftPos + 6, topPos + 15, button -> menu.previousSize() ) );
+		addButton( new RightButton( leftPos + 160, topPos + 15, button -> menu.nextSize() ) );
+		addButton( new LeftButton( leftPos + 6, topPos + 33, button -> menu.previousPainting() ) );
+		addButton( new RightButton( leftPos + 160, topPos + 33, button -> menu.nextPainting() ) );
 		addButton( new RandomCheckBoxButton(
-			guiLeft + 6,
-			guiTop + 51,
-			new TranslationTextComponent( Util.makeTranslationKey(
+			leftPos + 6,
+			topPos + 51,
+			new TranslationTextComponent( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) ).getString(),
-			container.getRandom(),
-			checkboxButton -> container.toggleRandom()
+			menu.getRandom(),
+			checkboxButton -> menu.toggleRandom()
 		) );
 	}
 	
@@ -62,22 +62,22 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer( @Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY ) {
+	protected void renderBg( @Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY ) {
 		
 		Objects.requireNonNull( minecraft );
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
-		minecraft.getTextureManager().bindTexture( SELECTABLE_PAINTING_GUI_TEXTURE );
-		int i = guiLeft;
-		int j = ( height - ySize ) / 2;
-		blit( matrixStack, i, j, 0, 0, xSize, ySize );
+		minecraft.getTextureManager().bind( SELECTABLE_PAINTING_GUI_TEXTURE );
+		int i = leftPos;
+		int j = ( height - imageHeight ) / 2;
+		blit( matrixStack, i, j, 0, 0, imageWidth, imageHeight );
 	}
 	
 	@Override
-	protected void drawGuiContainerForegroundLayer( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY ) {
+	protected void renderLabels( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY ) {
 		
 		int titleStartX =
-			width / 2 - guiLeft - font.getStringWidth( title.getString() ) / 2;
-		font.drawString(
+			width / 2 - leftPos - font.width( title.getString() ) / 2;
+		font.draw(
 			matrixStack,
 			title.getString(),
 			titleStartX,
@@ -87,31 +87,31 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 		drawCenteredString(
 			matrixStack,
 			font,
-			container.getSizeText(),
-			width / 2 - guiLeft,
+			menu.getSizeText(),
+			width / 2 - leftPos,
 			19,
 			16777215
 		);
 		drawCenteredString(
 			matrixStack,
 			font,
-			container.getPaintingText(),
-			width / 2 - guiLeft,
+			menu.getPaintingText(),
+			width / 2 - leftPos,
 			37,
 			16777215
 		);
 		
-		if( !container.getRandom() ) {
+		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
-			PaintingType paintingType = container.getCurrentPaintingType();
-			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingSpriteUploader().
-				getSpriteForPainting( paintingType );
-			minecraft.getTextureManager().bindTexture(
-				paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation()
+			PaintingType paintingType = menu.getCurrentPaintingType();
+			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures()
+				.get( paintingType );
+			minecraft.getTextureManager().bind(
+				paintingTextureAtlasSprite.atlas().location()
 			);
 			blit(
 				matrixStack,
-				width / 2 - guiLeft - paintingType.getWidth() / 2,
+				width / 2 - leftPos - paintingType.getWidth() / 2,
 				70,
 				0,
 				paintingType.getWidth(),

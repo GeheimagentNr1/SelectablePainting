@@ -28,7 +28,7 @@ public class SelectablePaintingNamedContainerProvider implements INamedContainer
 	@Override
 	public ITextComponent getDisplayName() {
 		
-		return new TranslationTextComponent( Util.makeTranslationKey(
+		return new TranslationTextComponent( Util.makeDescriptionId(
 			"container",
 			ModItems.SELECTABLE_PAINTING.getRegistryName()
 		) );

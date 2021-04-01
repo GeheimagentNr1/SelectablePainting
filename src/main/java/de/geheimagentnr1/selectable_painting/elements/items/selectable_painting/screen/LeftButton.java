@@ -28,7 +28,7 @@ class LeftButton extends Button {
 	@Override
 	public void renderButton( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
 		
-		Minecraft.getInstance().getTextureManager().bindTexture( DIRECTION_BUTTONS_TEXTURE );
+		Minecraft.getInstance().getTextureManager().bind( DIRECTION_BUTTONS_TEXTURE );
 		if( isHovered() ) {
 			blit( matrixStack, x, y, 13, 21, 10, 15, 64, 64 );
 		} else {

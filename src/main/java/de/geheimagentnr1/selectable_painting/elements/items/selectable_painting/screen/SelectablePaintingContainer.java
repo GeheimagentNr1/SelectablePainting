@@ -20,7 +20,7 @@ public class SelectablePaintingContainer extends Container {
 	
 	public SelectablePaintingContainer( int windowID, PacketBuffer buffer ) {
 		
-		this( windowID, buffer.readItemStack() );
+		this( windowID, buffer.readItem() );
 	}
 	
 	//package-private
@@ -31,7 +31,7 @@ public class SelectablePaintingContainer extends Container {
 	}
 	
 	@Override
-	public boolean canInteractWith( @Nonnull PlayerEntity playerIn ) {
+	public boolean stillValid( @Nonnull PlayerEntity playerIn ) {
 		
 		return true;
 	}

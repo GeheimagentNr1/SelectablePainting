@@ -29,28 +29,28 @@ public class SelectablePainting extends Item {
 	
 	public SelectablePainting() {
 		
-		super( new Item.Properties().group( ModItemGroups.SELECTABLE_PAINTING ) );
+		super( new Item.Properties().tab( ModItemGroups.SELECTABLE_PAINTING ) );
 		setRegistryName( registry_name );
 		PaintingSelectionHelper.init();
 	}
 	
 	@Override
-	public void addInformation(
+	public void appendHoverText(
 		@Nonnull ItemStack stack,
 		@Nullable World worldIn,
 		List<ITextComponent> tooltip,
 		@Nonnull ITooltipFlag flagIn ) {
 		
-		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
+		tooltip.add( new TranslationTextComponent( Util.makeDescriptionId(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
-		) ).appendString( ": " ).appendString( PaintingSelectionHelper.getSizeName( stack ) ) );
-		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
+		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( stack ) ) );
+		tooltip.add( new TranslationTextComponent( Util.makeDescriptionId(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
 		) )
-			.appendString( ": " ).append( SelectablePaintingItemStackHelper.getRandom( stack )
-				? new TranslationTextComponent( Util.makeTranslationKey(
+			.append( ": " ).append( SelectablePaintingItemStackHelper.getRandom( stack )
+				? new TranslationTextComponent( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) )
@@ -59,18 +59,18 @@ public class SelectablePainting extends Item {
 	
 	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(
+	public ActionResult<ItemStack> use(
 		@Nonnull World worldIn,
 		PlayerEntity playerIn,
 		@Nonnull Hand handIn ) {
 		
-		ItemStack stack = playerIn.getHeldItem( handIn );
+		ItemStack stack = playerIn.getItemInHand( handIn );
 		
-		if( !worldIn.isRemote ) {
+		if( !worldIn.isClientSide ) {
 			NetworkHooks.openGui(
 				(ServerPlayerEntity)playerIn,
 				new SelectablePaintingNamedContainerProvider( stack ),
-				packetBuffer -> packetBuffer.writeItemStack( stack )
+				packetBuffer -> packetBuffer.writeItem( stack )
 			);
 		}
 		return new ActionResult<>( ActionResultType.SUCCESS, stack );
@@ -78,15 +78,15 @@ public class SelectablePainting extends Item {
 	
 	@Nonnull
 	@Override
-	public ActionResultType onItemUse( ItemUseContext context ) {
+	public ActionResultType useOn( ItemUseContext context ) {
 		
-		Direction direction = context.getFace();
-		BlockPos pos = context.getPos().offset( direction );
+		Direction direction = context.getClickedFace();
+		BlockPos pos = context.getClickedPos().relative( direction );
 		PlayerEntity player = context.getPlayer();
-		ItemStack stack = context.getItem();
-		World world = context.getWorld();
+		ItemStack stack = context.getItemInHand();
+		World world = context.getLevel();
 		
-		if( direction.getAxis().isVertical() || player != null && !player.canPlayerEdit( pos, direction, stack ) ) {
+		if( direction.getAxis().isVertical() || player != null && !player.mayUseItemAt( pos, direction, stack ) ) {
 			return ActionResultType.FAIL;
 		} else {
 			SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
@@ -99,22 +99,22 @@ public class SelectablePainting extends Item {
 				SelectablePaintingItemStackHelper.getRandom( stack )
 			);
 			
-			EntityType.applyItemNBT( world, player, selectablePaintingEntity, stack.getTag() );
-			if( selectablePaintingEntity.onValidSurface() ) {
-				if( !world.isRemote ) {
-					selectablePaintingEntity.playPlaceSound();
-					world.addEntity( selectablePaintingEntity );
+			EntityType.updateCustomEntityTag( world, player, selectablePaintingEntity, stack.getTag() );
+			if( selectablePaintingEntity.survives() ) {
+				if( !world.isClientSide ) {
+					selectablePaintingEntity.playPlacementSound();
+					world.addFreshEntity( selectablePaintingEntity );
 				}
 				stack.shrink( 1 );
 			} else {
-				if( !world.isRemote && player != null ) {
-					player.sendMessage( new TranslationTextComponent( Util.makeTranslationKey(
+				if( !world.isClientSide && player != null ) {
+					player.sendMessage( new TranslationTextComponent( Util.makeDescriptionId(
 						"message",
 						new ResourceLocation(
 							SelectablePaintingMod.MODID,
 							"selectable_painting_painting_to_big_error"
 						)
-					) ), Util.DUMMY_UUID );
+					) ), Util.NIL_UUID );
 				}
 			}
 			return ActionResultType.SUCCESS;

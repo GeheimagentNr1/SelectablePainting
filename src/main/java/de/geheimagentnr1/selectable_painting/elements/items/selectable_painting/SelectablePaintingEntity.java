@@ -68,7 +68,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	private void init( Direction direction ) {
 		
-		updateFacingWithBoundingBox( direction );
+		setDirection( direction );
 	}
 	
 	/**
@@ -95,68 +95,68 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	public void writeAdditional( CompoundNBT compound ) {
+	public void addAdditionalSaveData( CompoundNBT compound ) {
 		
 		compound.putString( "Motive", Registry.MOTIVE.getKey( art ).toString() );
-		compound.putByte( "Facing", (byte)facingDirection.getHorizontalIndex() );
+		compound.putByte( "Facing", (byte)direction.get2DDataValue() );
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", painting_index );
 		compound.putBoolean( "random", random );
-		super.writeAdditional( compound );
+		super.addAdditionalSaveData( compound );
 	}
 	
 	@SuppressWarnings( "deprecation" )
 	@Override
-	public void readAdditional( CompoundNBT compound ) {
+	public void readAdditionalSaveData( CompoundNBT compound ) {
 		
-		art = Registry.MOTIVE.getOrDefault( ResourceLocation.tryCreate( compound.getString( "Motive" ) ) );
-		facingDirection = Direction.byHorizontalIndex( compound.getByte( "Facing" ) );
+		art = Registry.MOTIVE.get( ResourceLocation.tryParse( compound.getString( "Motive" ) ) );
+		direction = Direction.from2DDataValue( compound.getByte( "Facing" ) );
 		size_index = compound.getInt( "size_index" );
 		painting_index = compound.getInt( "painting_index" );
 		random = compound.getBoolean( "random" );
-		super.readAdditional( compound );
+		super.readAdditionalSaveData( compound );
 	}
 	
 	@Override
-	public int getWidthPixels() {
+	public int getWidth() {
 		
 		return art == null ? 1 : art.getWidth();
 	}
 	
 	@Override
-	public int getHeightPixels() {
+	public int getHeight() {
 		
 		return art == null ? 1 : art.getHeight();
 	}
 	
 	@Override
-	public void onBroken( @Nullable Entity brokenEntity ) {
+	public void dropItem( @Nullable Entity brokenEntity ) {
 		
-		if( world.getGameRules().getBoolean( GameRules.DO_ENTITY_DROPS ) ) {
-			playSound( SoundEvents.ENTITY_PAINTING_BREAK, 1.0F, 1.0F );
+		if( level.getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
+			playSound( SoundEvents.PAINTING_BREAK, 1.0F, 1.0F );
 			if( brokenEntity instanceof PlayerEntity ) {
 				if( ( (PlayerEntity)brokenEntity ).isCreative() ) {
 					return;
 				}
 			}
-			entityDropItem( getItemStackOfEntity() );
+			spawnAtLocation( getItemStackOfEntity() );
 		}
 	}
 	
 	@Override
-	public void playPlaceSound() {
+	public void playPlacementSound() {
 		
-		playSound( SoundEvents.ENTITY_PAINTING_PLACE, 1.0F, 1.0F );
+		playSound( SoundEvents.PAINTING_PLACE, 1.0F, 1.0F );
 	}
 	
 	@Override
-	public void setLocationAndAngles( double x, double y, double z, float yaw, float pitch ) {
+	public void moveTo( double x, double y, double z, float yaw, float pitch ) {
 		
-		setPosition( x, y, z );
+		setPos( x, y, z );
 	}
 	
 	@Override
-	public void setPositionAndRotationDirect(
+	public void lerpTo(
 		double x,
 		double y,
 		double z,
@@ -171,17 +171,17 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	@Nonnull
 	@Override
-	public IPacket<?> createSpawnPacket() {
+	public IPacket<?> getAddEntityPacket() {
 		
-		SpawnSelectablePaintingMsg.sendToChunkTrackers( world.getChunkAt( getOnPosition() ), this );
+		SpawnSelectablePaintingMsg.sendToChunkTrackers( level.getChunkAt( getOnPos() ), this );
 		return new SSpawnObjectPacket( this );
 	}
 	
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
 		
 		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder
-			.<SelectablePaintingEntity> create( SelectablePaintingEntity::new, EntityClassification.MISC )
-			.size( 0.5F, 0.5F )
+			.<SelectablePaintingEntity>of( SelectablePaintingEntity::new, EntityClassification.MISC )
+			.sized( 0.5F, 0.5F )
 			.build( SelectablePainting.registry_name );
 		entityType.setRegistryName( SelectablePainting.registry_name );
 		return entityType;

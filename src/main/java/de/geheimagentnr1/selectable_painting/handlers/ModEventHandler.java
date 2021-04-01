@@ -36,11 +36,11 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
 		
-		Minecraft.getInstance().getRenderManager().register(
+		Minecraft.getInstance().getEntityRenderDispatcher().register(
 			ModItems.SELECTABLE_PAINTING_ENTITY,
-			new SelectablePaintingRenderer( Minecraft.getInstance().getRenderManager() )
+			new SelectablePaintingRenderer( Minecraft.getInstance().getEntityRenderDispatcher() )
 		);
-		ScreenManager.registerFactory( ModItems.SELECTABLE_PAINTING_CONTAINER, SelectablePaintingScreen::new );
+		ScreenManager.register( ModItems.SELECTABLE_PAINTING_CONTAINER, SelectablePaintingScreen::new );
 	}
 	
 	@SubscribeEvent

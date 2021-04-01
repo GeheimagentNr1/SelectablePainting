@@ -23,13 +23,13 @@ public class UpdateSelectablePaintingItemStackMsg {
 	//package-private
 	static UpdateSelectablePaintingItemStackMsg decode( PacketBuffer buffer ) {
 		
-		return new UpdateSelectablePaintingItemStackMsg( buffer.readItemStack() );
+		return new UpdateSelectablePaintingItemStackMsg( buffer.readItem() );
 	}
 	
 	//package-private
 	void encode( PacketBuffer buffer ) {
 		
-		buffer.writeItemStack( stack );
+		buffer.writeItem( stack );
 	}
 	
 	public static void sendToServer( ItemStack stack ) {
@@ -42,9 +42,9 @@ public class UpdateSelectablePaintingItemStackMsg {
 		
 		Optional.ofNullable( context.get().getSender() )
 			.ifPresent( player -> {
-				if( player.openContainer instanceof SelectablePaintingContainer ) {
+				if( player.containerMenu instanceof SelectablePaintingContainer ) {
 					SelectablePaintingContainer selectablePaintingContainer =
-						(SelectablePaintingContainer)player.openContainer;
+						(SelectablePaintingContainer)player.containerMenu;
 					selectablePaintingContainer.updateItemStack( stack );
 				}
 			} );

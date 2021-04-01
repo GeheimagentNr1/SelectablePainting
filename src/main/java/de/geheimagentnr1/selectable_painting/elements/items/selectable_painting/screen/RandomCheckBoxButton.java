@@ -41,13 +41,13 @@ class RandomCheckBoxButton extends CheckboxButton {
 	@Override
 	public void renderButton( @Nonnull MatrixStack matrixStack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_ ) {
 		
-		Minecraft.getInstance().getTextureManager().bindTexture( SELECTABLE_PAINTING_GUI_TEXTURE );
-		if( isChecked() ) {
+		Minecraft.getInstance().getTextureManager().bind( SELECTABLE_PAINTING_GUI_TEXTURE );
+		if( selected() ) {
 			blit( matrixStack, x, y, 0, 10, 10, 10, 16, 32 );
 		} else {
 			blit( matrixStack, x, y, 0, 0, 10, 10, 16, 32 );
 		}
-		Minecraft.getInstance().fontRenderer.drawString(
+		Minecraft.getInstance().font.draw(
 			matrixStack,
 			getMessage().getString(),
 			x + 14,

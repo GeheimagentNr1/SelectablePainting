@@ -114,7 +114,7 @@ public class PaintingSelectionHelper {
 	
 	private static TranslationTextComponent getPaintingName( int size_index, int painting_index ) {
 		
-		return new TranslationTextComponent( Util.makeTranslationKey(
+		return new TranslationTextComponent( Util.makeDescriptionId(
 			"painting",
 			painting_types.get( size_index ).get( painting_index ).getRegistryName()
 		) );

@@ -60,10 +60,10 @@ public class SpawnSelectablePaintingMsg {
 		
 		return new SpawnSelectablePaintingMsg(
 			buffer.readVarInt(),
-			buffer.readUniqueId(),
-			Registry.MOTIVE.getByValue( buffer.readVarInt() ),
+			buffer.readUUID(),
+			Registry.MOTIVE.byId( buffer.readVarInt() ),
 			buffer.readBlockPos(),
-			Direction.byHorizontalIndex( buffer.readByte() ),
+			Direction.from2DDataValue( buffer.readByte() ),
 			buffer.readVarInt(),
 			buffer.readVarInt(),
 			buffer.readBoolean()
@@ -74,10 +74,10 @@ public class SpawnSelectablePaintingMsg {
 	void encode( PacketBuffer buffer ) {
 		
 		buffer.writeVarInt( entityID );
-		buffer.writeUniqueId( uniqueId );
+		buffer.writeUUID( uniqueId );
 		buffer.writeVarInt( Registry.MOTIVE.getId( art ) );
 		buffer.writeBlockPos( position );
-		buffer.writeByte( facing.getHorizontalIndex() );
+		buffer.writeByte( facing.get2DDataValue() );
 		buffer.writeVarInt( size_index );
 		buffer.writeVarInt( painting_index );
 		buffer.writeBoolean( random );
@@ -88,11 +88,11 @@ public class SpawnSelectablePaintingMsg {
 		Network.CHANNEL.send(
 			PacketDistributor.TRACKING_CHUNK.with( () -> chunk ),
 			new SpawnSelectablePaintingMsg(
-				selectablePaintingEntity.getEntityId(),
-				selectablePaintingEntity.getUniqueID(),
+				selectablePaintingEntity.getId(),
+				selectablePaintingEntity.getUUID(),
 				selectablePaintingEntity.getArt(),
-				selectablePaintingEntity.getHangingPosition(),
-				selectablePaintingEntity.getHorizontalFacing(),
+				selectablePaintingEntity.getPos(),
+				selectablePaintingEntity.getDirection(),
 				selectablePaintingEntity.getSizeIndex(),
 				selectablePaintingEntity.getPaintingIndex(),
 				selectablePaintingEntity.isRandom()
@@ -103,7 +103,7 @@ public class SpawnSelectablePaintingMsg {
 	//package-private
 	void handle( Supplier<NetworkEvent.Context> context ) {
 		
-		Optional.ofNullable( Minecraft.getInstance().world )
+		Optional.ofNullable( Minecraft.getInstance().level )
 			.ifPresent( world -> {
 				SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
 					world,
@@ -114,9 +114,9 @@ public class SpawnSelectablePaintingMsg {
 					painting_index,
 					random
 				);
-				selectablePaintingEntity.setEntityId( entityID );
-				selectablePaintingEntity.setUniqueId( uniqueId );
-				world.addEntity( entityID, selectablePaintingEntity );
+				selectablePaintingEntity.setId( entityID );
+				selectablePaintingEntity.setUUID( uniqueId );
+				world.putNonPlayerEntity( entityID, selectablePaintingEntity );
 			} );
 		context.get().setPacketHandled( true );
 	}
