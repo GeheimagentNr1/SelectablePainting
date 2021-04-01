@@ -53,7 +53,7 @@ public class SelectablePaintingContainer extends Container {
 	
 	public String getPaintingText() {
 		
-		return PaintingSelectionHelper.getPaintingName( stack ).getFormattedText();
+		return PaintingSelectionHelper.getPaintingName( stack ).getString();
 	}
 	
 	public PaintingType getCurrentPaintingType() {

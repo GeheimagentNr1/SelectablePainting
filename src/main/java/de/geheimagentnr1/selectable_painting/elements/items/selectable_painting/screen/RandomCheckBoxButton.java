@@ -1,10 +1,13 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.CheckboxButton;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 
@@ -23,27 +26,37 @@ class RandomCheckBoxButton extends CheckboxButton {
 	@SuppressWarnings( "SameParameterValue" )
 	RandomCheckBoxButton( int _x, int _y, String _message, boolean _checked, Consumer<CheckboxButton> _onPress ) {
 		
-		super( _x, _y, 10, 10, _message, _checked );
+		super( _x, _y, 10, 10, new StringTextComponent( _message ), _checked );
 		onPress = _onPress;
 	}
 	
 	@Override
-	public void onPress() {
+	public void func_230930_b_() {
 		
-		super.onPress();
+		super.func_230930_b_();
 		onPress.accept( this );
 		
 	}
 	
 	@Override
-	public void renderButton( int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_ ) {
+	public void func_230431_b_(
+		@Nonnull MatrixStack matrixStack,
+		int p_renderButton_1_,
+		int p_renderButton_2_,
+		float p_renderButton_3_ ) {
 		
 		Minecraft.getInstance().getTextureManager().bindTexture( SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( isChecked() ) {
-			blit( x, y, 0, 10, 10, 10, 16, 32 );
+			func_238463_a_( matrixStack, field_230690_l_, field_230691_m_, 0, 10, 10, 10, 16, 32 );
 		} else {
-			blit( x, y, 0, 0, 10, 10, 16, 32 );
+			func_238463_a_( matrixStack, field_230690_l_, field_230691_m_, 0, 0, 10, 10, 16, 32 );
 		}
-		Minecraft.getInstance().fontRenderer.drawString( getMessage(), x + 14, y + 2, 4210752 );
+		Minecraft.getInstance().fontRenderer.func_238421_b_(
+			matrixStack,
+			func_230458_i_().getString(),
+			field_230690_l_ + 14,
+			field_230691_m_ + 2,
+			4210752
+		);
 	}
 }
