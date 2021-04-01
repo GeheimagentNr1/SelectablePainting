@@ -94,7 +94,7 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 				0,
 				paintingType.getWidth(),
 				paintingType.getHeight(),
-				Minecraft.getInstance().getPaintingSpriteUploader().getSpriteForPainting( paintingType )
+				minecraft.getPaintingSpriteUploader().getSpriteForPainting( paintingType )
 			);
 		}
 	}
