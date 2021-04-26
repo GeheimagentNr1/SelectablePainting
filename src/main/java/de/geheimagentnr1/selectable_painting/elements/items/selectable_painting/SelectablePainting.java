@@ -44,12 +44,13 @@ public class SelectablePainting extends Item {
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
-		) ).func_240702_b_( ": " ).func_240702_b_( PaintingSelectionHelper.getSizeName( stack ) ) );
+		) ).func_240702_b_( ": " )
+			.func_240702_b_( PaintingSelectionHelper.getSizeName( stack ) ) );
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
-		) )
-			.func_240702_b_( ": " ).func_230529_a_( SelectablePaintingItemStackHelper.getRandom( stack )
+		) ).func_240702_b_( ": " )
+			.func_230529_a_( SelectablePaintingItemStackHelper.getRandom( stack )
 				? new TranslationTextComponent( Util.makeTranslationKey(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
