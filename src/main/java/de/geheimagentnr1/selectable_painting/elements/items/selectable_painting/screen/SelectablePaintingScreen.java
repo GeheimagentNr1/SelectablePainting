@@ -19,10 +19,8 @@ import java.util.Objects;
 public class SelectablePaintingScreen extends ContainerScreen<SelectablePaintingContainer> {
 	
 	
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE = new ResourceLocation(
-		SelectablePaintingMod.MODID,
-		"textures/gui/select_painting_gui.png"
-	);
+	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
+		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
 		@Nonnull SelectablePaintingContainer screenContainer,
@@ -75,12 +73,7 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	protected void drawGuiContainerForegroundLayer( int mouseX, int mouseY ) {
 		
 		int titleStartX = width / 2 - guiLeft - font.getStringWidth( title.getFormattedText() ) / 2;
-		font.drawString(
-			title.getFormattedText(),
-			titleStartX,
-			5,
-			4210752
-		);
+		font.drawString( title.getFormattedText(), titleStartX, 5, 4210752 );
 		drawCenteredString( font, container.getSizeText(), width / 2 - guiLeft, 19, 16777215 );
 		drawCenteredString( font, container.getPaintingText(), width / 2 - guiLeft, 37, 16777215 );
 		
