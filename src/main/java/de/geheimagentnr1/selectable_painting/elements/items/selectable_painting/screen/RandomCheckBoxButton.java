@@ -37,7 +37,7 @@ class RandomCheckBoxButton extends CheckboxButton {
 	}
 	
 	@Override
-	public void renderButton( @Nonnull MatrixStack matrixStack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_ ) {
+	public void renderButton( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
 		
 		Minecraft.getInstance().getTextureManager().bindTexture( SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( isChecked() ) {

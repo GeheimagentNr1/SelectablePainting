@@ -33,9 +33,9 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	
 	
 	@Override
-	public void init( @Nonnull Minecraft _minecraft, int _width, int _height ) {
+	public void init( @Nonnull Minecraft minecraft, int width, int height ) {
 		
-		super.init( _minecraft, _width, _height );
+		super.init( minecraft, width, height );
 		addButton( new LeftButton( guiLeft + 6, guiTop + 15, button -> container.previousSize() ) );
 		addButton( new RightButton( guiLeft + 160, guiTop + 15, button -> container.nextSize() ) );
 		addButton( new LeftButton( guiLeft + 6, guiTop + 33, button -> container.previousPainting() ) );
@@ -60,7 +60,11 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer( @Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY ) {
+	protected void drawGuiContainerBackgroundLayer(
+		@Nonnull MatrixStack matrixStack,
+		float partialTicks,
+		int x,
+		int y ) {
 		
 		Objects.requireNonNull( minecraft );
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
@@ -71,27 +75,12 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	protected void drawGuiContainerForegroundLayer( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY ) {
+	protected void drawGuiContainerForegroundLayer( @Nonnull MatrixStack matrixStack, int x, int y ) {
 		
-		int titleStartX = width / 2
-			- guiLeft - font.getStringWidth( title.getString() ) / 2;
+		int titleStartX = width / 2 - guiLeft - font.getStringWidth( title.getString() ) / 2;
 		font.drawString( matrixStack, title.getString(), titleStartX, 5, 4210752 );
-		drawCenteredString(
-			matrixStack,
-			font,
-			container.getSizeText(),
-			width / 2 - guiLeft,
-			19,
-			16777215
-		);
-		drawCenteredString(
-			matrixStack,
-			font,
-			container.getPaintingText(),
-			width / 2 - guiLeft,
-			37,
-			16777215
-		);
+		drawCenteredString( matrixStack, font, container.getSizeText(), width / 2 - guiLeft, 19, 16777215 );
+		drawCenteredString( matrixStack, font, container.getPaintingText(), width / 2 - guiLeft, 37, 16777215 );
 		
 		if( !container.getRandom() ) {
 			Objects.requireNonNull( minecraft );
