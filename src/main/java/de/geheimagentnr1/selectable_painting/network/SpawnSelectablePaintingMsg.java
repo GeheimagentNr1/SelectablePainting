@@ -103,21 +103,20 @@ public class SpawnSelectablePaintingMsg {
 	//package-private
 	void handle( Supplier<NetworkEvent.Context> context ) {
 		
-		Optional.ofNullable( Minecraft.getInstance().world )
-			.ifPresent( world -> {
-				SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
-					world,
-					position,
-					facing,
-					art,
-					size_index,
-					painting_index,
-					random
-				);
-				selectablePaintingEntity.setEntityId( entityID );
-				selectablePaintingEntity.setUniqueId( uniqueId );
-				world.addEntity( entityID, selectablePaintingEntity );
-			} );
+		Optional.ofNullable( Minecraft.getInstance().world ).ifPresent( world -> {
+			SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
+				world,
+				position,
+				facing,
+				art,
+				size_index,
+				painting_index,
+				random
+			);
+			selectablePaintingEntity.setEntityId( entityID );
+			selectablePaintingEntity.setUniqueId( uniqueId );
+			world.addEntity( entityID, selectablePaintingEntity );
+		} );
 		context.get().setPacketHandled( true );
 	}
 }

@@ -20,10 +20,8 @@ import java.util.Objects;
 public class SelectablePaintingScreen extends ContainerScreen<SelectablePaintingContainer> {
 	
 	
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE = new ResourceLocation(
-		SelectablePaintingMod.MODID,
-		"textures/gui/select_painting_gui.png"
-	);
+	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
+		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
 		@Nonnull SelectablePaintingContainer screenContainer,
@@ -79,11 +77,7 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 			field_230708_k_ / 2 - guiLeft - field_230712_o_.getStringWidth( field_230704_d_.getString() ) / 2;
 		field_230712_o_.func_238421_b_(
 			matrixStack,
-			field_230704_d_.getString(),
-			titleStartX,
-			5,
-			4210752
-		);
+			field_230704_d_.getString(), titleStartX, 5, 4210752 );
 		func_238471_a_(
 			matrixStack,
 			field_230712_o_,
@@ -104,11 +98,10 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 		if( !container.getRandom() ) {
 			Objects.requireNonNull( field_230706_i_ );
 			PaintingType paintingType = container.getCurrentPaintingType();
-			TextureAtlasSprite paintingTextureAtlasSprite = field_230706_i_.getPaintingSpriteUploader().
-				getSpriteForPainting( paintingType );
-			field_230706_i_.getTextureManager().bindTexture(
-				paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation()
-			);
+			TextureAtlasSprite paintingTextureAtlasSprite = field_230706_i_.getPaintingSpriteUploader()
+				.getSpriteForPainting( paintingType );
+			field_230706_i_.getTextureManager()
+				.bindTexture( paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation() );
 			func_238470_a_(
 				matrixStack,
 				field_230708_k_ / 2 - guiLeft - paintingType.getWidth() / 2,
