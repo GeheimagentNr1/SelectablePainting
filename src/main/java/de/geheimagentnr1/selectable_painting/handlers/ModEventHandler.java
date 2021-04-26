@@ -59,8 +59,9 @@ public class ModEventHandler {
 	public static void handleRegistryContainer( RegistryEvent.Register<ContainerType<?>> event ) {
 		
 		event.getRegistry().register(
-			IForgeContainerType.create( ( windowId, inv, data ) -> new SelectablePaintingContainer( windowId, data ) )
-				.setRegistryName( SelectablePainting.registry_name )
+			IForgeContainerType.create(
+				( windowId, inv, data ) -> new SelectablePaintingContainer( windowId, data )
+			).setRegistryName( SelectablePainting.registry_name )
 		);
 	}
 }

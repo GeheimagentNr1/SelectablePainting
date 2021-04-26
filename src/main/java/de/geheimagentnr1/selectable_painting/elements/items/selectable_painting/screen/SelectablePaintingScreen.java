@@ -80,11 +80,10 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 		if( !container.getRandom() ) {
 			Objects.requireNonNull( minecraft );
 			PaintingType paintingType = container.getCurrentPaintingType();
-			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingSpriteUploader().
-				getSpriteForPainting( paintingType );
-			minecraft.getTextureManager().bindTexture(
-				paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation()
-			);
+			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingSpriteUploader()
+				.getSpriteForPainting( paintingType );
+			minecraft.getTextureManager()
+				.bindTexture( paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation() );
 			blit(
 				width / 2 - guiLeft - paintingType.getWidth() / 2,
 				70,
