@@ -1,5 +1,6 @@
 package de.geheimagentnr1.selectable_painting.handlers;
 
+import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePainting;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingEntity;
@@ -22,7 +23,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
+@Mod.EventBusSubscriber( modid = SelectablePaintingMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class ModEventHandler {
 	
 	
