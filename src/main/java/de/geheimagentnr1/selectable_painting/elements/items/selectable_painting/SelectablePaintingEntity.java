@@ -180,7 +180,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
 		
 		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder
-			.<SelectablePaintingEntity>of( SelectablePaintingEntity::new, EntityClassification.MISC )
+			.<SelectablePaintingEntity> of( SelectablePaintingEntity::new, EntityClassification.MISC )
 			.sized( 0.5F, 0.5F )
 			.build( SelectablePainting.registry_name );
 		entityType.setRegistryName( SelectablePainting.registry_name );

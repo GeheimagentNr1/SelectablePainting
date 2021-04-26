@@ -59,10 +59,7 @@ public class SelectablePainting extends Item {
 	
 	@Nonnull
 	@Override
-	public ActionResult<ItemStack> use(
-		@Nonnull World worldIn,
-		PlayerEntity playerIn,
-		@Nonnull Hand handIn ) {
+	public ActionResult<ItemStack> use( @Nonnull World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn ) {
 		
 		ItemStack stack = playerIn.getItemInHand( handIn );
 		
@@ -110,7 +107,8 @@ public class SelectablePainting extends Item {
 				if( !world.isClientSide && player != null ) {
 					player.sendMessage( new TranslationTextComponent( Util.makeDescriptionId(
 						"message",
-						new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting_to_big_error" )
+						new ResourceLocation( SelectablePaintingMod.MODID,
+							"selectable_painting_painting_to_big_error" )
 					) ), Util.NIL_UUID );
 				}
 			}

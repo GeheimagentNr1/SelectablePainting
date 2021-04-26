@@ -60,11 +60,7 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	protected void renderBg(
-		@Nonnull MatrixStack matrixStack,
-		float partialTicks,
-		int x,
-		int y ) {
+	protected void renderBg( @Nonnull MatrixStack matrixStack, float partialTicks, int x, int y ) {
 		
 		Objects.requireNonNull( minecraft );
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
@@ -85,11 +81,8 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
 			PaintingType paintingType = menu.getCurrentPaintingType();
-			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures()
-				.get( paintingType );
-			minecraft.getTextureManager().bind(
-				paintingTextureAtlasSprite.atlas().location()
-			);
+			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
+			minecraft.getTextureManager().bind( paintingTextureAtlasSprite.atlas().location() );
 			blit(
 				matrixStack,
 				width / 2 - leftPos - paintingType.getWidth() / 2,

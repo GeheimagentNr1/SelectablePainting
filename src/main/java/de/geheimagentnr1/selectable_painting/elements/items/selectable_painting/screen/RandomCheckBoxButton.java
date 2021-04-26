@@ -45,12 +45,6 @@ class RandomCheckBoxButton extends CheckboxButton {
 		} else {
 			blit( matrixStack, x, y, 0, 0, 10, 10, 16, 32 );
 		}
-		Minecraft.getInstance().font.draw(
-			matrixStack,
-			getMessage().getString(),
-			x + 14,
-			y + 2,
-			4210752
-		);
+		Minecraft.getInstance().font.draw( matrixStack, getMessage().getString(), x + 14, y + 2, 4210752 );
 	}
 }

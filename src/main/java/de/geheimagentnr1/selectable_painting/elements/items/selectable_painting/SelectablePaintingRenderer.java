@@ -47,8 +47,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		matrixStackIn.mulPose( Vector3f.YP.rotationDegrees( 180.0F - entityYaw ) );
 		PaintingType paintingtype = entityIn.getArt();
 		matrixStackIn.scale( 0.0625F, 0.0625F, 0.0625F );
-		IVertexBuilder ivertexbuilder =
-			bufferIn.getBuffer( RenderType.entitySolid( getTextureLocation( entityIn ) ) );
+		IVertexBuilder ivertexbuilder = bufferIn.getBuffer( RenderType.entitySolid( getTextureLocation( entityIn ) ) );
 		PaintingSpriteUploader paintingspriteuploader = Minecraft.getInstance().getPaintingTextures();
 		render(
 			matrixStackIn,
@@ -70,10 +69,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	@Override
 	public ResourceLocation getTextureLocation( @Nonnull SelectablePaintingEntity entity ) {
 		
-		return Minecraft.getInstance()
-			.getPaintingTextures()
-			.getBackSprite()
-			.atlas().location();
+		return Minecraft.getInstance().getPaintingTextures().getBackSprite().atlas().location();
 	}
 	
 	private void render(
