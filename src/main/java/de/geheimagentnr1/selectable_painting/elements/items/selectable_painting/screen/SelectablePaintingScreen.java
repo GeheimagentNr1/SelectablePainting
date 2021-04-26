@@ -20,10 +20,8 @@ import java.util.Objects;
 public class SelectablePaintingScreen extends ContainerScreen<SelectablePaintingContainer> {
 	
 	
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE = new ResourceLocation(
-		SelectablePaintingMod.MODID,
-		"textures/gui/select_painting_gui.png"
-	);
+	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
+		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
 		@Nonnull SelectablePaintingContainer screenContainer,
@@ -35,9 +33,9 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	
 	
 	@Override
-	public void init( @Nonnull Minecraft _minecraft, int _width, int _height ) {
+	public void init( @Nonnull Minecraft minecraft, int width, int height ) {
 		
-		super.init( _minecraft, _width, _height );
+		super.init( minecraft, width, height );
 		addButton( new LeftButton( leftPos + 6, topPos + 15, button -> menu.previousSize() ) );
 		addButton( new RightButton( leftPos + 160, topPos + 15, button -> menu.nextSize() ) );
 		addButton( new LeftButton( leftPos + 6, topPos + 33, button -> menu.previousPainting() ) );
@@ -62,7 +60,11 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	protected void renderBg( @Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY ) {
+	protected void renderBg(
+		@Nonnull MatrixStack matrixStack,
+		float partialTicks,
+		int x,
+		int y ) {
 		
 		Objects.requireNonNull( minecraft );
 		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
@@ -73,33 +75,12 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	protected void renderLabels( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY ) {
+	protected void renderLabels( @Nonnull MatrixStack matrixStack, int x, int y ) {
 		
-		int titleStartX =
-			width / 2 - leftPos - font.width( title.getString() ) / 2;
-		font.draw(
-			matrixStack,
-			title.getString(),
-			titleStartX,
-			5,
-			4210752
-		);
-		drawCenteredString(
-			matrixStack,
-			font,
-			menu.getSizeText(),
-			width / 2 - leftPos,
-			19,
-			16777215
-		);
-		drawCenteredString(
-			matrixStack,
-			font,
-			menu.getPaintingText(),
-			width / 2 - leftPos,
-			37,
-			16777215
-		);
+		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
+		font.draw( matrixStack, title.getString(), titleStartX, 5, 4210752 );
+		drawCenteredString( matrixStack, font, menu.getSizeText(), width / 2 - leftPos, 19, 16777215 );
+		drawCenteredString( matrixStack, font, menu.getPaintingText(), width / 2 - leftPos, 37, 16777215 );
 		
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );

@@ -40,14 +40,13 @@ public class UpdateSelectablePaintingItemStackMsg {
 	//package-private
 	void handle( Supplier<NetworkEvent.Context> context ) {
 		
-		Optional.ofNullable( context.get().getSender() )
-			.ifPresent( player -> {
-				if( player.containerMenu instanceof SelectablePaintingContainer ) {
-					SelectablePaintingContainer selectablePaintingContainer =
-						(SelectablePaintingContainer)player.containerMenu;
-					selectablePaintingContainer.updateItemStack( stack );
-				}
-			} );
+		Optional.ofNullable( context.get().getSender() ).ifPresent( player -> {
+			if( player.containerMenu instanceof SelectablePaintingContainer ) {
+				SelectablePaintingContainer selectablePaintingContainer =
+					(SelectablePaintingContainer)player.containerMenu;
+				selectablePaintingContainer.updateItemStack( stack );
+			}
+		} );
 		context.get().setPacketHandled( true );
 	}
 }

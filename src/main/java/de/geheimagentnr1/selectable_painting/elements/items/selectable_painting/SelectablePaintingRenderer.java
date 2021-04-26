@@ -36,9 +36,12 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	
 	@Override
 	public void render(
-		SelectablePaintingEntity entityIn, float entityYaw, float partialTicks,
+		SelectablePaintingEntity entityIn,
+		float entityYaw,
+		float partialTicks,
 		MatrixStack matrixStackIn,
-		IRenderTypeBuffer bufferIn, int packedLightIn ) {
+		IRenderTypeBuffer bufferIn,
+		int packedLightIn ) {
 		
 		matrixStackIn.pushPose();
 		matrixStackIn.mulPose( Vector3f.YP.rotationDegrees( 180.0F - entityYaw ) );
@@ -47,7 +50,10 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		IVertexBuilder ivertexbuilder =
 			bufferIn.getBuffer( RenderType.entitySolid( getTextureLocation( entityIn ) ) );
 		PaintingSpriteUploader paintingspriteuploader = Minecraft.getInstance().getPaintingTextures();
-		render( matrixStackIn, ivertexbuilder, entityIn,
+		render(
+			matrixStackIn,
+			ivertexbuilder,
+			entityIn,
 			paintingtype.getWidth(),
 			paintingtype.getHeight(),
 			paintingspriteuploader.get( paintingtype ),
@@ -64,12 +70,20 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	@Override
 	public ResourceLocation getTextureLocation( @Nonnull SelectablePaintingEntity entity ) {
 		
-		return Minecraft.getInstance().getPaintingTextures().getBackSprite().atlas().location();
+		return Minecraft.getInstance()
+			.getPaintingTextures()
+			.getBackSprite()
+			.atlas().location();
 	}
 	
 	private void render(
-		MatrixStack matrixStack, IVertexBuilder vertexBuilder, SelectablePaintingEntity entity,
-		int weidth, int height, TextureAtlasSprite paintingAtlas, TextureAtlasSprite backSpriteAtlas ) {
+		MatrixStack matrixStack,
+		IVertexBuilder vertexBuilder,
+		SelectablePaintingEntity entity,
+		int weidth,
+		int height,
+		TextureAtlasSprite paintingAtlas,
+		TextureAtlasSprite backSpriteAtlas ) {
 		
 		MatrixStack.Entry matrixstack_entry = matrixStack.last();
 		Matrix4f matrix1 = matrixstack_entry.pose();
@@ -150,10 +164,25 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	}
 	
 	private void render(
-		Matrix4f matrix1, Matrix3f matrix2, IVertexBuilder vertexBuilder, float x1, float y1, float u,
-		float v, float z1, int x2, int y2, int z2, int lightmapUV ) {
+		Matrix4f matrix1,
+		Matrix3f matrix2,
+		IVertexBuilder vertexBuilder,
+		float x1,
+		float y1,
+		float u,
+		float v,
+		float z1,
+		int x2,
+		int y2,
+		int z2,
+		int lightmapUV ) {
 		
-		vertexBuilder.vertex( matrix1, x1, y1, z1 ).color( 255, 255, 255, 255 ).uv( u, v )
-			.overlayCoords( OverlayTexture.NO_OVERLAY ).uv2( lightmapUV ).normal( matrix2, x2, y2, z2 ).endVertex();
+		vertexBuilder.vertex( matrix1, x1, y1, z1 )
+			.color( 255, 255, 255, 255 )
+			.uv( u, v )
+			.overlayCoords( OverlayTexture.NO_OVERLAY )
+			.uv2( lightmapUV )
+			.normal( matrix2, x2, y2, z2 )
+			.endVertex();
 	}
 }

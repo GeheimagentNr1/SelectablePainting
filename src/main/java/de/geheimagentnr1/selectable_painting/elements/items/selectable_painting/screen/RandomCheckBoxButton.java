@@ -15,10 +15,8 @@ import java.util.function.Consumer;
 class RandomCheckBoxButton extends CheckboxButton {
 	
 	
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE = new ResourceLocation(
-		SelectablePaintingMod.MODID,
-		"textures/gui/checkbox.png"
-	);
+	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
+		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/checkbox.png" );
 	
 	private final Consumer<CheckboxButton> onPress;
 	
@@ -39,7 +37,7 @@ class RandomCheckBoxButton extends CheckboxButton {
 	}
 	
 	@Override
-	public void renderButton( @Nonnull MatrixStack matrixStack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_ ) {
+	public void renderButton( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
 		
 		Minecraft.getInstance().getTextureManager().bind( SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( selected() ) {
