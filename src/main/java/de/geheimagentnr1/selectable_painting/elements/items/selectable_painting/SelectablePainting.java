@@ -48,8 +48,7 @@ public class SelectablePainting extends Item {
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
-		) )
-			.appendString( ": " ).append( SelectablePaintingItemStackHelper.getRandom( stack )
+		) ).appendString( ": " ).append( SelectablePaintingItemStackHelper.getRandom( stack )
 				? new TranslationTextComponent( Util.makeTranslationKey(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )

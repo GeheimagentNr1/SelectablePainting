@@ -20,10 +20,8 @@ import java.util.Objects;
 public class SelectablePaintingScreen extends ContainerScreen<SelectablePaintingContainer> {
 	
 	
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE = new ResourceLocation(
-		SelectablePaintingMod.MODID,
-		"textures/gui/select_painting_gui.png"
-	);
+	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
+		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
 		@Nonnull SelectablePaintingContainer screenContainer,
@@ -75,15 +73,9 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	@Override
 	protected void drawGuiContainerForegroundLayer( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY ) {
 		
-		int titleStartX =
-			width / 2 - guiLeft - font.getStringWidth( title.getString() ) / 2;
-		font.drawString(
-			matrixStack,
-			title.getString(),
-			titleStartX,
-			5,
-			4210752
-		);
+		int titleStartX = width / 2
+			- guiLeft - font.getStringWidth( title.getString() ) / 2;
+		font.drawString( matrixStack, title.getString(), titleStartX, 5, 4210752 );
 		drawCenteredString(
 			matrixStack,
 			font,
@@ -104,11 +96,10 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 		if( !container.getRandom() ) {
 			Objects.requireNonNull( minecraft );
 			PaintingType paintingType = container.getCurrentPaintingType();
-			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingSpriteUploader().
-				getSpriteForPainting( paintingType );
-			minecraft.getTextureManager().bindTexture(
-				paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation()
-			);
+			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingSpriteUploader()
+				.getSpriteForPainting( paintingType );
+			minecraft.getTextureManager()
+				.bindTexture( paintingTextureAtlasSprite.getAtlasTexture().getTextureLocation() );
 			blit(
 				matrixStack,
 				width / 2 - guiLeft - paintingType.getWidth() / 2,

@@ -42,9 +42,9 @@ public class PaintingSelectionHelper {
 					paintingNames.put( paintingSize, new TreeSet<>() );
 					paintingTypes.put(
 						paintingSize,
-						new TreeSet<>( Comparator.comparing( paintingType2 ->
-							Objects.requireNonNull( paintingType2.getRegistryName() ).getPath() )
-						)
+						new TreeSet<>( Comparator.comparing(
+							paintingType2 -> Objects.requireNonNull( paintingType2.getRegistryName() ).getPath()
+						) )
 					);
 				}
 				paintingNames.get( paintingSize ).add( Objects.requireNonNull( paintingType.getRegistryName() )

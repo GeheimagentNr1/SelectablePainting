@@ -15,10 +15,8 @@ import java.util.function.Consumer;
 class RandomCheckBoxButton extends CheckboxButton {
 	
 	
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE = new ResourceLocation(
-		SelectablePaintingMod.MODID,
-		"textures/gui/checkbox.png"
-	);
+	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
+		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/checkbox.png" );
 	
 	private final Consumer<CheckboxButton> onPress;
 	
