@@ -44,19 +44,19 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleRegisterItem( RegistryEvent.Register<Item> itemRegistryEvent ) {
+	public static void handleItemRegistryEvent( RegistryEvent.Register<Item> itemRegistryEvent ) {
 		
 		itemRegistryEvent.getRegistry().registerAll( ModItems.ITEMS );
 	}
 	
 	@SubscribeEvent
-	public static void handleRegisterEntity( RegistryEvent.Register<EntityType<?>> entityTypeRegister ) {
+	public static void handleEntityTypeRegistryEvent( RegistryEvent.Register<EntityType<?>> entityTypeRegister ) {
 		
 		entityTypeRegister.getRegistry().register( SelectablePaintingEntity.buildEntityType() );
 	}
 	
 	@SubscribeEvent
-	public static void handleRegistryContainer( RegistryEvent.Register<ContainerType<?>> event ) {
+	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<ContainerType<?>> event ) {
 		
 		event.getRegistry().register(
 			IForgeContainerType.create( ( windowId, inv, data ) -> new SelectablePaintingContainer( windowId, data ) )
