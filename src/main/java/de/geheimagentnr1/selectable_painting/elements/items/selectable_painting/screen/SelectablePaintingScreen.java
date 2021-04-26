@@ -73,11 +73,9 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	@Override
 	protected void func_230451_b_( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY ) {
 		
-		int titleStartX =
-			field_230708_k_ / 2 - guiLeft - field_230712_o_.getStringWidth( field_230704_d_.getString() ) / 2;
-		field_230712_o_.func_238421_b_(
-			matrixStack,
-			field_230704_d_.getString(), titleStartX, 5, 4210752 );
+		int titleStartX = field_230708_k_ / 2
+			- guiLeft - field_230712_o_.getStringWidth( field_230704_d_.getString() ) / 2;
+		field_230712_o_.func_238421_b_( matrixStack, field_230704_d_.getString(), titleStartX, 5, 4210752 );
 		func_238471_a_(
 			matrixStack,
 			field_230712_o_,
