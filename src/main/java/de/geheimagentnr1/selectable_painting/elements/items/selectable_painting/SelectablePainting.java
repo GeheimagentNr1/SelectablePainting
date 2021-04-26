@@ -44,12 +44,13 @@ public class SelectablePainting extends Item {
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
-		) ).appendString( ": " ).appendString( PaintingSelectionHelper.getSizeName( stack ) ) );
+		) ).appendString( ": " )
+			.appendString( PaintingSelectionHelper.getSizeName( stack ) ) );
 		tooltip.add( new TranslationTextComponent( Util.makeTranslationKey(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
-		) )
-			.appendString( ": " ).append( SelectablePaintingItemStackHelper.getRandom( stack )
+		) ).appendString( ": " )
+			.append( SelectablePaintingItemStackHelper.getRandom( stack )
 				? new TranslationTextComponent( Util.makeTranslationKey(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
@@ -110,10 +111,7 @@ public class SelectablePainting extends Item {
 				if( !world.isRemote && player != null ) {
 					player.sendMessage( new TranslationTextComponent( Util.makeTranslationKey(
 						"message",
-						new ResourceLocation(
-							SelectablePaintingMod.MODID,
-							"selectable_painting_painting_to_big_error"
-						)
+						new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting_to_big_error" )
 					) ), Util.DUMMY_UUID );
 				}
 			}
