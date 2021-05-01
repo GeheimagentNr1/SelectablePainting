@@ -10,15 +10,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 
@@ -109,7 +106,7 @@ public class SpawnSelectablePaintingMsg {
 	//package-private
 	void handle( Supplier<NetworkEvent.Context> context ) {
 		
-		LogicalSidedProvider.CLIENTWORLD.<Optional<World>>get( context.get().getDirection().getReceptionSide() )
+		LogicalSidedProvider.CLIENTWORLD.<Optional<World>> get( context.get().getDirection().getReceptionSide() )
 			.ifPresent( world -> {
 				if( world instanceof ClientWorld ) {
 					SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
