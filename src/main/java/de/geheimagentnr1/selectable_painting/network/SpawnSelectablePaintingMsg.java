@@ -14,6 +14,7 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -107,10 +108,10 @@ public class SpawnSelectablePaintingMsg {
 	void handle( Supplier<NetworkEvent.Context> context ) {
 		
 		LogicalSidedProvider.CLIENTWORLD.<Optional<World>> get( context.get().getDirection().getReceptionSide() )
-			.ifPresent( world -> {
-				if( world instanceof ClientWorld ) {
+			.ifPresent( level -> {
+				if( level instanceof ClientWorld ) {
 					SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
-						world,
+						level,
 						position,
 						facing,
 						art,
@@ -120,7 +121,8 @@ public class SpawnSelectablePaintingMsg {
 					);
 					selectablePaintingEntity.setId( entityID );
 					selectablePaintingEntity.setUUID( uniqueId );
-					Minecraft.getInstance().world.putNonPlayerEntity( entityID, selectablePaintingEntity );
+					Objects.requireNonNull( Minecraft.getInstance().level );
+					Minecraft.getInstance().level.putNonPlayerEntity( entityID, selectablePaintingEntity );
 				}
 			} );
 		context.get().setPacketHandled( true );
