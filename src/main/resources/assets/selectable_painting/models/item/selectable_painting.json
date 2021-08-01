@@ -1,5 +1,5 @@
 {
-	"parent": "minecraft:item/generated",
+	"parent":   "minecraft:item/generated",
 	"textures": {
 		"layer0": "selectable_painting:item/selectable_painting/selectable_painting"
 	}

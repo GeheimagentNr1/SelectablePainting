@@ -47,8 +47,7 @@ public class PaintingSelectionHelper {
 						) )
 					);
 				}
-				paintingNames.get( paintingSize ).add( Objects.requireNonNull( motive.getRegistryName() )
-					.getPath() );
+				paintingNames.get( paintingSize ).add( Objects.requireNonNull( motive.getRegistryName() ).getPath() );
 				motivesMap.get( paintingSize ).add( motive );
 			}
 			painting_sizes = sizes.toArray( new String[0] );

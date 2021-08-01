@@ -41,8 +41,8 @@ class RandomCheckBoxButton extends Checkbox {
 	@Override
 	public void renderButton( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
 		
-		RenderSystem.setShader( GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, SELECTABLE_PAINTING_GUI_TEXTURE);
+		RenderSystem.setShader( GameRenderer::getPositionTexShader );
+		RenderSystem.setShaderTexture( 0, SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( selected() ) {
 			blit( poseStack, x, y, 0, 10, 10, 10, 16, 32 );
 		} else {

@@ -21,7 +21,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fmllegacy.network.FMLMCRegisterPacketHandler;
 
 
 @Mod.EventBusSubscriber( modid = SelectablePaintingMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )

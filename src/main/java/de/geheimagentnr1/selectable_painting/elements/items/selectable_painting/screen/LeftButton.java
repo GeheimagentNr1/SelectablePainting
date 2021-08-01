@@ -29,8 +29,8 @@ class LeftButton extends Button {
 	@Override
 	public void renderButton( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
 		
-		RenderSystem.setShader( GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, DIRECTION_BUTTONS_TEXTURE);
+		RenderSystem.setShader( GameRenderer::getPositionTexShader );
+		RenderSystem.setShaderTexture( 0, DIRECTION_BUTTONS_TEXTURE );
 		if( isHovered() ) {
 			blit( poseStack, x, y, 13, 21, 10, 15, 64, 64 );
 		} else {
