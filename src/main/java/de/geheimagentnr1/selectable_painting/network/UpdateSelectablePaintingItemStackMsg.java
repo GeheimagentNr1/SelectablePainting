@@ -1,10 +1,10 @@
 package de.geheimagentnr1.selectable_painting.network;
 
-import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingContainer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingMenu;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -21,13 +21,13 @@ public class UpdateSelectablePaintingItemStackMsg {
 	}
 	
 	//package-private
-	static UpdateSelectablePaintingItemStackMsg decode( PacketBuffer buffer ) {
+	static UpdateSelectablePaintingItemStackMsg decode( FriendlyByteBuf buffer ) {
 		
 		return new UpdateSelectablePaintingItemStackMsg( buffer.readItem() );
 	}
 	
 	//package-private
-	void encode( PacketBuffer buffer ) {
+	void encode( FriendlyByteBuf buffer ) {
 		
 		buffer.writeItem( stack );
 	}
@@ -41,10 +41,8 @@ public class UpdateSelectablePaintingItemStackMsg {
 	void handle( Supplier<NetworkEvent.Context> context ) {
 		
 		Optional.ofNullable( context.get().getSender() ).ifPresent( player -> {
-			if( player.containerMenu instanceof SelectablePaintingContainer ) {
-				SelectablePaintingContainer selectablePaintingContainer =
-					(SelectablePaintingContainer)player.containerMenu;
-				selectablePaintingContainer.updateItemStack( stack );
+			if( player.containerMenu instanceof SelectablePaintingMenu selectablePaintingMenu ) {
+				selectablePaintingMenu.updateItemStack( stack );
 			}
 		} );
 		context.get().setPacketHandled( true );

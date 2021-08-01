@@ -1,20 +1,20 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class SelectablePaintingNamedContainerProvider implements INamedContainerProvider {
+public class SelectablePaintingNamedContainerProvider implements MenuProvider {
 	
 	
 	private final ItemStack stack;
@@ -26,9 +26,9 @@ public class SelectablePaintingNamedContainerProvider implements INamedContainer
 	
 	@Nonnull
 	@Override
-	public ITextComponent getDisplayName() {
+	public Component getDisplayName() {
 		
-		return new TranslationTextComponent( Util.makeDescriptionId(
+		return new TranslatableComponent( Util.makeDescriptionId(
 			"container",
 			ModItems.SELECTABLE_PAINTING.getRegistryName()
 		) );
@@ -36,11 +36,8 @@ public class SelectablePaintingNamedContainerProvider implements INamedContainer
 	
 	@Nullable
 	@Override
-	public Container createMenu(
-		int window_id,
-		@Nonnull PlayerInventory playerInventory,
-		@Nonnull PlayerEntity playerEntity ) {
+	public AbstractContainerMenu createMenu( int containerId, @Nonnull Inventory inventory, @Nonnull Player player ) {
 		
-		return new SelectablePaintingContainer( window_id, stack );
+		return new SelectablePaintingMenu( containerId, stack );
 	}
 }

@@ -1,49 +1,48 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.Util;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.item.PaintingType;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
-public class SelectablePaintingScreen extends ContainerScreen<SelectablePaintingContainer> {
+public class SelectablePaintingScreen extends AbstractContainerScreen<SelectablePaintingMenu> {
 	
 	
 	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
 		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
-		@Nonnull SelectablePaintingContainer screenContainer,
-		@Nonnull PlayerInventory inv,
-		@Nonnull ITextComponent titleIn ) {
+		@Nonnull SelectablePaintingMenu screenContainer,
+		@Nonnull Inventory inventory,
+		@Nonnull Component _title ) {
 		
-		super( screenContainer, inv, titleIn );
+		super( screenContainer, inventory, _title );
 	}
 	
-	
 	@Override
-	public void init( @Nonnull Minecraft minecraft, int width, int height ) {
+	protected void init() {
 		
-		super.init( minecraft, width, height );
-		addButton( new LeftButton( leftPos + 6, topPos + 15, button -> menu.previousSize() ) );
-		addButton( new RightButton( leftPos + 160, topPos + 15, button -> menu.nextSize() ) );
-		addButton( new LeftButton( leftPos + 6, topPos + 33, button -> menu.previousPainting() ) );
-		addButton( new RightButton( leftPos + 160, topPos + 33, button -> menu.nextPainting() ) );
-		addButton( new RandomCheckBoxButton(
+		super.init();
+		addRenderableWidget( new LeftButton( leftPos + 6, topPos + 15, button -> menu.previousSize() ) );
+		addRenderableWidget( new RightButton( leftPos + 160, topPos + 15, button -> menu.nextSize() ) );
+		addRenderableWidget( new LeftButton( leftPos + 6, topPos + 33, button -> menu.previousPainting() ) );
+		addRenderableWidget( new RightButton( leftPos + 160, topPos + 33, button -> menu.nextPainting() ) );
+		addRenderableWidget( new RandomCheckBoxButton(
 			leftPos + 6,
 			topPos + 51,
-			new TranslationTextComponent( Util.makeDescriptionId(
+			new TranslatableComponent( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) ).getString(),
@@ -53,38 +52,37 @@ public class SelectablePaintingScreen extends ContainerScreen<SelectablePainting
 	}
 	
 	@Override
-	public void render( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
+	public void render( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
 		
-		renderBackground( matrixStack );
-		super.render( matrixStack, mouseX, mouseY, partialTicks );
+		renderBackground( poseStack );
+		super.render( poseStack, mouseX, mouseY, partialTicks );
 	}
 	
 	@Override
-	protected void renderBg( @Nonnull MatrixStack matrixStack, float partialTicks, int x, int y ) {
+	protected void renderBg( @Nonnull PoseStack poseStack, float partialTicks, int x, int y ) {
 		
 		Objects.requireNonNull( minecraft );
-		RenderSystem.color4f( 1.0F, 1.0F, 1.0F, 1.0F );
-		minecraft.getTextureManager().bind( SELECTABLE_PAINTING_GUI_TEXTURE );
-		int i = leftPos;
-		int j = ( height - imageHeight ) / 2;
-		blit( matrixStack, i, j, 0, 0, imageWidth, imageHeight );
+		RenderSystem.setShader( GameRenderer::getPositionTexShader );
+		RenderSystem.setShaderColor( 1.0F, 1.0F, 1.0F, 1.0F );
+		RenderSystem.setShaderTexture( 0, SELECTABLE_PAINTING_GUI_TEXTURE );
+		blit( poseStack, leftPos, topPos, 0, 0, imageWidth, imageHeight );
 	}
 	
 	@Override
-	protected void renderLabels( @Nonnull MatrixStack matrixStack, int x, int y ) {
+	protected void renderLabels( @Nonnull PoseStack poseStack, int x, int y ) {
 		
 		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
-		font.draw( matrixStack, title.getString(), titleStartX, 5, 4210752 );
-		drawCenteredString( matrixStack, font, menu.getSizeText(), width / 2 - leftPos, 19, 16777215 );
-		drawCenteredString( matrixStack, font, menu.getPaintingText(), width / 2 - leftPos, 37, 16777215 );
+		font.draw( poseStack, title.getString(), titleStartX, 5, 4210752 );
+		drawCenteredString( poseStack, font, menu.getSizeText(), width / 2 - leftPos, 19, 16777215 );
+		drawCenteredString( poseStack, font, menu.getPaintingText(), width / 2 - leftPos, 37, 16777215 );
 		
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
-			PaintingType paintingType = menu.getCurrentPaintingType();
+			Motive paintingType = menu.getCurrentMotive();
 			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
-			minecraft.getTextureManager().bind( paintingTextureAtlasSprite.atlas().location() );
+			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlas().location() );
 			blit(
-				matrixStack,
+				poseStack,
 				width / 2 - leftPos - paintingType.getWidth() / 2,
 				70,
 				0,

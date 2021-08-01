@@ -2,14 +2,14 @@ package de.geheimagentnr1.selectable_painting.elements.item_groups;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 
 //package-private
-class SelectablePaintingItemGroup extends ItemGroup {
+class SelectablePaintingItemGroup extends CreativeModeTab {
 	
 	
 	//package-private

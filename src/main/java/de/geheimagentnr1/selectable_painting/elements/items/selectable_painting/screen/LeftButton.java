@@ -1,11 +1,12 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
@@ -20,19 +21,20 @@ class LeftButton extends Button {
 	);
 	
 	//package-private
-	LeftButton( int _x, int _y, IPressable _onPress ) {
+	LeftButton( int _x, int _y, OnPress _onPress ) {
 		
-		super( _x, _y, 10, 15, new StringTextComponent( "" ), _onPress );
+		super( _x, _y, 10, 15, new TextComponent( "" ), _onPress );
 	}
 	
 	@Override
-	public void renderButton( @Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks ) {
+	public void renderButton( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
 		
-		Minecraft.getInstance().getTextureManager().bind( DIRECTION_BUTTONS_TEXTURE );
+		RenderSystem.setShader( GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, DIRECTION_BUTTONS_TEXTURE);
 		if( isHovered() ) {
-			blit( matrixStack, x, y, 13, 21, 10, 15, 64, 64 );
+			blit( poseStack, x, y, 13, 21, 10, 15, 64, 64 );
 		} else {
-			blit( matrixStack, x, y, 1, 21, 10, 15, 64, 64 );
+			blit( poseStack, x, y, 1, 21, 10, 15, 64, 64 );
 		}
 	}
 }

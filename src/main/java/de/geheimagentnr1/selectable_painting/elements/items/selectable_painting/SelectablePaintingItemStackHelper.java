@@ -1,6 +1,6 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 
 public class SelectablePaintingItemStackHelper {

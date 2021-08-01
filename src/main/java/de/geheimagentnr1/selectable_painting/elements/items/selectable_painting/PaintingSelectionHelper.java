@@ -1,11 +1,11 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
-import net.minecraft.entity.item.PaintingType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.Util;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class PaintingSelectionHelper {
 	
 	private static ArrayList<ArrayList<String>> painting_names;
 	
-	private static ArrayList<ArrayList<PaintingType>> painting_types;
+	private static ArrayList<ArrayList<Motive>> motives;
 	
 	//package-private
 	static void init() {
@@ -27,38 +27,38 @@ public class PaintingSelectionHelper {
 		long current_painting_count = Registry.MOTIVE.stream().count();
 		if( painting_count != current_painting_count ) {
 			painting_count = current_painting_count;
-			Iterator<PaintingType> iterator = Registry.MOTIVE.iterator();
+			Iterator<Motive> iterator = Registry.MOTIVE.iterator();
 			TreeSet<String> sizes = new TreeSet<>();
 			TreeMap<String, TreeSet<String>> paintingNames = new TreeMap<>();
-			TreeMap<String, TreeSet<PaintingType>> paintingTypes = new TreeMap<>();
+			TreeMap<String, TreeSet<Motive>> motivesMap = new TreeMap<>();
 			
 			while( iterator.hasNext() ) {
-				PaintingType paintingType = iterator.next();
-				int widthSize = paintingType.getWidth() / 16;
-				int heightSize = paintingType.getHeight() / 16;
+				Motive motive = iterator.next();
+				int widthSize = motive.getWidth() / 16;
+				int heightSize = motive.getHeight() / 16;
 				@SuppressWarnings( "StringConcatenationMissingWhitespace" )
 				String paintingSize = widthSize + "x" + heightSize;
 				if( sizes.add( paintingSize ) ) {
 					paintingNames.put( paintingSize, new TreeSet<>() );
-					paintingTypes.put(
+					motivesMap.put(
 						paintingSize,
 						new TreeSet<>( Comparator.comparing(
-							paintingType2 -> Objects.requireNonNull( paintingType2.getRegistryName() ).getPath()
+							motive2 -> Objects.requireNonNull( motive2.getRegistryName() ).getPath()
 						) )
 					);
 				}
-				paintingNames.get( paintingSize ).add( Objects.requireNonNull( paintingType.getRegistryName() )
+				paintingNames.get( paintingSize ).add( Objects.requireNonNull( motive.getRegistryName() )
 					.getPath() );
-				paintingTypes.get( paintingSize ).add( paintingType );
+				motivesMap.get( paintingSize ).add( motive );
 			}
 			painting_sizes = sizes.toArray( new String[0] );
 			painting_names = new ArrayList<>();
 			for( TreeSet<String> names : paintingNames.values() ) {
 				painting_names.add( new ArrayList<>( Arrays.asList( names.toArray( new String[0] ) ) ) );
 			}
-			painting_types = new ArrayList<>();
-			for( TreeSet<PaintingType> types : paintingTypes.values() ) {
-				painting_types.add( new ArrayList<>( Arrays.asList( types.toArray( new PaintingType[0] ) ) ) );
+			motives = new ArrayList<>();
+			for( TreeSet<Motive> types : motivesMap.values() ) {
+				motives.add( new ArrayList<>( Arrays.asList( types.toArray( new Motive[0] ) ) ) );
 			}
 		}
 	}
@@ -104,7 +104,7 @@ public class PaintingSelectionHelper {
 		return painting_sizes[SelectablePaintingItemStackHelper.getSizeIndex( stack )];
 	}
 	
-	public static TranslationTextComponent getPaintingName( ItemStack stack ) {
+	public static TranslatableComponent getPaintingName( ItemStack stack ) {
 		
 		return getPaintingName(
 			SelectablePaintingItemStackHelper.getSizeIndex( stack ),
@@ -112,31 +112,31 @@ public class PaintingSelectionHelper {
 		);
 	}
 	
-	private static TranslationTextComponent getPaintingName( int size_index, int painting_index ) {
+	private static TranslatableComponent getPaintingName( int size_index, int painting_index ) {
 		
-		return new TranslationTextComponent( Util.makeDescriptionId(
+		return new TranslatableComponent( Util.makeDescriptionId(
 			"painting",
-			painting_types.get( size_index ).get( painting_index ).getRegistryName()
+			motives.get( size_index ).get( painting_index ).getRegistryName()
 		) );
 	}
 	
-	public static PaintingType getCurrentPaintingType( ItemStack stack ) {
+	public static Motive getCurrentMotive( ItemStack stack ) {
 		
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
-		return painting_types.get( size_index ).get( painting_index );
+		return motives.get( size_index ).get( painting_index );
 	}
 	
 	//package-private
-	static PaintingType getPaintingType( ItemStack stack, World world ) {
+	static Motive getMotive( ItemStack stack, Level level ) {
 		
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index;
 		if( SelectablePaintingItemStackHelper.getRandom( stack ) ) {
-			painting_index = world.getRandom().nextInt( painting_types.get( size_index ).size() );
+			painting_index = level.getRandom().nextInt( motives.get( size_index ).size() );
 		} else {
 			painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
 		}
-		return painting_types.get( size_index ).get( painting_index );
+		return motives.get( size_index ).get( painting_index );
 	}
 }

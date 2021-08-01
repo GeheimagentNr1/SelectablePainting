@@ -4,34 +4,34 @@ import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.PaintingSelectionHelper;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingItemStackHelper;
 import de.geheimagentnr1.selectable_painting.network.UpdateSelectablePaintingItemStackMsg;
-import net.minecraft.entity.item.PaintingType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 
-public class SelectablePaintingContainer extends Container {
+public class SelectablePaintingMenu extends AbstractContainerMenu {
 	
 	
 	private final ItemStack stack;
 	
-	public SelectablePaintingContainer( int windowID, PacketBuffer buffer ) {
+	public SelectablePaintingMenu( int windowID, FriendlyByteBuf buffer ) {
 		
 		this( windowID, buffer.readItem() );
 	}
 	
 	//package-private
-	SelectablePaintingContainer( int windowID, ItemStack _stack ) {
+	SelectablePaintingMenu( int windowID, ItemStack _stack ) {
 		
-		super( ModItems.SELECTABLE_PAINTING_CONTAINER, windowID );
+		super( ModItems.SELECTABLE_PAINTING_MENU, windowID );
 		stack = _stack;
 	}
 	
 	@Override
-	public boolean stillValid( @Nonnull PlayerEntity playerIn ) {
+	public boolean stillValid( @Nonnull Player playerIn ) {
 		
 		return true;
 	}
@@ -56,9 +56,9 @@ public class SelectablePaintingContainer extends Container {
 		return PaintingSelectionHelper.getPaintingName( stack ).getString();
 	}
 	
-	public PaintingType getCurrentPaintingType() {
+	public Motive getCurrentMotive() {
 		
-		return PaintingSelectionHelper.getCurrentPaintingType( stack );
+		return PaintingSelectionHelper.getCurrentMotive( stack );
 	}
 	
 	public void previousSize() {

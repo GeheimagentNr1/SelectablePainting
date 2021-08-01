@@ -3,19 +3,26 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.item_groups.ModItemGroups;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingNamedContainerProvider;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,20 +44,20 @@ public class SelectablePainting extends Item {
 	@Override
 	public void appendHoverText(
 		@Nonnull ItemStack stack,
-		@Nullable World worldIn,
-		List<ITextComponent> tooltip,
-		@Nonnull ITooltipFlag flagIn ) {
+		@Nullable Level level,
+		@Nonnull List<Component> tooltip,
+		@Nonnull TooltipFlag flag ) {
 		
-		tooltip.add( new TranslationTextComponent( Util.makeDescriptionId(
+		tooltip.add( new TranslatableComponent( Util.makeDescriptionId(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
 		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( stack ) ) );
-		tooltip.add( new TranslationTextComponent( Util.makeDescriptionId(
+		tooltip.add( new TranslatableComponent( Util.makeDescriptionId(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
 		) ).append( ": " )
 			.append( SelectablePaintingItemStackHelper.getRandom( stack )
-				? new TranslationTextComponent( Util.makeDescriptionId(
+				? new TranslatableComponent( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) )
@@ -59,60 +66,72 @@ public class SelectablePainting extends Item {
 	
 	@Nonnull
 	@Override
-	public ActionResult<ItemStack> use( @Nonnull World worldIn, PlayerEntity playerIn, @Nonnull Hand handIn ) {
+	public InteractionResultHolder<ItemStack> use(
+		@Nonnull Level level,
+		@Nonnull Player player,
+		@Nonnull InteractionHand hand ) {
 		
-		ItemStack stack = playerIn.getItemInHand( handIn );
+		ItemStack stack = player.getItemInHand( hand );
 		
-		if( !worldIn.isClientSide ) {
+		if( !level.isClientSide() ) {
 			NetworkHooks.openGui(
-				(ServerPlayerEntity)playerIn,
+				(ServerPlayer)player,
 				new SelectablePaintingNamedContainerProvider( stack ),
 				packetBuffer -> packetBuffer.writeItem( stack )
 			);
 		}
-		return new ActionResult<>( ActionResultType.SUCCESS, stack );
+		return new InteractionResultHolder<>( InteractionResult.SUCCESS, stack );
 	}
 	
 	@Nonnull
 	@Override
-	public ActionResultType useOn( ItemUseContext context ) {
+	public InteractionResult useOn( UseOnContext context ) {
 		
 		Direction direction = context.getClickedFace();
 		BlockPos pos = context.getClickedPos().relative( direction );
-		PlayerEntity player = context.getPlayer();
+		Player player = context.getPlayer();
 		ItemStack stack = context.getItemInHand();
-		World world = context.getLevel();
+		Level level = context.getLevel();
 		
 		if( direction.getAxis().isVertical() || player != null && !player.mayUseItemAt( pos, direction, stack ) ) {
-			return ActionResultType.FAIL;
+			return InteractionResult.FAIL;
 		} else {
 			SelectablePaintingEntity selectablePaintingEntity = new SelectablePaintingEntity(
-				world,
+				level,
 				pos,
 				direction,
-				PaintingSelectionHelper.getPaintingType( stack, world ),
+				PaintingSelectionHelper.getMotive( stack, level ),
 				SelectablePaintingItemStackHelper.getSizeIndex( stack ),
 				SelectablePaintingItemStackHelper.getPaintingIndex( stack ),
 				SelectablePaintingItemStackHelper.getRandom( stack )
 			);
 			
-			EntityType.updateCustomEntityTag( world, player, selectablePaintingEntity, stack.getTag() );
+			CompoundTag tag = stack.getTag();
+			if( tag != null ) {
+				EntityType.updateCustomEntityTag( level, player, selectablePaintingEntity, tag );
+			}
+			
 			if( selectablePaintingEntity.survives() ) {
-				if( !world.isClientSide ) {
+				if( !level.isClientSide() ) {
 					selectablePaintingEntity.playPlacementSound();
-					world.addFreshEntity( selectablePaintingEntity );
+					level.gameEvent( player, GameEvent.ENTITY_PLACE, pos );
+					level.addFreshEntity( selectablePaintingEntity );
 				}
+				
 				stack.shrink( 1 );
+				return InteractionResult.sidedSuccess( level.isClientSide );
 			} else {
-				if( !world.isClientSide && player != null ) {
-					player.sendMessage( new TranslationTextComponent( Util.makeDescriptionId(
+				if( !level.isClientSide() && player != null ) {
+					player.sendMessage( new TranslatableComponent( Util.makeDescriptionId(
 						"message",
-						new ResourceLocation( SelectablePaintingMod.MODID,
-							"selectable_painting_painting_to_big_error" )
+						new ResourceLocation(
+							SelectablePaintingMod.MODID,
+							"selectable_painting_painting_to_big_error"
+						)
 					) ), Util.NIL_UUID );
 				}
+				return InteractionResult.CONSUME;
 			}
-			return ActionResultType.SUCCESS;
 		}
 	}
 }

@@ -1,84 +1,80 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
-import de.geheimagentnr1.selectable_painting.network.SpawnSelectablePaintingMsg;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.HangingEntity;
-import net.minecraft.entity.item.PaintingType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.play.server.SSpawnObjectPacket;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class SelectablePaintingEntity extends HangingEntity {
+public class SelectablePaintingEntity extends HangingEntity implements IEntityAdditionalSpawnData {
 	
 	
-	private PaintingType art;
+	private Motive motive;
 	
 	private int size_index;
 	
-	private int painting_index;
+	private int motive_index;
 	
-	private boolean random;
+	private boolean randomMotive;
 	
 	@SuppressWarnings( "unused" )
-	public SelectablePaintingEntity( World _world ) {
+	public SelectablePaintingEntity( Level _level ) {
 		
-		this( ModItems.SELECTABLE_PAINTING_ENTITY, _world );
+		this( ModItems.SELECTABLE_PAINTING_ENTITY, _level );
 	}
 	
-	private SelectablePaintingEntity( EntityType<SelectablePaintingEntity> entityType, World _world ) {
+	private SelectablePaintingEntity( EntityType<SelectablePaintingEntity> entityType, Level _level ) {
 		
-		super( entityType, _world );
+		super( entityType, _level );
 		size_index = 0;
-		painting_index = 0;
+		motive_index = 0;
 	}
 	
 	public SelectablePaintingEntity(
-		World _world,
-		BlockPos pos,
-		Direction direction,
-		PaintingType paintingType,
+		Level _level,
+		BlockPos _pos,
+		Direction _direction,
+		Motive paintingType,
 		int _size_index,
 		int _painting_index,
 		boolean _random ) {
 		
-		super( ModItems.SELECTABLE_PAINTING_ENTITY, _world, pos );
-		art = paintingType;
-		init( direction );
+		super( ModItems.SELECTABLE_PAINTING_ENTITY, _level, _pos );
+		motive = paintingType;
+		init( _direction );
 		size_index = _size_index;
-		painting_index = _painting_index;
-		random = _random;
+		motive_index = _painting_index;
+		randomMotive = _random;
 	}
 	
-	private void init( Direction direction ) {
+	private void init( Direction _direction ) {
 		
-		setDirection( direction );
+		setDirection( _direction );
 	}
 	
-	/**
-	 * Called when a user uses the creative pick block button on this entity.
-	 *
-	 * @param target The full target the player is looking at
-	 * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
-	 */
 	@Override
-	public ItemStack getPickedResult( RayTraceResult target ) {
+	public ItemStack getPickedResult( HitResult target ) {
 		
 		return getItemStackOfEntity();
 	}
@@ -88,54 +84,75 @@ public class SelectablePaintingEntity extends HangingEntity {
 		return SelectablePaintingItemStackHelper.writeDataToStack(
 			new ItemStack( ModItems.SELECTABLE_PAINTING ),
 			size_index,
-			painting_index,
-			random
+			motive_index,
+			randomMotive
 		);
 	}
 	
-	@SuppressWarnings( "deprecation" )
 	@Override
-	public void addAdditionalSaveData( CompoundNBT compound ) {
+	public void addAdditionalSaveData( CompoundTag compound ) {
 		
-		compound.putString( "Motive", Registry.MOTIVE.getKey( art ).toString() );
+		compound.putString( "Motive", Registry.MOTIVE.getKey( motive ).toString() );
 		compound.putByte( "Facing", (byte)direction.get2DDataValue() );
 		compound.putInt( "size_index", size_index );
-		compound.putInt( "painting_index", painting_index );
-		compound.putBoolean( "random", random );
+		compound.putInt( "painting_index", motive_index );
+		compound.putBoolean( "random", randomMotive );
 		super.addAdditionalSaveData( compound );
 	}
 	
-	@SuppressWarnings( "deprecation" )
 	@Override
-	public void readAdditionalSaveData( CompoundNBT compound ) {
+	public void writeSpawnData( FriendlyByteBuf buffer ) {
 		
-		art = Registry.MOTIVE.get( ResourceLocation.tryParse( compound.getString( "Motive" ) ) );
+		buffer.writeVarInt( Registry.MOTIVE.getId( motive ) );
+		buffer.writeVarInt( size_index );
+		buffer.writeVarInt( motive_index );
+		buffer.writeBoolean( randomMotive );
+		buffer.writeBlockPos( pos );
+		buffer.writeByte( direction.get2DDataValue() );
+	}
+	
+	@Override
+	public void readAdditionalSaveData( CompoundTag compound ) {
+		
+		motive = Registry.MOTIVE.get( ResourceLocation.tryParse( compound.getString( "Motive" ) ) );
 		direction = Direction.from2DDataValue( compound.getByte( "Facing" ) );
 		size_index = compound.getInt( "size_index" );
-		painting_index = compound.getInt( "painting_index" );
-		random = compound.getBoolean( "random" );
+		motive_index = compound.getInt( "painting_index" );
+		randomMotive = compound.getBoolean( "random" );
 		super.readAdditionalSaveData( compound );
+	}
+	
+	@Override
+	public void readSpawnData( FriendlyByteBuf additionalData ) {
+		
+		motive = Registry.MOTIVE.byId( additionalData.readVarInt() );
+		size_index = additionalData.readVarInt();
+		motive_index = additionalData.readVarInt();
+		randomMotive = additionalData.readBoolean();
+		BlockPos position = additionalData.readBlockPos();
+		setPos( position.getX(), position.getY(), position.getZ() );
+		setDirection( Direction.from2DDataValue( additionalData.readByte() ) );
 	}
 	
 	@Override
 	public int getWidth() {
 		
-		return art == null ? 1 : art.getWidth();
+		return motive == null ? 1 : motive.getWidth();
 	}
 	
 	@Override
 	public int getHeight() {
 		
-		return art == null ? 1 : art.getHeight();
+		return motive == null ? 1 : motive.getHeight();
 	}
 	
 	@Override
-	public void dropItem( @Nullable Entity brokenEntity ) {
+	public void dropItem( @Nullable Entity brakingEntity ) {
 		
 		if( level.getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
 			playSound( SoundEvents.PAINTING_BREAK, 1.0F, 1.0F );
-			if( brokenEntity instanceof PlayerEntity ) {
-				if( ( (PlayerEntity)brokenEntity ).isCreative() ) {
+			if( brakingEntity instanceof Player ) {
+				if( ( (Player)brakingEntity ).isCreative() ) {
 					return;
 				}
 			}
@@ -171,25 +188,25 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	@Nonnull
 	@Override
-	public IPacket<?> getAddEntityPacket() {
+	public Packet<?> getAddEntityPacket() {
 		
-		SpawnSelectablePaintingMsg.sendToChunkTrackers( level.getChunkAt( getOnPos() ), this );
-		return new SSpawnObjectPacket( this );
+		//SpawnSelectablePaintingMsg.sendToChunkTrackers( level.getChunkAt( getOnPos() ), this );
+		return NetworkHooks.getEntitySpawningPacket( this );
 	}
 	
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
 		
 		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder
-			.<SelectablePaintingEntity> of( SelectablePaintingEntity::new, EntityClassification.MISC )
+			.<SelectablePaintingEntity> of( SelectablePaintingEntity::new, MobCategory.MISC )
 			.sized( 0.5F, 0.5F )
 			.build( SelectablePainting.registry_name );
 		entityType.setRegistryName( SelectablePainting.registry_name );
 		return entityType;
 	}
 	
-	public PaintingType getArt() {
+	public Motive getMotive() {
 		
-		return art;
+		return motive;
 	}
 	
 	public int getSizeIndex() {
@@ -199,11 +216,11 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	public int getPaintingIndex() {
 		
-		return painting_index;
+		return motive_index;
 	}
 	
-	public boolean isRandom() {
+	public boolean isRandomMotive() {
 		
-		return random;
+		return randomMotive;
 	}
 }

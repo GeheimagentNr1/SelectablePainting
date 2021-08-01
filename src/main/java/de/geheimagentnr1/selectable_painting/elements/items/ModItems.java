@@ -3,10 +3,10 @@ package de.geheimagentnr1.selectable_painting.elements.items;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePainting;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingEntity;
-import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingContainer;
-import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
+import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingMenu;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 
 
@@ -31,7 +31,7 @@ public class ModItems {
 	public static SelectablePainting SELECTABLE_PAINTING;
 	
 	@ObjectHolder( SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
-	public static ContainerType<SelectablePaintingContainer> SELECTABLE_PAINTING_CONTAINER;
+	public static MenuType<SelectablePaintingMenu> SELECTABLE_PAINTING_MENU;
 	
 	@ObjectHolder( SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
 	public static EntityType<SelectablePaintingEntity> SELECTABLE_PAINTING_ENTITY;

@@ -5,14 +5,14 @@ import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePainting;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingEntity;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingRenderer;
-import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingContainer;
+import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingMenu;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingScreen;
 import de.geheimagentnr1.selectable_painting.network.Network;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeContainerType;
@@ -21,6 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fmllegacy.network.FMLMCRegisterPacketHandler;
 
 
 @Mod.EventBusSubscriber( modid = SelectablePaintingMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -37,11 +38,8 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public static void handleClientSetupEvent( FMLClientSetupEvent event ) {
 		
-		Minecraft.getInstance().getEntityRenderDispatcher().register(
-			ModItems.SELECTABLE_PAINTING_ENTITY,
-			new SelectablePaintingRenderer( Minecraft.getInstance().getEntityRenderDispatcher() )
-		);
-		ScreenManager.register( ModItems.SELECTABLE_PAINTING_CONTAINER, SelectablePaintingScreen::new );
+		EntityRenderers.register( ModItems.SELECTABLE_PAINTING_ENTITY, SelectablePaintingRenderer::new );
+		MenuScreens.register( ModItems.SELECTABLE_PAINTING_MENU, SelectablePaintingScreen::new );
 	}
 	
 	@SubscribeEvent
@@ -57,11 +55,11 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleContainerTypeRegistryEvent( RegistryEvent.Register<ContainerType<?>> event ) {
+	public static void handleMenuTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
 		
 		event.getRegistry().register(
 			IForgeContainerType.create(
-				( windowId, inv, data ) -> new SelectablePaintingContainer( windowId, data )
+				( containerId, inv, data ) -> new SelectablePaintingMenu( containerId, data )
 			).setRegistryName( SelectablePainting.registry_name )
 		);
 	}
