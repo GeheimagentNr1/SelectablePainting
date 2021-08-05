@@ -445,12 +445,12 @@
   {
     "project": "forge",
     "description": null,
-    "version": "1.15.2-31.2.50_mapped_snapshot_20210426-1.15.1",
+    "version": "1.15.2-31.2.55_mapped_snapshot_20210805-1.15.1",
     "developers": [],
     "url": null,
     "year": null,
     "licenses": [],
-    "dependency": "net.minecraftforge:forge:1.15.2-31.2.50_mapped_snapshot_20210426-1.15.1"
+    "dependency": "net.minecraftforge:forge:1.15.2-31.2.55_mapped_snapshot_20210805-1.15.1"
   },
   {
     "project": "Forge Service Provider Interface",
@@ -920,12 +920,12 @@
   {
     "project": "patchy",
     "description": null,
-    "version": "1.1",
+    "version": "1.2.3",
     "developers": [],
     "url": null,
     "year": null,
     "licenses": [],
-    "dependency": "com.mojang:patchy:1.1"
+    "dependency": "com.mojang:patchy:1.2.3"
   },
   {
     "project": "Plexus Common Utilities",
