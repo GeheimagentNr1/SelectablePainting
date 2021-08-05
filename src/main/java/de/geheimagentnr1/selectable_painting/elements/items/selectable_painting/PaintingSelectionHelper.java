@@ -101,11 +101,13 @@ public class PaintingSelectionHelper {
 	
 	public static String getSizeName( ItemStack stack ) {
 		
+		init();
 		return painting_sizes[SelectablePaintingItemStackHelper.getSizeIndex( stack )];
 	}
 	
 	public static TranslationTextComponent getPaintingName( ItemStack stack ) {
 		
+		init();
 		return getPaintingName(
 			SelectablePaintingItemStackHelper.getSizeIndex( stack ),
 			SelectablePaintingItemStackHelper.getPaintingIndex( stack )
@@ -114,6 +116,7 @@ public class PaintingSelectionHelper {
 	
 	private static TranslationTextComponent getPaintingName( int size_index, int painting_index ) {
 		
+		init();
 		return new TranslationTextComponent( Util.makeDescriptionId(
 			"painting",
 			painting_types.get( size_index ).get( painting_index ).getRegistryName()
@@ -122,6 +125,7 @@ public class PaintingSelectionHelper {
 	
 	public static PaintingType getCurrentPaintingType( ItemStack stack ) {
 		
+		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
 		return painting_types.get( size_index ).get( painting_index );
@@ -130,6 +134,7 @@ public class PaintingSelectionHelper {
 	//package-private
 	static PaintingType getPaintingType( ItemStack stack, World world ) {
 		
+		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index;
 		if( SelectablePaintingItemStackHelper.getRandom( stack ) ) {
