@@ -31,7 +31,7 @@ class LeftButton extends Button {
 		
 		RenderSystem.setShader( GameRenderer::getPositionTexShader );
 		RenderSystem.setShaderTexture( 0, DIRECTION_BUTTONS_TEXTURE );
-		if( isHovered() ) {
+		if( isHovered ) {
 			blit( poseStack, x, y, 13, 21, 10, 15, 64, 64 );
 		} else {
 			blit( poseStack, x, y, 1, 21, 10, 15, 64, 64 );

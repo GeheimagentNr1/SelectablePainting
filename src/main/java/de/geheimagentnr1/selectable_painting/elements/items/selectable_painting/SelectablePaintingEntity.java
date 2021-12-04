@@ -19,8 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -189,7 +189,6 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	@Override
 	public Packet<?> getAddEntityPacket() {
 		
-		//SpawnSelectablePaintingMsg.sendToChunkTrackers( level.getChunkAt( getOnPos() ), this );
 		return NetworkHooks.getEntitySpawningPacket( this );
 	}
 	

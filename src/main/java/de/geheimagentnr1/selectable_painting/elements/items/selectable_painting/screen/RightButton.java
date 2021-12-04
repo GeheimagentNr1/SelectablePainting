@@ -31,7 +31,7 @@ class RightButton extends Button {
 		
 		RenderSystem.setShader( GameRenderer::getPositionTexShader );
 		RenderSystem.setShaderTexture( 0, DIRECTION_BUTTONS_TEXTURE );
-		if( isHovered() ) {
+		if( isHovered ) {
 			blit( poseStack, x, y, 13, 2, 10, 15, 64, 64 );
 		} else {
 			blit( poseStack, x, y, 1, 2, 10, 15, 64, 64 );

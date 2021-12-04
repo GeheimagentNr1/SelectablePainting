@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,7 +57,7 @@ public class ModEventHandler {
 	public static void handleMenuTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
 		
 		event.getRegistry().register(
-			IForgeContainerType.create(
+			IForgeMenuType.create(
 				( containerId, inv, data ) -> new SelectablePaintingMenu( containerId, data )
 			).setRegistryName( SelectablePainting.registry_name )
 		);
