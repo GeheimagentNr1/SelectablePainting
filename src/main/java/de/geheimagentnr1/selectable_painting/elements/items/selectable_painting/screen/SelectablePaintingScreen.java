@@ -8,9 +8,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Inventory;
 
 import javax.annotation.Nonnull;
@@ -42,7 +41,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 		addRenderableWidget( new RandomCheckBoxButton(
 			leftPos + 6,
 			topPos + 51,
-			new TranslatableComponent( Util.makeDescriptionId(
+			Component.translatable( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) ).getString(),
@@ -78,7 +77,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 		
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
-			Motive paintingType = menu.getCurrentMotive();
+			PaintingVariant paintingType = menu.getCurrentMotive();
 			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
 			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlas().location() );
 			blit(

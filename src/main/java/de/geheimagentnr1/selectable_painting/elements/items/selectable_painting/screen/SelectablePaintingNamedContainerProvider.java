@@ -2,8 +2,8 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import net.minecraft.Util;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -28,9 +28,9 @@ public class SelectablePaintingNamedContainerProvider implements MenuProvider {
 	@Override
 	public Component getDisplayName() {
 		
-		return new TranslatableComponent( Util.makeDescriptionId(
+		return Component.translatable( Util.makeDescriptionId(
 			"container",
-			ModItems.SELECTABLE_PAINTING.getRegistryName()
+			Registry.ITEM.getKey( ModItems.SELECTABLE_PAINTING )
 		) );
 	}
 	

@@ -10,17 +10,15 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import de.geheimagentnr1.selectable_painting.network.Network;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 
 @Mod.EventBusSubscriber( modid = SelectablePaintingMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -42,24 +40,46 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleItemRegistryEvent( RegistryEvent.Register<Item> itemRegistryEvent ) {
+	public static void handleItemRegistryEvent( RegisterEvent event ) {
 		
-		itemRegistryEvent.getRegistry().registerAll( ModItems.ITEMS );
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.ITEMS ) ) {
+			event.register(
+				ForgeRegistries.Keys.ITEMS,
+				registerHelper -> ModItems.ITEMS.forEach( registryEntry -> registerHelper.register(
+					registryEntry.getRegistryName(),
+					registryEntry.getValue()
+				) )
+			);
+		}
 	}
 	
 	@SubscribeEvent
-	public static void handleEntityTypeRegistryEvent( RegistryEvent.Register<EntityType<?>> entityTypeRegister ) {
+	public static void handleEntityTypeRegistryEvent( RegisterEvent event ) {
 		
-		entityTypeRegister.getRegistry().register( SelectablePaintingEntity.buildEntityType() );
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.ENTITY_TYPES ) ) {
+			event.register(
+				ForgeRegistries.Keys.ENTITY_TYPES,
+				registerHelper -> registerHelper.register(
+					SelectablePainting.registry_name,
+					SelectablePaintingEntity.buildEntityType()
+				)
+			);
+		}
 	}
 	
 	@SubscribeEvent
-	public static void handleMenuTypeRegistryEvent( RegistryEvent.Register<MenuType<?>> event ) {
+	public static void handleMenuTypeRegistryEvent( RegisterEvent event ) {
 		
-		event.getRegistry().register(
-			IForgeMenuType.create(
-				( containerId, inv, data ) -> new SelectablePaintingMenu( containerId, data )
-			).setRegistryName( SelectablePainting.registry_name )
-		);
+		if( event.getRegistryKey().equals( ForgeRegistries.Keys.CONTAINER_TYPES ) ) {
+			event.register(
+				ForgeRegistries.Keys.CONTAINER_TYPES,
+				registerHelper -> registerHelper.register(
+					SelectablePainting.registry_name,
+					IForgeMenuType.create(
+						( containerId, inv, data ) -> new SelectablePaintingMenu( containerId, data )
+					)
+				)
+			);
+		}
 	}
 }

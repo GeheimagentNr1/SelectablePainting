@@ -6,7 +6,7 @@ import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -26,7 +26,7 @@ class RandomCheckBoxButton extends Checkbox {
 	@SuppressWarnings( "SameParameterValue" )
 	RandomCheckBoxButton( int _x, int _y, String _message, boolean _checked, Consumer<Checkbox> _onPress ) {
 		
-		super( _x, _y, 10, 10, new TextComponent( _message ), _checked );
+		super( _x, _y, 10, 10, Component.literal( _message ), _checked );
 		onPress = _onPress;
 	}
 	

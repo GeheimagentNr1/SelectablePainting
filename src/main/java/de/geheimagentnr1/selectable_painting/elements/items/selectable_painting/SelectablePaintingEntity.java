@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.decoration.HangingEntity;
-import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 public class SelectablePaintingEntity extends HangingEntity implements IEntityAdditionalSpawnData {
 	
 	
-	private Motive motive;
+	private PaintingVariant motive;
 	
 	private int size_index;
 	
@@ -54,7 +54,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 		Level _level,
 		BlockPos _pos,
 		Direction _direction,
-		Motive paintingType,
+		PaintingVariant paintingType,
 		int _size_index,
 		int _painting_index,
 		boolean _random ) {
@@ -91,7 +91,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	@Override
 	public void addAdditionalSaveData( CompoundTag compound ) {
 		
-		compound.putString( "Motive", Registry.MOTIVE.getKey( motive ).toString() );
+		compound.putString( "Motive", Registry.PAINTING_VARIANT.getKey( motive ).toString() );
 		compound.putByte( "Facing", (byte)direction.get2DDataValue() );
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", motive_index );
@@ -102,7 +102,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	@Override
 	public void writeSpawnData( FriendlyByteBuf buffer ) {
 		
-		buffer.writeVarInt( Registry.MOTIVE.getId( motive ) );
+		buffer.writeVarInt( Registry.PAINTING_VARIANT.getId( motive ) );
 		buffer.writeVarInt( size_index );
 		buffer.writeVarInt( motive_index );
 		buffer.writeBoolean( randomMotive );
@@ -113,7 +113,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	@Override
 	public void readAdditionalSaveData( CompoundTag compound ) {
 		
-		motive = Registry.MOTIVE.get( ResourceLocation.tryParse( compound.getString( "Motive" ) ) );
+		motive = Registry.PAINTING_VARIANT.get( ResourceLocation.tryParse( compound.getString( "Motive" ) ) );
 		direction = Direction.from2DDataValue( compound.getByte( "Facing" ) );
 		size_index = compound.getInt( "size_index" );
 		motive_index = compound.getInt( "painting_index" );
@@ -124,7 +124,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	@Override
 	public void readSpawnData( FriendlyByteBuf additionalData ) {
 		
-		motive = Registry.MOTIVE.byId( additionalData.readVarInt() );
+		motive = Registry.PAINTING_VARIANT.byId( additionalData.readVarInt() );
 		size_index = additionalData.readVarInt();
 		motive_index = additionalData.readVarInt();
 		randomMotive = additionalData.readBoolean();
@@ -198,11 +198,10 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 			.<SelectablePaintingEntity> of( SelectablePaintingEntity::new, MobCategory.MISC )
 			.sized( 0.5F, 0.5F )
 			.build( SelectablePainting.registry_name );
-		entityType.setRegistryName( SelectablePainting.registry_name );
 		return entityType;
 	}
 	
-	public Motive getMotive() {
+	public PaintingVariant getMotive() {
 		
 		return motive;
 	}

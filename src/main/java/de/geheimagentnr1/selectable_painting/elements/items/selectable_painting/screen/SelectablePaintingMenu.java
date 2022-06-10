@@ -5,10 +5,11 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingItemStackHelper;
 import de.geheimagentnr1.selectable_painting.network.UpdateSelectablePaintingItemStackMsg;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -28,6 +29,12 @@ public class SelectablePaintingMenu extends AbstractContainerMenu {
 		
 		super( ModItems.SELECTABLE_PAINTING_MENU, windowID );
 		stack = _stack;
+	}
+	
+	@Override
+	public @NotNull ItemStack quickMoveStack( Player p_38941_, int p_38942_ ) {
+		
+		return ItemStack.EMPTY;
 	}
 	
 	@Override
@@ -56,7 +63,7 @@ public class SelectablePaintingMenu extends AbstractContainerMenu {
 		return PaintingSelectionHelper.getPaintingName( stack ).getString();
 	}
 	
-	public Motive getCurrentMotive() {
+	public PaintingVariant getCurrentMotive() {
 		
 		return PaintingSelectionHelper.getCurrentMotive( stack );
 	}

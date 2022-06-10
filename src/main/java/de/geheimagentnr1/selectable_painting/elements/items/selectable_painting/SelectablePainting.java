@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -37,7 +36,6 @@ public class SelectablePainting extends Item {
 	public SelectablePainting() {
 		
 		super( new Item.Properties().tab( ModItemGroups.SELECTABLE_PAINTING ) );
-		setRegistryName( registry_name );
 		PaintingSelectionHelper.init();
 	}
 	
@@ -48,16 +46,16 @@ public class SelectablePainting extends Item {
 		@Nonnull List<Component> tooltip,
 		@Nonnull TooltipFlag flag ) {
 		
-		tooltip.add( new TranslatableComponent( Util.makeDescriptionId(
+		tooltip.add( Component.translatable( Util.makeDescriptionId(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
 		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( stack ) ) );
-		tooltip.add( new TranslatableComponent( Util.makeDescriptionId(
-			"message",
-			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
-		) ).append( ": " )
+		tooltip.add( Component.translatable( Util.makeDescriptionId(
+				"message",
+				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
+			) ).append( ": " )
 			.append( SelectablePaintingItemStackHelper.getRandom( stack )
-				? new TranslatableComponent( Util.makeDescriptionId(
+				? Component.translatable( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) )
@@ -122,13 +120,15 @@ public class SelectablePainting extends Item {
 				return InteractionResult.sidedSuccess( level.isClientSide );
 			} else {
 				if( !level.isClientSide() && player != null ) {
-					player.sendMessage( new TranslatableComponent( Util.makeDescriptionId(
-						"message",
-						new ResourceLocation(
-							SelectablePaintingMod.MODID,
-							"selectable_painting_painting_to_big_error"
-						)
-					) ), Util.NIL_UUID );
+					player.sendSystemMessage(
+						Component.translatable( Util.makeDescriptionId(
+							"message",
+							new ResourceLocation(
+								SelectablePaintingMod.MODID,
+								"selectable_painting_painting_to_big_error"
+							)
+						) )
+					);
 				}
 				return InteractionResult.CONSUME;
 			}

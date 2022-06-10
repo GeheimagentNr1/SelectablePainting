@@ -18,7 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -45,7 +45,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		
 		poseStack.pushPose();
 		poseStack.mulPose( Vector3f.YP.rotationDegrees( 180.0F - yaw ) );
-		Motive motive = entity.getMotive();
+		PaintingVariant motive = entity.getMotive();
 		poseStack.scale( 0.0625F, 0.0625F, 0.0625F );
 		VertexConsumer vertexconsumer = buffer.getBuffer( RenderType.entitySolid( getTextureLocation( entity ) ) );
 		PaintingTextureManager paintingtexturemanager = Minecraft.getInstance().getPaintingTextures();

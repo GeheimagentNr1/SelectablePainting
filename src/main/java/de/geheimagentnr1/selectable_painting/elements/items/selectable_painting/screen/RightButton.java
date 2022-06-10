@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ class RightButton extends Button {
 	//package-private
 	RightButton( int _x, int _y, Button.OnPress _onPress ) {
 		
-		super( _x, _y, 10, 15, new TextComponent( "" ), _onPress );
+		super( _x, _y, 10, 15, Component.literal( "" ), _onPress );
 	}
 	
 	@Override
