@@ -41,6 +41,10 @@
 				"painting.minecraft.burning_skull": "Burning Skull",
 				"painting.minecraft.skeleton": "Skeleton",
 				"painting.minecraft.donkey_kong": "Donkey Kong",
+				"painting.minecraft.earth": "Earth",
+				"painting.minecraft.wind": "Wind",
+				"painting.minecraft.water": "Water",
+				"painting.minecraft.fire": "Fire",
 		"selectable_painting_item_groups": "Item Groups",
 			"itemGroup.selectable_painting": "Selectable Painting"
 }
