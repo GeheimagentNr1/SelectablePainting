@@ -1,65 +1,70 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 
 public class PaintingSelectionHelper {
 	
 	
-	private static long painting_count = 0;
-	
 	private static String[] painting_sizes;
 	
-	private static ArrayList<ArrayList<String>> painting_names;
-	
-	private static ArrayList<ArrayList<PaintingVariant>> motives;
+	private static List<List<Holder<PaintingVariant>>> motives;
 	
 	//package-private
 	static void init() {
 		
-		long current_painting_count = Registry.PAINTING_VARIANT.stream().count();
-		if( painting_count != current_painting_count ) {
-			painting_count = current_painting_count;
-			Iterator<PaintingVariant> iterator = Registry.PAINTING_VARIANT.iterator();
+		long current_painting_count = Registry.PAINTING_VARIANT.size();
+		if( motivesCount() != current_painting_count ) {
 			TreeSet<String> sizes = new TreeSet<>();
-			TreeMap<String, TreeSet<String>> paintingNames = new TreeMap<>();
-			TreeMap<String, TreeSet<PaintingVariant>> motivesMap = new TreeMap<>();
+			TreeMap<String, TreeSet<Holder<PaintingVariant>>> motivesMap = new TreeMap<>();
 			
-			while( iterator.hasNext() ) {
-				PaintingVariant motive = iterator.next();
-				int widthSize = motive.getWidth() / 16;
-				int heightSize = motive.getHeight() / 16;
-				@SuppressWarnings( "StringConcatenationMissingWhitespace" )
-				String paintingSize = widthSize + "x" + heightSize;
-				if( sizes.add( paintingSize ) ) {
-					paintingNames.put( paintingSize, new TreeSet<>() );
-					motivesMap.put(
-						paintingSize,
-						new TreeSet<>( Comparator.comparing(
-							motive2 -> Registry.PAINTING_VARIANT.getKey( motive2 ).getPath()
-						) )
-					);
-				}
-				paintingNames.get( paintingSize ).add( Registry.PAINTING_VARIANT.getKey( motive ).getPath() );
-				motivesMap.get( paintingSize ).add( motive );
-			}
+			Registry.PAINTING_VARIANT.registryKeySet().forEach( paintingVariantResourceKey ->
+				Registry.PAINTING_VARIANT.getHolder( paintingVariantResourceKey ).ifPresent( motiveHolder -> {
+					PaintingVariant motive = motiveHolder.value();
+					int widthSize = motive.getWidth() / 16;
+					int heightSize = motive.getHeight() / 16;
+					@SuppressWarnings( "StringConcatenationMissingWhitespace" )
+					String paintingSize = widthSize + "x" + heightSize;
+					if( sizes.add( paintingSize ) ) {
+						motivesMap.put(
+							paintingSize,
+							new TreeSet<>( Comparator.comparing(
+								motiveComparing -> motiveComparing.unwrap().left().get().location().toString()
+							) )
+						);
+					}
+					motivesMap.get( paintingSize ).add( motiveHolder );
+				} )
+			);
 			painting_sizes = sizes.toArray( new String[0] );
-			painting_names = new ArrayList<>();
-			for( TreeSet<String> names : paintingNames.values() ) {
-				painting_names.add( new ArrayList<>( Arrays.asList( names.toArray( new String[0] ) ) ) );
-			}
-			motives = new ArrayList<>();
-			for( TreeSet<PaintingVariant> types : motivesMap.values() ) {
-				motives.add( new ArrayList<>( Arrays.asList( types.toArray( new PaintingVariant[0] ) ) ) );
+			motives = motivesMap.values().stream()
+				.map( holders -> holders.stream().toList() )
+				.toList();
+			if( painting_sizes.length != motives.size() ||
+				motivesCount() != current_painting_count ) {
+				throw new IllegalStateException(
+					"Invalid build of motives list, please create a bug report on GitHub"
+				);
 			}
 		}
+	}
+	
+	private static int motivesCount() {
+		
+		return motives == null ? 0 : motives.stream()
+			.mapToInt( List::size )
+			.sum();
 	}
 	
 	public static void previousSize( ItemStack stack ) {
@@ -85,7 +90,7 @@ public class PaintingSelectionHelper {
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack ) - 1;
-		painting_index = painting_index < 0 ? painting_names.get( size_index ).size() - 1 : painting_index;
+		painting_index = painting_index < 0 ? motives.get( size_index ).size() - 1 : painting_index;
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, painting_index );
 	}
 	
@@ -94,7 +99,7 @@ public class PaintingSelectionHelper {
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack ) + 1;
-		painting_index = painting_index >= painting_names.get( size_index ).size() ? 0 : painting_index;
+		painting_index = painting_index >= motives.get( size_index ).size() ? 0 : painting_index;
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, painting_index );
 	}
 	
@@ -116,9 +121,14 @@ public class PaintingSelectionHelper {
 	private static Component getPaintingName( int size_index, int painting_index ) {
 		
 		init();
+		
 		return Component.translatable( Util.makeDescriptionId(
 			"painting",
-			Registry.PAINTING_VARIANT.getKey( motives.get( size_index ).get( painting_index ) )
+			Registry.PAINTING_VARIANT.getKey(
+				motives.get( size_index >= motives.size() ? 0 : size_index )
+					.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
+					.value()
+			)
 		) );
 	}
 	
@@ -127,11 +137,13 @@ public class PaintingSelectionHelper {
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
 		int painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
-		return motives.get( size_index ).get( painting_index );
+		return motives.get( size_index >= motives.size() ? 0 : size_index )
+			.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
+			.value();
 	}
 	
 	//package-private
-	static PaintingVariant getMotive( ItemStack stack, Level level ) {
+	static Holder<PaintingVariant> getMotive( ItemStack stack, Level level ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
@@ -141,6 +153,7 @@ public class PaintingSelectionHelper {
 		} else {
 			painting_index = SelectablePaintingItemStackHelper.getPaintingIndex( stack );
 		}
-		return motives.get( size_index ).get( painting_index );
+		return motives.get( size_index >= motives.size() ? 0 : size_index )
+			.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index );
 	}
 }

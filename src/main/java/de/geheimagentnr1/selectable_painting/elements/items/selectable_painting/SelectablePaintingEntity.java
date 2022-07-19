@@ -3,33 +3,45 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.decoration.HangingEntity;
+import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.PaintingVariants;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 
-public class SelectablePaintingEntity extends HangingEntity implements IEntityAdditionalSpawnData {
+public class SelectablePaintingEntity extends HangingEntity {
 	
 	
-	private PaintingVariant motive;
+	private static final EntityDataAccessor<Holder<PaintingVariant>> DATA_MOTIVE_ID = SynchedEntityData.defineId(
+		Painting.class,
+		EntityDataSerializers.PAINTING_VARIANT
+	);
+	
+	private static final ResourceKey<PaintingVariant> DEFAULT_VARIANT = PaintingVariants.KEBAB;
 	
 	private int size_index;
 	
@@ -54,13 +66,13 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 		Level _level,
 		BlockPos _pos,
 		Direction _direction,
-		PaintingVariant paintingType,
+		Holder<PaintingVariant> paintingType,
 		int _size_index,
 		int _painting_index,
 		boolean _random ) {
 		
 		super( ModItems.SELECTABLE_PAINTING_ENTITY, _level, _pos );
-		motive = paintingType;
+		setMotiveHolder( paintingType );
 		init( _direction );
 		size_index = _size_index;
 		motive_index = _painting_index;
@@ -70,6 +82,42 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	private void init( Direction _direction ) {
 		
 		setDirection( _direction );
+	}
+	
+	@Override
+	protected void setDirection( Direction p_31728_ ) {
+		
+		System.out.println( p_31728_ );
+		super.setDirection( p_31728_ );
+	}
+	
+	@Override
+	protected void defineSynchedData() {
+		
+		entityData.define( DATA_MOTIVE_ID, getDefaultMotive() );
+	}
+	
+	@Override
+	public void onSyncedDataUpdated( EntityDataAccessor<?> data ) {
+		
+		if( data.equals( DATA_MOTIVE_ID ) ) {
+			recalculateBoundingBox();
+		}
+	}
+	
+	private static Holder<PaintingVariant> getDefaultMotive() {
+		
+		return Registry.PAINTING_VARIANT.getHolderOrThrow( DEFAULT_VARIANT );
+	}
+	
+	private void setMotiveHolder( Holder<PaintingVariant> holder ) {
+		
+		entityData.set( DATA_MOTIVE_ID, holder );
+	}
+	
+	public Holder<PaintingVariant> getMotiveHolder() {
+		
+		return entityData.get( DATA_MOTIVE_ID );
 	}
 	
 	@Override
@@ -91,7 +139,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	@Override
 	public void addAdditionalSaveData( CompoundTag compound ) {
 		
-		compound.putString( "Motive", Registry.PAINTING_VARIANT.getKey( motive ).toString() );
+		compound.putString( "variant", getMotiveHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString() );
 		compound.putByte( "Facing", (byte)direction.get2DDataValue() );
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", motive_index );
@@ -100,49 +148,30 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	}
 	
 	@Override
-	public void writeSpawnData( FriendlyByteBuf buffer ) {
-		
-		buffer.writeVarInt( Registry.PAINTING_VARIANT.getId( motive ) );
-		buffer.writeVarInt( size_index );
-		buffer.writeVarInt( motive_index );
-		buffer.writeBoolean( randomMotive );
-		buffer.writeBlockPos( pos );
-		buffer.writeByte( direction.get2DDataValue() );
-	}
-	
-	@Override
 	public void readAdditionalSaveData( CompoundTag compound ) {
 		
-		motive = Registry.PAINTING_VARIANT.get( ResourceLocation.tryParse( compound.getString( "Motive" ) ) );
-		direction = Direction.from2DDataValue( compound.getByte( "Facing" ) );
+		setMotiveHolder( Registry.PAINTING_VARIANT.getHolder( ResourceKey.create(
+			Registry.PAINTING_VARIANT_REGISTRY,
+			Optional.ofNullable( ResourceLocation.tryParse( compound.getString( "Motive" ) ) )
+				.orElse( new ResourceLocation( "" ) )
+		) ).orElseGet( SelectablePaintingEntity::getDefaultMotive ) );
 		size_index = compound.getInt( "size_index" );
 		motive_index = compound.getInt( "painting_index" );
 		randomMotive = compound.getBoolean( "random" );
 		super.readAdditionalSaveData( compound );
-	}
-	
-	@Override
-	public void readSpawnData( FriendlyByteBuf additionalData ) {
-		
-		motive = Registry.PAINTING_VARIANT.byId( additionalData.readVarInt() );
-		size_index = additionalData.readVarInt();
-		motive_index = additionalData.readVarInt();
-		randomMotive = additionalData.readBoolean();
-		BlockPos position = additionalData.readBlockPos();
-		setPos( position.getX(), position.getY(), position.getZ() );
-		setDirection( Direction.from2DDataValue( additionalData.readByte() ) );
+		setDirection( Direction.from2DDataValue( compound.getByte( "Facing" ) ) );
 	}
 	
 	@Override
 	public int getWidth() {
 		
-		return motive == null ? 1 : motive.getWidth();
+		return getMotiveHolder().value().getWidth();
 	}
 	
 	@Override
 	public int getHeight() {
 		
-		return motive == null ? 1 : motive.getHeight();
+		return getMotiveHolder().value().getHeight();
 	}
 	
 	@Override
@@ -181,15 +210,20 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 		int posRotationIncrements,
 		boolean teleport ) {
 		
-		/*BlockPos pos = hangingPosition.add( posX - x, posY - y, posZ - z );
-		setPosition( pos.getX(), pos.getY(), pos.getZ() );*/
+		setPos( x, y, z );
 	}
 	
 	@Nonnull
 	@Override
 	public Packet<?> getAddEntityPacket() {
 		
-		return NetworkHooks.getEntitySpawningPacket( this );
+		return new ClientboundAddEntityPacket( this, this.direction.get3DDataValue(), this.getPos() );
+	}
+	
+	public void recreateFromPacket( @NotNull ClientboundAddEntityPacket packet ) {
+		
+		super.recreateFromPacket( packet );
+		setDirection( Direction.from3DDataValue( packet.getData() ) );
 	}
 	
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
@@ -203,7 +237,7 @@ public class SelectablePaintingEntity extends HangingEntity implements IEntityAd
 	
 	public PaintingVariant getMotive() {
 		
-		return motive;
+		return getMotiveHolder().value();
 	}
 	
 	public int getSizeIndex() {
