@@ -72,7 +72,7 @@ public class SelectablePainting extends Item {
 		ItemStack stack = player.getItemInHand( hand );
 		
 		if( !level.isClientSide() ) {
-			NetworkHooks.openGui(
+			NetworkHooks.openScreen(
 				(ServerPlayer)player,
 				new SelectablePaintingNamedContainerProvider( stack ),
 				packetBuffer -> packetBuffer.writeItem( stack )
