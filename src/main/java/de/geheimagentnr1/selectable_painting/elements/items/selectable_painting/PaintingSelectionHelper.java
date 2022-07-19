@@ -40,7 +40,7 @@ public class PaintingSelectionHelper {
 						motivesMap.put(
 							paintingSize,
 							new TreeSet<>( Comparator.comparing(
-								motiveComparing -> motiveComparing.unwrap().left().get().location().toString()
+								motiveComparing -> motiveComparing.unwrapKey().orElseThrow().location().toString()
 							) )
 						);
 					}
@@ -121,7 +121,6 @@ public class PaintingSelectionHelper {
 	private static Component getPaintingName( int size_index, int painting_index ) {
 		
 		init();
-		
 		return Component.translatable( Util.makeDescriptionId(
 			"painting",
 			Registry.PAINTING_VARIANT.getKey(

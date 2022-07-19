@@ -85,13 +85,6 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	protected void setDirection( Direction p_31728_ ) {
-		
-		System.out.println( p_31728_ );
-		super.setDirection( p_31728_ );
-	}
-	
-	@Override
 	protected void defineSynchedData() {
 		
 		entityData.define( DATA_MOTIVE_ID, getDefaultMotive() );
@@ -139,7 +132,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void addAdditionalSaveData( CompoundTag compound ) {
 		
-		compound.putString( "variant", getMotiveHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString() );
+		compound.putString( "Motive", getMotiveHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString() );
 		compound.putByte( "Facing", (byte)direction.get2DDataValue() );
 		compound.putInt( "size_index", size_index );
 		compound.putInt( "painting_index", motive_index );
@@ -153,7 +146,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		setMotiveHolder( Registry.PAINTING_VARIANT.getHolder( ResourceKey.create(
 			Registry.PAINTING_VARIANT_REGISTRY,
 			Optional.ofNullable( ResourceLocation.tryParse( compound.getString( "Motive" ) ) )
-				.orElse( new ResourceLocation( "" ) )
+				.orElse( DEFAULT_VARIANT.location() )
 		) ).orElseGet( SelectablePaintingEntity::getDefaultMotive ) );
 		size_index = compound.getInt( "size_index" );
 		motive_index = compound.getInt( "painting_index" );
