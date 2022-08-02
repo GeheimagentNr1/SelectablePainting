@@ -3,6 +3,7 @@ package de.geheimagentnr1.selectable_painting.elements;
 
 public class RegistryEntry<T> {
 	
+	
 	private final String registryName;
 	
 	private final T value;
@@ -13,9 +14,9 @@ public class RegistryEntry<T> {
 		value = _value;
 	}
 	
-	public static <T> RegistryEntry<T> create( String registryName, T value) {
+	public static <T> RegistryEntry<T> create( String registryName, T value ) {
 		
-		return new RegistryEntry<>(registryName, value);
+		return new RegistryEntry<>( registryName, value );
 	}
 	
 	public String getRegistryName() {

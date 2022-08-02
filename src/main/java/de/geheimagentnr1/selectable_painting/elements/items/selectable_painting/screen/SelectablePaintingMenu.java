@@ -4,7 +4,6 @@ import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.PaintingSelectionHelper;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingItemStackHelper;
 import de.geheimagentnr1.selectable_painting.network.UpdateSelectablePaintingItemStackMsg;
-import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
