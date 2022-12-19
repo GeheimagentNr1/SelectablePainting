@@ -1,7 +1,6 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import de.geheimagentnr1.selectable_painting.elements.item_groups.ModItemGroups;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingNamedContainerProvider;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -35,7 +34,7 @@ public class SelectablePainting extends Item {
 	
 	public SelectablePainting() {
 		
-		super( new Item.Properties().tab( ModItemGroups.SELECTABLE_PAINTING ) );
+		super( new Item.Properties() );
 		PaintingSelectionHelper.init();
 	}
 	

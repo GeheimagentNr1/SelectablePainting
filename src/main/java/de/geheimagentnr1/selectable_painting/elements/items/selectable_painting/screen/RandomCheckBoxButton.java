@@ -44,10 +44,10 @@ class RandomCheckBoxButton extends Checkbox {
 		RenderSystem.setShader( GameRenderer::getPositionTexShader );
 		RenderSystem.setShaderTexture( 0, SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( selected() ) {
-			blit( poseStack, x, y, 0, 10, 10, 10, 16, 32 );
+			blit( poseStack, getX(), getY(), 0, 10, 10, 10, 16, 32 );
 		} else {
-			blit( poseStack, x, y, 0, 0, 10, 10, 16, 32 );
+			blit( poseStack, getX(), getY(), 0, 0, 10, 10, 16, 32 );
 		}
-		Minecraft.getInstance().font.draw( poseStack, getMessage().getString(), x + 14, y + 2, 4210752 );
+		Minecraft.getInstance().font.draw( poseStack, getMessage().getString(), getX() + 14, getY() + 2, 4210752 );
 	}
 }

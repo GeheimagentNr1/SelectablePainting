@@ -79,7 +79,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			Objects.requireNonNull( minecraft );
 			PaintingVariant paintingType = menu.getCurrentMotive();
 			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
-			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlas().location() );
+			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlasLocation() );
 			blit(
 				poseStack,
 				width / 2 - leftPos - paintingType.getWidth() / 2,

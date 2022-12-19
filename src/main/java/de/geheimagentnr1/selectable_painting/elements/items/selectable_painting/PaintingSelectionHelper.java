@@ -2,7 +2,7 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
@@ -24,13 +24,13 @@ public class PaintingSelectionHelper {
 	//package-private
 	static void init() {
 		
-		long current_painting_count = Registry.PAINTING_VARIANT.size();
+		long current_painting_count = BuiltInRegistries.PAINTING_VARIANT.size();
 		if( motivesCount() != current_painting_count ) {
 			TreeSet<String> sizes = new TreeSet<>();
 			TreeMap<String, TreeSet<Holder<PaintingVariant>>> motivesMap = new TreeMap<>();
 			
-			Registry.PAINTING_VARIANT.registryKeySet().forEach( paintingVariantResourceKey ->
-				Registry.PAINTING_VARIANT.getHolder( paintingVariantResourceKey ).ifPresent( motiveHolder -> {
+			BuiltInRegistries.PAINTING_VARIANT.registryKeySet().forEach( paintingVariantResourceKey ->
+				BuiltInRegistries.PAINTING_VARIANT.getHolder( paintingVariantResourceKey ).ifPresent( motiveHolder -> {
 					PaintingVariant motive = motiveHolder.value();
 					int widthSize = motive.getWidth() / 16;
 					int heightSize = motive.getHeight() / 16;
@@ -123,7 +123,7 @@ public class PaintingSelectionHelper {
 		init();
 		return Component.translatable( Util.makeDescriptionId(
 			"painting",
-			Registry.PAINTING_VARIANT.getKey(
+			BuiltInRegistries.PAINTING_VARIANT.getKey(
 				motives.get( size_index >= motives.size() ? 0 : size_index )
 					.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
 					.value()

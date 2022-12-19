@@ -4,9 +4,11 @@ import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -100,7 +102,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	private static Holder<PaintingVariant> getDefaultMotive() {
 		
-		return Registry.PAINTING_VARIANT.getHolderOrThrow( DEFAULT_VARIANT );
+		return BuiltInRegistries.PAINTING_VARIANT.getHolderOrThrow( DEFAULT_VARIANT );
 	}
 	
 	private void setMotiveHolder( Holder<PaintingVariant> holder ) {
@@ -143,11 +145,13 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void readAdditionalSaveData( CompoundTag compound ) {
 		
-		setMotiveHolder( Registry.PAINTING_VARIANT.getHolder( ResourceKey.create(
-			Registry.PAINTING_VARIANT_REGISTRY,
-			Optional.ofNullable( ResourceLocation.tryParse( compound.getString( "Motive" ) ) )
-				.orElse( DEFAULT_VARIANT.location() )
-		) ).orElseGet( SelectablePaintingEntity::getDefaultMotive ) );
+		setMotiveHolder(
+			BuiltInRegistries.PAINTING_VARIANT.getHolder( ResourceKey.create(
+					Registries.PAINTING_VARIANT,
+					Optional.ofNullable( ResourceLocation.tryParse( compound.getString( "Motive" ) ) )
+						.orElse( DEFAULT_VARIANT.location() )
+				) ).map( paintingVariantReference -> (Holder<PaintingVariant>)paintingVariantReference )
+				.orElseGet( SelectablePaintingEntity::getDefaultMotive ) );
 		size_index = compound.getInt( "size_index" );
 		motive_index = compound.getInt( "painting_index" );
 		randomMotive = compound.getBoolean( "random" );
@@ -208,7 +212,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	@Nonnull
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		
 		return new ClientboundAddEntityPacket( this, this.direction.get3DDataValue(), this.getPos() );
 	}

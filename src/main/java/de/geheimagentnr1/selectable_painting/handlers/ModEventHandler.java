@@ -1,6 +1,7 @@
 package de.geheimagentnr1.selectable_painting.handlers;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
+import de.geheimagentnr1.selectable_painting.elements.creative_mod_tabs.ModCreativeTabs;
 import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePainting;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingEntity;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -51,6 +53,13 @@ public class ModEventHandler {
 				) )
 			);
 		}
+	}
+	
+	@SubscribeEvent
+	public static void handleCreativeModeTabRegisterEvent( CreativeModeTabEvent.Register event ) {
+		
+		ModCreativeTabs.CREATIVE_TAB_FACTORIES.forEach( creativeModeTabFactory ->
+			event.registerCreativeModeTab( creativeModeTabFactory.getName(), creativeModeTabFactory ) );
 	}
 	
 	@SubscribeEvent

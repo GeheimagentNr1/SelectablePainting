@@ -2,9 +2,7 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,6 +19,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nonnull;
 
@@ -44,7 +44,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		int packedLight ) {
 		
 		poseStack.pushPose();
-		poseStack.mulPose( Vector3f.YP.rotationDegrees( 180.0F - yaw ) );
+		poseStack.mulPose( Axis.YP.rotationDegrees( 180.0F - yaw ) );
 		PaintingVariant motive = entity.getMotive();
 		poseStack.scale( 0.0625F, 0.0625F, 0.0625F );
 		VertexConsumer vertexconsumer = buffer.getBuffer( RenderType.entitySolid( getTextureLocation( entity ) ) );
@@ -69,7 +69,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	@Override
 	public ResourceLocation getTextureLocation( @Nonnull SelectablePaintingEntity entity ) {
 		
-		return Minecraft.getInstance().getPaintingTextures().getBackSprite().atlas().location();
+		return Minecraft.getInstance().getPaintingTextures().getBackSprite().atlasLocation();
 	}
 	
 	private void renderPainting(

@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
+import java.util.function.Supplier;
 
 
 //package-private
@@ -23,7 +24,7 @@ class LeftButton extends Button {
 	//package-private
 	LeftButton( int _x, int _y, OnPress _onPress ) {
 		
-		super( _x, _y, 10, 15, Component.literal( "" ), _onPress );
+		super( _x, _y, 10, 15, Component.literal( "" ), _onPress, Supplier::get );
 	}
 	
 	@Override
@@ -32,9 +33,9 @@ class LeftButton extends Button {
 		RenderSystem.setShader( GameRenderer::getPositionTexShader );
 		RenderSystem.setShaderTexture( 0, DIRECTION_BUTTONS_TEXTURE );
 		if( isHovered ) {
-			blit( poseStack, x, y, 13, 21, 10, 15, 64, 64 );
+			blit( poseStack, getX(), getY(), 13, 21, 10, 15, 64, 64 );
 		} else {
-			blit( poseStack, x, y, 1, 21, 10, 15, 64, 64 );
+			blit( poseStack, getX(), getY(), 1, 21, 10, 15, 64, 64 );
 		}
 	}
 }
