@@ -37,7 +37,7 @@ public interface CreativeModeTabFactory extends Consumer<CreativeModeTab.Builder
 	
 	Item getDisplayItem();
 	
-	default void displayItemsGenerator( FeatureFlagSet flags, CreativeModeTab.Output output, boolean hasPermisions ) {
+	default void displayItemsGenerator( CreativeModeTab.ItemDisplayParameters itemDisplayParameters, CreativeModeTab.Output output ) {
 		
 		output.acceptAll( getDisplayItems() );
 	}

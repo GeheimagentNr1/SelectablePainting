@@ -28,7 +28,7 @@ class RightButton extends Button {
 	}
 	
 	@Override
-	public void renderButton( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
+	public void renderWidget( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partial ) {
 		
 		RenderSystem.setShader( GameRenderer::getPositionTexShader );
 		RenderSystem.setShaderTexture( 0, DIRECTION_BUTTONS_TEXTURE );
