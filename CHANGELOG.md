@@ -1,1 +1,1 @@
-Ported to 1.19.4
+- Fix self teleporting Selectable Paintings
