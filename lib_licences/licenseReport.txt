@@ -361,7 +361,7 @@ TerminalConsoleAppender (1.2.0) - MIT License
 JLine 3 appender for Log4j2, allows extending command line apps using colors and command completion
 https://github.com/Minecrell/TerminalConsoleAppender
 
-text2speech (1.13.9)
+text2speech (1.16.7)
 
 Typetools (0.8.3)
 Typetools for reading lambda metadata
