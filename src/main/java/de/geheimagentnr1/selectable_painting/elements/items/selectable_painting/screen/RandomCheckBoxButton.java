@@ -1,11 +1,9 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,15 +37,20 @@ class RandomCheckBoxButton extends Checkbox {
 	}
 	
 	@Override
-	public void renderWidget( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partial ) {
+	public void renderWidget( @Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial ) {
 		
-		RenderSystem.setShader( GameRenderer::getPositionTexShader );
-		RenderSystem.setShaderTexture( 0, SELECTABLE_PAINTING_GUI_TEXTURE );
 		if( selected() ) {
-			blit( poseStack, getX(), getY(), 0, 10, 10, 10, 16, 32 );
+			guiGraphics.blit( SELECTABLE_PAINTING_GUI_TEXTURE, getX(), getY(), 0, 10, 10, 10, 16, 32 );
 		} else {
-			blit( poseStack, getX(), getY(), 0, 0, 10, 10, 16, 32 );
+			guiGraphics.blit( SELECTABLE_PAINTING_GUI_TEXTURE, getX(), getY(), 0, 0, 10, 10, 16, 32 );
 		}
-		Minecraft.getInstance().font.draw( poseStack, getMessage().getString(), getX() + 14, getY() + 2, 4210752 );
+		guiGraphics.drawString(
+			Minecraft.getInstance().font,
+			getMessage().getString(),
+			getX() + 14,
+			getY() + 2,
+			4210752,
+			false
+		);
 	}
 }

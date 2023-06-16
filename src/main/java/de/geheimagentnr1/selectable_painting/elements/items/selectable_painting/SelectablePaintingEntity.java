@@ -175,7 +175,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void dropItem( @Nullable Entity brakingEntity ) {
 		
-		if( level.getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
+		if( level().getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
 			playSound( SoundEvents.PAINTING_BREAK, 1.0F, 1.0F );
 			if( brakingEntity instanceof Player ) {
 				if( ( (Player)brakingEntity ).isCreative() ) {

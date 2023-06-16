@@ -2,16 +2,15 @@ package de.geheimagentnr1.selectable_painting.elements.creative_mod_tabs;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 
-public interface CreativeModeTabFactory extends Consumer<CreativeModeTab.Builder> {
+public interface CreativeModeTabFactory extends Supplier<CreativeModeTab> {
 	
 	
 	default ResourceLocation getName() {
@@ -23,11 +22,14 @@ public interface CreativeModeTabFactory extends Consumer<CreativeModeTab.Builder
 	
 	String getRegistryName();
 	
-	default void accept( CreativeModeTab.Builder builder ) {
+	@Override
+	default CreativeModeTab get() {
 		
-		builder.title( Component.translatable( "itemGroup." + getRegistryName() ) );
-		builder.icon( this::buildDisplayItemStack );
-		builder.displayItems( this::displayItemsGenerator );
+		return CreativeModeTab.builder()
+			.title( Component.translatable( "itemGroup." + getRegistryName() ) )
+			.icon( this::buildDisplayItemStack )
+			.displayItems( this::displayItemsGenerator )
+			.build();
 	}
 	
 	default ItemStack buildDisplayItemStack() {
@@ -37,7 +39,9 @@ public interface CreativeModeTabFactory extends Consumer<CreativeModeTab.Builder
 	
 	Item getDisplayItem();
 	
-	default void displayItemsGenerator( CreativeModeTab.ItemDisplayParameters itemDisplayParameters, CreativeModeTab.Output output ) {
+	default void displayItemsGenerator(
+		CreativeModeTab.ItemDisplayParameters itemDisplayParameters,
+		CreativeModeTab.Output output ) {
 		
 		output.acceptAll( getDisplayItems() );
 	}

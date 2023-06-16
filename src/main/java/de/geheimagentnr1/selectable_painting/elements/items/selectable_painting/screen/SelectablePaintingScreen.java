@@ -1,9 +1,9 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -51,37 +51,46 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	}
 	
 	@Override
-	public void render( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks ) {
+	public void render( @Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
 		
-		renderBackground( poseStack );
-		super.render( poseStack, mouseX, mouseY, partialTicks );
+		renderBackground( guiGraphics );
+		super.render( guiGraphics, mouseX, mouseY, partialTick );
 	}
 	
 	@Override
-	protected void renderBg( @Nonnull PoseStack poseStack, float partialTicks, int x, int y ) {
+	protected void renderBg( @Nonnull GuiGraphics guiGraphics, float partialTick, int x, int y ) {
 		
-		Objects.requireNonNull( minecraft );
-		RenderSystem.setShader( GameRenderer::getPositionTexShader );
-		RenderSystem.setShaderColor( 1.0F, 1.0F, 1.0F, 1.0F );
-		RenderSystem.setShaderTexture( 0, SELECTABLE_PAINTING_GUI_TEXTURE );
-		blit( poseStack, leftPos, topPos, 0, 0, imageWidth, imageHeight );
+		guiGraphics.blit( SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight );
 	}
 	
 	@Override
-	protected void renderLabels( @Nonnull PoseStack poseStack, int x, int y ) {
+	protected void renderLabels( @Nonnull GuiGraphics guiGraphics, int x, int y ) {
 		
 		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
-		font.draw( poseStack, title.getString(), titleStartX, 5, 4210752 );
-		drawCenteredString( poseStack, font, menu.getSizeText(), width / 2 - leftPos, 19, 16777215 );
-		drawCenteredString( poseStack, font, menu.getPaintingText(), width / 2 - leftPos, 37, 16777215 );
+		guiGraphics.drawString( font, title.getString(), titleStartX, 5, 4210752, false );
+		guiGraphics.drawString(
+			font,
+			menu.getSizeText(),
+			width / 2 - leftPos - font.width( menu.getSizeText() ) / 2,
+			19,
+			16777215,
+			false
+		);
+		guiGraphics.drawString(
+			font,
+			menu.getPaintingText(),
+			width / 2 - leftPos - font.width( menu.getPaintingText() ) / 2,
+			37,
+			16777215,
+			false
+		);
 		
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
 			PaintingVariant paintingType = menu.getCurrentMotive();
 			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
 			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlasLocation() );
-			blit(
-				poseStack,
+			guiGraphics.blit(
 				width / 2 - leftPos - paintingType.getWidth() / 2,
 				70,
 				0,

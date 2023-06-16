@@ -11,10 +11,10 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import de.geheimagentnr1.selectable_painting.network.Network;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.registries.Registries;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -56,10 +56,20 @@ public class ModEventHandler {
 	}
 	
 	@SubscribeEvent
-	public static void handleCreativeModeTabRegisterEvent( CreativeModeTabEvent.Register event ) {
+	public static void handleCreativeModeTabRegisterEvent( RegisterEvent event ) {
 		
-		ModCreativeTabs.CREATIVE_TAB_FACTORIES.forEach( creativeModeTabFactory ->
-			event.registerCreativeModeTab( creativeModeTabFactory.getName(), creativeModeTabFactory ) );
+		ModCreativeTabs.CREATIVE_TAB_FACTORIES.forEach( creativeModeTabFactory -> {
+				event.register(
+					Registries.CREATIVE_MODE_TAB,
+					creativeModeTabRegisterHelper -> {
+						creativeModeTabRegisterHelper.register(
+							creativeModeTabFactory.getName(),
+							creativeModeTabFactory.get()
+						);
+					}
+				);
+			}
+		);
 	}
 	
 	@SubscribeEvent

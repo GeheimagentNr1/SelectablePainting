@@ -3,6 +3,7 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -28,14 +29,12 @@ class RightButton extends Button {
 	}
 	
 	@Override
-	public void renderWidget( @Nonnull PoseStack poseStack, int mouseX, int mouseY, float partial ) {
+	public void renderWidget( @Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial ) {
 		
-		RenderSystem.setShader( GameRenderer::getPositionTexShader );
-		RenderSystem.setShaderTexture( 0, DIRECTION_BUTTONS_TEXTURE );
 		if( isHovered ) {
-			blit( poseStack, getX(), getY(), 13, 2, 10, 15, 64, 64 );
+			guiGraphics.blit( DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13, 2, 10, 15, 64, 64 );
 		} else {
-			blit( poseStack, getX(), getY(), 1, 2, 10, 15, 64, 64 );
+			guiGraphics.blit( DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 1, 2, 10, 15, 64, 64 );
 		}
 	}
 }

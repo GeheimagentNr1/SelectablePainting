@@ -129,7 +129,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 					k1 = Mth.floor( entity.getZ() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
 				}
 				
-				int l1 = LevelRenderer.getLightColor( entity.level, new BlockPos( i1, j1, k1 ) );
+				int l1 = LevelRenderer.getLightColor( entity.level(), new BlockPos( i1, j1, k1 ) );
 				float f19 = paintingAtlas.getU( d0 * ( i - k ) );
 				float f20 = paintingAtlas.getU( d0 * ( i - ( k + 1 ) ) );
 				float f21 = paintingAtlas.getV( d1 * ( j - l ) );
