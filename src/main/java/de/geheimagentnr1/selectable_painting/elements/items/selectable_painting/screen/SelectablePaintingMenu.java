@@ -1,6 +1,6 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
-import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
+import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFactory;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.PaintingSelectionHelper;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingItemStackHelper;
 import de.geheimagentnr1.selectable_painting.network.UpdateSelectablePaintingItemStackMsg;
@@ -11,39 +11,39 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
-
 
 public class SelectablePaintingMenu extends AbstractContainerMenu {
 	
 	
+	@NotNull
 	private final ItemStack stack;
 	
-	public SelectablePaintingMenu( int windowID, FriendlyByteBuf buffer ) {
+	public SelectablePaintingMenu( int windowId, @NotNull FriendlyByteBuf buffer ) {
 		
-		this( windowID, buffer.readItem() );
+		this( windowId, buffer.readItem() );
 	}
 	
 	//package-private
-	SelectablePaintingMenu( int windowID, ItemStack _stack ) {
+	SelectablePaintingMenu( int windowId, @NotNull ItemStack _stack ) {
 		
-		super( ModItems.SELECTABLE_PAINTING_MENU, windowID );
+		super( ModItemsRegisterFactory.SELECTABLE_PAINTING_MENU, windowId );
 		stack = _stack;
 	}
 	
+	@NotNull
 	@Override
-	public @NotNull ItemStack quickMoveStack( Player p_38941_, int p_38942_ ) {
+	public ItemStack quickMoveStack( @NotNull Player player, int index ) {
 		
 		return ItemStack.EMPTY;
 	}
 	
 	@Override
-	public boolean stillValid( @Nonnull Player playerIn ) {
+	public boolean stillValid( @NotNull Player player ) {
 		
 		return true;
 	}
 	
-	public void updateItemStack( ItemStack _stack ) {
+	public void updateItemStack( @NotNull ItemStack _stack ) {
 		
 		SelectablePaintingItemStackHelper.writeDataToStack(
 			stack,
@@ -53,16 +53,19 @@ public class SelectablePaintingMenu extends AbstractContainerMenu {
 		);
 	}
 	
+	@NotNull
 	public String getSizeText() {
 		
 		return PaintingSelectionHelper.getSizeName( stack );
 	}
 	
+	@NotNull
 	public String getPaintingText() {
 		
 		return PaintingSelectionHelper.getPaintingName( stack ).getString();
 	}
 	
+	@NotNull
 	public PaintingVariant getCurrentMotive() {
 		
 		return PaintingSelectionHelper.getCurrentMotive( stack );

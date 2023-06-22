@@ -1,6 +1,6 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
-import de.geheimagentnr1.selectable_painting.elements.items.ModItems;
+import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -31,7 +31,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
@@ -39,11 +38,13 @@ import java.util.Optional;
 public class SelectablePaintingEntity extends HangingEntity {
 	
 	
+	@NotNull
 	private static final EntityDataAccessor<Holder<PaintingVariant>> DATA_MOTIVE_ID = SynchedEntityData.defineId(
 		Painting.class,
 		EntityDataSerializers.PAINTING_VARIANT
 	);
 	
+	@NotNull
 	private static final ResourceKey<PaintingVariant> DEFAULT_VARIANT = PaintingVariants.KEBAB;
 	
 	private int size_index;
@@ -53,12 +54,14 @@ public class SelectablePaintingEntity extends HangingEntity {
 	private boolean randomMotive;
 	
 	@SuppressWarnings( "unused" )
-	public SelectablePaintingEntity( Level _level ) {
+	public SelectablePaintingEntity( @NotNull Level _level ) {
 		
-		this( ModItems.SELECTABLE_PAINTING_ENTITY, _level );
+		this( ModItemsRegisterFactory.SELECTABLE_PAINTING_ENTITY, _level );
 	}
 	
-	private SelectablePaintingEntity( EntityType<SelectablePaintingEntity> entityType, Level _level ) {
+	private SelectablePaintingEntity(
+		@NotNull EntityType<SelectablePaintingEntity> entityType,
+		@NotNull Level _level ) {
 		
 		super( entityType, _level );
 		size_index = 0;
@@ -66,15 +69,15 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	public SelectablePaintingEntity(
-		Level _level,
-		BlockPos _pos,
-		Direction _direction,
-		Holder<PaintingVariant> paintingType,
+		@NotNull Level _level,
+		@NotNull BlockPos _pos,
+		@NotNull Direction _direction,
+		@NotNull Holder<PaintingVariant> paintingType,
 		int _size_index,
 		int _painting_index,
 		boolean _random ) {
 		
-		super( ModItems.SELECTABLE_PAINTING_ENTITY, _level, _pos );
+		super( ModItemsRegisterFactory.SELECTABLE_PAINTING_ENTITY, _level, _pos );
 		setMotiveHolder( paintingType );
 		init( _direction );
 		size_index = _size_index;
@@ -82,7 +85,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		randomMotive = _random;
 	}
 	
-	private void init( Direction _direction ) {
+	private void init( @NotNull Direction _direction ) {
 		
 		setDirection( _direction );
 	}
@@ -94,38 +97,42 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void onSyncedDataUpdated( EntityDataAccessor<?> data ) {
+	public void onSyncedDataUpdated( @NotNull EntityDataAccessor<?> data ) {
 		
 		if( data.equals( DATA_MOTIVE_ID ) ) {
 			recalculateBoundingBox();
 		}
 	}
 	
+	@NotNull
 	private static Holder<PaintingVariant> getDefaultMotive() {
 		
 		return BuiltInRegistries.PAINTING_VARIANT.getHolderOrThrow( DEFAULT_VARIANT );
 	}
 	
-	private void setMotiveHolder( Holder<PaintingVariant> holder ) {
+	private void setMotiveHolder( @NotNull Holder<PaintingVariant> holder ) {
 		
 		entityData.set( DATA_MOTIVE_ID, holder );
 	}
 	
-	public Holder<PaintingVariant> getMotiveHolder() {
+	@NotNull
+	private Holder<PaintingVariant> getMotiveHolder() {
 		
 		return entityData.get( DATA_MOTIVE_ID );
 	}
 	
+	@NotNull
 	@Override
-	public ItemStack getPickedResult( HitResult target ) {
+	public ItemStack getPickedResult( @NotNull HitResult target ) {
 		
 		return getItemStackOfEntity();
 	}
 	
+	@NotNull
 	private ItemStack getItemStackOfEntity() {
 		
 		return SelectablePaintingItemStackHelper.writeDataToStack(
-			new ItemStack( ModItems.SELECTABLE_PAINTING ),
+			new ItemStack( ModItemsRegisterFactory.SELECTABLE_PAINTING ),
 			size_index,
 			motive_index,
 			randomMotive
@@ -133,7 +140,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void addAdditionalSaveData( CompoundTag compound ) {
+	public void addAdditionalSaveData( @NotNull CompoundTag compound ) {
 		
 		compound.putString( "Motive", getMotiveHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString() );
 		compound.putByte( "Facing", (byte)direction.get2DDataValue() );
@@ -144,7 +151,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void readAdditionalSaveData( CompoundTag compound ) {
+	public void readAdditionalSaveData( @NotNull CompoundTag compound ) {
 		
 		setMotiveHolder(
 			BuiltInRegistries.PAINTING_VARIANT.getHolder( ResourceKey.create(
@@ -218,7 +225,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		return Vec3.atLowerCornerOf( pos );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		
@@ -231,15 +238,16 @@ public class SelectablePaintingEntity extends HangingEntity {
 		setDirection( Direction.from3DDataValue( packet.getData() ) );
 	}
 	
+	@NotNull
 	public static EntityType<SelectablePaintingEntity> buildEntityType() {
 		
-		EntityType<SelectablePaintingEntity> entityType = EntityType.Builder
+		return EntityType.Builder
 			.<SelectablePaintingEntity> of( SelectablePaintingEntity::new, MobCategory.MISC )
 			.sized( 0.5F, 0.5F )
 			.build( SelectablePainting.registry_name );
-		return entityType;
 	}
 	
+	@NotNull
 	public PaintingVariant getMotive() {
 		
 		return getMotiveHolder().value();

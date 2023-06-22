@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.List;
@@ -67,7 +68,7 @@ public class PaintingSelectionHelper {
 			.sum();
 	}
 	
-	public static void previousSize( ItemStack stack ) {
+	public static void previousSize( @NotNull ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack ) - 1;
@@ -76,7 +77,7 @@ public class PaintingSelectionHelper {
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, 0 );
 	}
 	
-	public static void nextSize( ItemStack stack ) {
+	public static void nextSize( @NotNull ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack ) + 1;
@@ -85,7 +86,7 @@ public class PaintingSelectionHelper {
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, 0 );
 	}
 	
-	public static void previousPainting( ItemStack stack ) {
+	public static void previousPainting( @NotNull ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
@@ -94,7 +95,7 @@ public class PaintingSelectionHelper {
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, painting_index );
 	}
 	
-	public static void nextPainting( ItemStack stack ) {
+	public static void nextPainting( @NotNull ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
@@ -103,13 +104,13 @@ public class PaintingSelectionHelper {
 		SelectablePaintingItemStackHelper.setPaintingIndex( stack, painting_index );
 	}
 	
-	public static String getSizeName( ItemStack stack ) {
+	public static String getSizeName( @NotNull ItemStack stack ) {
 		
 		init();
 		return painting_sizes[SelectablePaintingItemStackHelper.getSizeIndex( stack )];
 	}
 	
-	public static Component getPaintingName( ItemStack stack ) {
+	public static Component getPaintingName( @NotNull ItemStack stack ) {
 		
 		init();
 		return getPaintingName(
@@ -118,6 +119,7 @@ public class PaintingSelectionHelper {
 		);
 	}
 	
+	@NotNull
 	private static Component getPaintingName( int size_index, int painting_index ) {
 		
 		init();
@@ -131,7 +133,8 @@ public class PaintingSelectionHelper {
 		) );
 	}
 	
-	public static PaintingVariant getCurrentMotive( ItemStack stack ) {
+	@NotNull
+	public static PaintingVariant getCurrentMotive( @NotNull ItemStack stack ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );
@@ -142,7 +145,8 @@ public class PaintingSelectionHelper {
 	}
 	
 	//package-private
-	static Holder<PaintingVariant> getMotive( ItemStack stack, Level level ) {
+	@NotNull
+	static Holder<PaintingVariant> getMotive( @NotNull ItemStack stack, @NotNull Level level ) {
 		
 		init();
 		int size_index = SelectablePaintingItemStackHelper.getSizeIndex( stack );

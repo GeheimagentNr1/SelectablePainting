@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -13,32 +14,37 @@ import java.util.function.Supplier;
 public class UpdateSelectablePaintingItemStackMsg {
 	
 	
+	@NotNull
 	private final ItemStack stack;
 	
-	private UpdateSelectablePaintingItemStackMsg( ItemStack _stack ) {
+	private UpdateSelectablePaintingItemStackMsg( @NotNull ItemStack _stack ) {
 		
 		stack = _stack;
 	}
 	
 	//package-private
-	static UpdateSelectablePaintingItemStackMsg decode( FriendlyByteBuf buffer ) {
+	@NotNull
+	static UpdateSelectablePaintingItemStackMsg decode( @NotNull FriendlyByteBuf buffer ) {
 		
 		return new UpdateSelectablePaintingItemStackMsg( buffer.readItem() );
 	}
 	
 	//package-private
-	void encode( FriendlyByteBuf buffer ) {
+	void encode( @NotNull FriendlyByteBuf buffer ) {
 		
 		buffer.writeItem( stack );
 	}
 	
-	public static void sendToServer( ItemStack stack ) {
+	public static void sendToServer( @NotNull ItemStack stack ) {
 		
-		Network.CHANNEL.send( PacketDistributor.SERVER.noArg(), new UpdateSelectablePaintingItemStackMsg( stack ) );
+		Network.getInstance().getChannel().send(
+			PacketDistributor.SERVER.noArg(),
+			new UpdateSelectablePaintingItemStackMsg( stack )
+		);
 	}
 	
 	//package-private
-	void handle( Supplier<NetworkEvent.Context> context ) {
+	void handle( @NotNull Supplier<NetworkEvent.Context> context ) {
 		
 		Optional.ofNullable( context.get().getSender() ).ifPresent( player -> {
 			if( player.containerMenu instanceof SelectablePaintingMenu selectablePaintingMenu ) {

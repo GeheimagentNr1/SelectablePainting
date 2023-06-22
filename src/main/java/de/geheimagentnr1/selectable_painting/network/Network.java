@@ -1,27 +1,43 @@
 package de.geheimagentnr1.selectable_painting.network;
 
+import de.geheimagentnr1.minecraft_forge_api.network.AbstractNetwork;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 
-public class Network {
+@NoArgsConstructor( access = AccessLevel.PRIVATE )
+public class Network extends AbstractNetwork {
 	
 	
-	private static final String PROTOCOL_VERSION = "1";
+	@NotNull
+	private static final Network INSTANCE = new Network();
 	
-	//package-private
-	static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-		new ResourceLocation( SelectablePaintingMod.MODID, "main" ),
-		() -> PROTOCOL_VERSION,
-		PROTOCOL_VERSION::equals,
-		PROTOCOL_VERSION::equals
-	);
-	
-	public static void registerPackets() {
+	@NotNull
+	public static Network getInstance() {
 		
-		CHANNEL.registerMessage(
+		return INSTANCE;
+	}
+	
+	@NotNull
+	@Override
+	protected String getModId() {
+		
+		return SelectablePaintingMod.MODID;
+	}
+	
+	@NotNull
+	@Override
+	protected String getNetworkName() {
+		
+		return "main";
+	}
+	
+	@Override
+	public void registerPackets() {
+		
+		getChannel().registerMessage(
 			0,
 			UpdateSelectablePaintingItemStackMsg.class,
 			UpdateSelectablePaintingItemStackMsg::encode,

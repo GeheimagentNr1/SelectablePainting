@@ -19,28 +19,27 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-
-import javax.annotation.Nonnull;
 
 
 @OnlyIn( Dist.CLIENT )
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity> {
 	
 	
-	public SelectablePaintingRenderer( EntityRendererProvider.Context context ) {
+	public SelectablePaintingRenderer( @NotNull EntityRendererProvider.Context context ) {
 		
 		super( context );
 	}
 	
 	@Override
 	public void render(
-		SelectablePaintingEntity entity,
+		@NotNull SelectablePaintingEntity entity,
 		float yaw,
 		float partialTicks,
-		PoseStack poseStack,
-		MultiBufferSource buffer,
+		@NotNull PoseStack poseStack,
+		@NotNull MultiBufferSource buffer,
 		int packedLight ) {
 		
 		poseStack.pushPose();
@@ -65,21 +64,21 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	/**
 	 * Returns the location of an entity's texture.
 	 */
-	@Nonnull
+	@NotNull
 	@Override
-	public ResourceLocation getTextureLocation( @Nonnull SelectablePaintingEntity entity ) {
+	public ResourceLocation getTextureLocation( @NotNull SelectablePaintingEntity entity ) {
 		
 		return Minecraft.getInstance().getPaintingTextures().getBackSprite().atlasLocation();
 	}
 	
 	private void renderPainting(
-		PoseStack poseStack,
-		VertexConsumer vertexConsumer,
-		SelectablePaintingEntity entity,
+		@NotNull PoseStack poseStack,
+		@NotNull VertexConsumer vertexConsumer,
+		@NotNull SelectablePaintingEntity entity,
 		int width,
 		int height,
-		TextureAtlasSprite paintingAtlas,
-		TextureAtlasSprite backSpriteAtlas ) {
+		@NotNull TextureAtlasSprite paintingAtlas,
+		@NotNull TextureAtlasSprite backSpriteAtlas ) {
 		
 		PoseStack.Pose pose = poseStack.last();
 		Matrix4f matrix4f = pose.pose();
@@ -164,9 +163,9 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	}
 	
 	private void vertex(
-		Matrix4f matrix1,
-		Matrix3f matrix2,
-		VertexConsumer vertexConsumer,
+		@NotNull Matrix4f matrix1,
+		@NotNull Matrix3f matrix2,
+		@NotNull VertexConsumer vertexConsumer,
 		float x1,
 		float y1,
 		float u,

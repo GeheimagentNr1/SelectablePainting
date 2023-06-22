@@ -21,8 +21,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -30,6 +30,7 @@ import java.util.List;
 public class SelectablePainting extends Item {
 	
 	
+	@NotNull
 	public static final String registry_name = "selectable_painting";
 	
 	public SelectablePainting() {
@@ -40,10 +41,10 @@ public class SelectablePainting extends Item {
 	
 	@Override
 	public void appendHoverText(
-		@Nonnull ItemStack stack,
+		@NotNull ItemStack stack,
 		@Nullable Level level,
-		@Nonnull List<Component> tooltip,
-		@Nonnull TooltipFlag flag ) {
+		@NotNull List<Component> tooltip,
+		@NotNull TooltipFlag flag ) {
 		
 		tooltip.add( Component.translatable( Util.makeDescriptionId(
 			"message",
@@ -61,12 +62,12 @@ public class SelectablePainting extends Item {
 				: PaintingSelectionHelper.getPaintingName( stack ) ) );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
 	public InteractionResultHolder<ItemStack> use(
-		@Nonnull Level level,
-		@Nonnull Player player,
-		@Nonnull InteractionHand hand ) {
+		@NotNull Level level,
+		@NotNull Player player,
+		@NotNull InteractionHand hand ) {
 		
 		ItemStack stack = player.getItemInHand( hand );
 		
@@ -80,9 +81,9 @@ public class SelectablePainting extends Item {
 		return new InteractionResultHolder<>( InteractionResult.SUCCESS, stack );
 	}
 	
-	@Nonnull
+	@NotNull
 	@Override
-	public InteractionResult useOn( UseOnContext context ) {
+	public InteractionResult useOn( @NotNull UseOnContext context ) {
 		
 		Direction direction = context.getClickedFace();
 		BlockPos pos = context.getClickedPos().relative( direction );

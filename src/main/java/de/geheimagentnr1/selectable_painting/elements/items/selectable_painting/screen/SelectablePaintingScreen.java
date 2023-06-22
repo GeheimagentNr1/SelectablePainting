@@ -5,27 +5,27 @@ import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
 public class SelectablePaintingScreen extends AbstractContainerScreen<SelectablePaintingMenu> {
 	
 	
+	@NotNull
 	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
 		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
-		@Nonnull SelectablePaintingMenu screenContainer,
-		@Nonnull Inventory inventory,
-		@Nonnull Component _title ) {
+		@NotNull SelectablePaintingMenu screenContainer,
+		@NotNull Inventory inventory,
+		@NotNull Component _title ) {
 		
 		super( screenContainer, inventory, _title );
 	}
@@ -51,20 +51,20 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	}
 	
 	@Override
-	public void render( @Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
+	public void render( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
 		
 		renderBackground( guiGraphics );
 		super.render( guiGraphics, mouseX, mouseY, partialTick );
 	}
 	
 	@Override
-	protected void renderBg( @Nonnull GuiGraphics guiGraphics, float partialTick, int x, int y ) {
+	protected void renderBg( @NotNull GuiGraphics guiGraphics, float partialTick, int x, int y ) {
 		
 		guiGraphics.blit( SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight );
 	}
 	
 	@Override
-	protected void renderLabels( @Nonnull GuiGraphics guiGraphics, int x, int y ) {
+	protected void renderLabels( @NotNull GuiGraphics guiGraphics, int x, int y ) {
 		
 		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
 		guiGraphics.drawString( font, title.getString(), titleStartX, 5, 4210752, false );
