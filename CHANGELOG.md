@@ -1,1 +1,1 @@
-- Fix self teleporting Selectable Paintings
+""Ported to 1.20"" 
