@@ -212,8 +212,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		double z,
 		float yaw,
 		float pitch,
-		int posRotationIncrements,
-		boolean teleport ) {
+		int posRotationIncrements ) {
 		
 		setPos( x, y, z );
 	}
@@ -251,20 +250,5 @@ public class SelectablePaintingEntity extends HangingEntity {
 	public PaintingVariant getMotive() {
 		
 		return getMotiveHolder().value();
-	}
-	
-	public int getSizeIndex() {
-		
-		return size_index;
-	}
-	
-	public int getPaintingIndex() {
-		
-		return motive_index;
-	}
-	
-	public boolean isRandomMotive() {
-		
-		return randomMotive;
 	}
 }

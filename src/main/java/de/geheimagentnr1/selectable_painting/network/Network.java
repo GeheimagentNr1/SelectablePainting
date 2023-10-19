@@ -37,12 +37,10 @@ public class Network extends AbstractNetwork {
 	@Override
 	public void registerPackets() {
 		
-		getChannel().registerMessage(
-			0,
-			UpdateSelectablePaintingItemStackMsg.class,
-			UpdateSelectablePaintingItemStackMsg::encode,
-			UpdateSelectablePaintingItemStackMsg::decode,
-			UpdateSelectablePaintingItemStackMsg::handle
-		);
+		getChannel().messageBuilder( UpdateSelectablePaintingItemStackMsg.class )
+			.encoder( UpdateSelectablePaintingItemStackMsg::encode )
+			.decoder( UpdateSelectablePaintingItemStackMsg::decode )
+			.consumerNetworkThread( UpdateSelectablePaintingItemStackMsg::handle )
+			.add();
 	}
 }

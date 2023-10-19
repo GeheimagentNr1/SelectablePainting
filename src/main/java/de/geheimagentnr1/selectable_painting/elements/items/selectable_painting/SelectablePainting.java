@@ -20,7 +20,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -72,11 +71,12 @@ public class SelectablePainting extends Item {
 		ItemStack stack = player.getItemInHand( hand );
 		
 		if( !level.isClientSide() ) {
-			NetworkHooks.openScreen(
-				(ServerPlayer)player,
-				new SelectablePaintingNamedContainerProvider( stack ),
-				packetBuffer -> packetBuffer.writeItem( stack )
-			);
+			if( player instanceof ServerPlayer serverPlayer ) {
+				serverPlayer.openMenu(
+					new SelectablePaintingNamedContainerProvider( stack ),
+					packetBuffer -> packetBuffer.writeItem( stack )
+				);
+			}
 		}
 		return new InteractionResultHolder<>( InteractionResult.SUCCESS, stack );
 	}

@@ -83,8 +83,8 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		PoseStack.Pose pose = poseStack.last();
 		Matrix4f matrix4f = pose.pose();
 		Matrix3f matrix3f = pose.normal();
-		float f = ( -width ) / 2.0F;
-		float f1 = ( -height ) / 2.0F;
+		float f = -width / 2.0F;
+		float f1 = -height / 2.0F;
 		float f3 = backSpriteAtlas.getU0();
 		float f4 = backSpriteAtlas.getU1();
 		float f5 = backSpriteAtlas.getV0();
@@ -92,15 +92,15 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		float f7 = backSpriteAtlas.getU0();
 		float f8 = backSpriteAtlas.getU1();
 		float f9 = backSpriteAtlas.getV0();
-		float f10 = backSpriteAtlas.getV( 1.0D );
+		float f10 = backSpriteAtlas.getV( 0.0625F );
 		float f11 = backSpriteAtlas.getU0();
-		float f12 = backSpriteAtlas.getU( 1.0D );
+		float f12 = backSpriteAtlas.getU( 0.0625F );
 		float f13 = backSpriteAtlas.getV0();
 		float f14 = backSpriteAtlas.getV1();
 		int i = width / 16;
 		int j = height / 16;
-		double d0 = 16.0D / i;
-		double d1 = 16.0D / j;
+		double d0 = 1.0D / i;
+		double d1 = 1.0D / j;
 		
 		for( int k = 0; k < i; ++k ) {
 			for( int l = 0; l < j; ++l ) {
@@ -129,34 +129,34 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 				}
 				
 				int l1 = LevelRenderer.getLightColor( entity.level(), new BlockPos( i1, j1, k1 ) );
-				float f19 = paintingAtlas.getU( d0 * ( i - k ) );
-				float f20 = paintingAtlas.getU( d0 * ( i - ( k + 1 ) ) );
-				float f21 = paintingAtlas.getV( d1 * ( j - l ) );
-				float f22 = paintingAtlas.getV( d1 * ( j - ( l + 1 ) ) );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f20, f21, -0.5F, 0, 0, -1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f19, f21, -0.5F, 0, 0, -1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f19, f22, -0.5F, 0, 0, -1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f20, f22, -0.5F, 0, 0, -1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f3, f5, 0.5F, 0, 0, 1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f4, f5, 0.5F, 0, 0, 1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f4, f6, 0.5F, 0, 0, 1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f3, f6, 0.5F, 0, 0, 1, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f7, f9, -0.5F, 0, 1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f8, f9, -0.5F, 0, 1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f8, f10, 0.5F, 0, 1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f7, f10, 0.5F, 0, 1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f7, f9, 0.5F, 0, -1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f8, f9, 0.5F, 0, -1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f8, f10, -0.5F, 0, -1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f7, f10, -0.5F, 0, -1, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f12, f13, 0.5F, -1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f12, f14, 0.5F, -1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f11, f14, -0.5F, -1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f11, f13, -0.5F, -1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f12, f13, -0.5F, 1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f12, f14, -0.5F, 1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f11, f14, 0.5F, 1, 0, 0, l1 );
-				vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f11, f13, 0.5F, 1, 0, 0, l1 );
+				float f19 = paintingAtlas.getU( (float)( d0 * ( i - k ) ) );
+				float f20 = paintingAtlas.getU( (float)( d0 * ( i - ( k + 1 ) ) ) );
+				float f21 = paintingAtlas.getV( (float)( d1 * ( j - l ) ) );
+				float f22 = paintingAtlas.getV( (float)( d1 * ( j - ( l + 1 ) ) ) );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f20, f21, -0.5F, 0, 0, -1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f19, f21, -0.5F, 0, 0, -1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f19, f22, -0.5F, 0, 0, -1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f20, f22, -0.5F, 0, 0, -1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f4, f5, 0.5F, 0, 0, 1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f3, f5, 0.5F, 0, 0, 1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f3, f6, 0.5F, 0, 0, 1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f4, f6, 0.5F, 0, 0, 1, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f7, f9, -0.5F, 0, 1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f8, f9, -0.5F, 0, 1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f8, f10, 0.5F, 0, 1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f7, f10, 0.5F, 0, 1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f7, f9, 0.5F, 0, -1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f8, f9, 0.5F, 0, -1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f8, f10, -0.5F, 0, -1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f7, f10, -0.5F, 0, -1, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f12, f13, 0.5F, -1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f12, f14, 0.5F, -1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f11, f14, -0.5F, -1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f11, f13, -0.5F, -1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f12, f13, -0.5F, 1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f12, f14, -0.5F, 1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f11, f14, 0.5F, 1, 0, 0, l1 );
+				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f11, f13, 0.5F, 1, 0, 0, l1 );
 			}
 		}
 		
