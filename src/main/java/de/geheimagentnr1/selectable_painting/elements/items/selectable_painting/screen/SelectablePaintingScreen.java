@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -38,16 +39,19 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 		addRenderableWidget( new RightButton( leftPos + 160, topPos + 15, button -> menu.nextSize() ) );
 		addRenderableWidget( new LeftButton( leftPos + 6, topPos + 33, button -> menu.previousPainting() ) );
 		addRenderableWidget( new RightButton( leftPos + 160, topPos + 33, button -> menu.nextPainting() ) );
-		addRenderableWidget( new RandomCheckBoxButton(
-			leftPos + 6,
-			topPos + 51,
-			Component.translatable( Util.makeDescriptionId(
-				"message",
-				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
-			) ).getString(),
-			menu.getRandom(),
-			checkboxButton -> menu.toggleRandom()
-		) );
+		addRenderableWidget(
+			Checkbox.builder(
+					Component.translatable( Util.makeDescriptionId(
+						"message",
+						new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
+					) ),
+					font
+				)
+				.pos( leftPos + 6, topPos + 51 )
+				.selected( menu.getRandom() )
+				.onValueChange( ( checkbox, value ) -> menu.toggleRandom() )
+				.build()
+		);
 	}
 	
 	@Override
