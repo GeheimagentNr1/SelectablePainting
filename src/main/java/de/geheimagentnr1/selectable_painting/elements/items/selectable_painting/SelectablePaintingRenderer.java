@@ -20,168 +20,160 @@ import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 
 @OnlyIn( Dist.CLIENT )
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity> {
 	
 	
-	public SelectablePaintingRenderer( @NotNull EntityRendererProvider.Context context ) {
+	public SelectablePaintingRenderer( @NotNull EntityRendererProvider.Context pContext ) {
 		
-		super( context );
+		super( pContext );
 	}
 	
-	@Override
 	public void render(
-		@NotNull SelectablePaintingEntity entity,
-		float yaw,
-		float partialTicks,
-		@NotNull PoseStack poseStack,
-		@NotNull MultiBufferSource buffer,
-		int packedLight ) {
+		@NotNull SelectablePaintingEntity pEntity,
+		float pEntityYaw,
+		float pPartialTick,
+		@NotNull PoseStack pPoseStack,
+		@NotNull MultiBufferSource pBuffer,
+		int pPackedLight ) {
 		
-		poseStack.pushPose();
-		poseStack.mulPose( Axis.YP.rotationDegrees( 180.0F - yaw ) );
-		PaintingVariant motive = entity.getMotive();
-		poseStack.scale( 0.0625F, 0.0625F, 0.0625F );
-		VertexConsumer vertexconsumer = buffer.getBuffer( RenderType.entitySolid( getTextureLocation( entity ) ) );
+		pPoseStack.pushPose();
+		pPoseStack.mulPose( Axis.YP.rotationDegrees( 180.0F - pEntityYaw ) );
+		PaintingVariant paintingVariant = pEntity.getVariant();
+		pPoseStack.scale( 0.0625F, 0.0625F, 0.0625F );
+		VertexConsumer vertexconsumer =
+			pBuffer.getBuffer( RenderType.entitySolid( this.getTextureLocation( pEntity ) ) );
 		PaintingTextureManager paintingtexturemanager = Minecraft.getInstance().getPaintingTextures();
-		renderPainting(
-			poseStack,
+		this.renderPainting(
+			pPoseStack,
 			vertexconsumer,
-			entity,
-			motive.getWidth(),
-			motive.getHeight(),
-			paintingtexturemanager.get( motive ),
+			pEntity,
+			paintingVariant.getWidth(),
+			paintingVariant.getHeight(),
+			paintingtexturemanager.get( paintingVariant ),
 			paintingtexturemanager.getBackSprite()
 		);
-		poseStack.popPose();
-		super.render( entity, yaw, partialTicks, poseStack, buffer, packedLight );
+		pPoseStack.popPose();
+		super.render( pEntity, pEntityYaw, pPartialTick, pPoseStack, pBuffer, pPackedLight );
 	}
 	
-	/**
-	 * Returns the location of an entity's texture.
-	 */
 	@NotNull
-	@Override
-	public ResourceLocation getTextureLocation( @NotNull SelectablePaintingEntity entity ) {
+	public ResourceLocation getTextureLocation( @NotNull SelectablePaintingEntity pEntity ) {
 		
 		return Minecraft.getInstance().getPaintingTextures().getBackSprite().atlasLocation();
 	}
 	
 	private void renderPainting(
-		@NotNull PoseStack poseStack,
-		@NotNull VertexConsumer vertexConsumer,
-		@NotNull SelectablePaintingEntity entity,
-		int width,
-		int height,
-		@NotNull TextureAtlasSprite paintingAtlas,
-		@NotNull TextureAtlasSprite backSpriteAtlas ) {
+		@NotNull PoseStack pPoseStack,
+		@NotNull VertexConsumer pConsumer,
+		@NotNull SelectablePaintingEntity pPainting,
+		int pWidth,
+		int pHeight,
+		@NotNull TextureAtlasSprite pPaintingSprite,
+		@NotNull TextureAtlasSprite pBackSprite
+	) {
 		
-		PoseStack.Pose pose = poseStack.last();
-		Matrix4f matrix4f = pose.pose();
-		Matrix3f matrix3f = pose.normal();
-		float f = -width / 2.0F;
-		float f1 = -height / 2.0F;
-		float f3 = backSpriteAtlas.getU0();
-		float f4 = backSpriteAtlas.getU1();
-		float f5 = backSpriteAtlas.getV0();
-		float f6 = backSpriteAtlas.getV1();
-		float f7 = backSpriteAtlas.getU0();
-		float f8 = backSpriteAtlas.getU1();
-		float f9 = backSpriteAtlas.getV0();
-		float f10 = backSpriteAtlas.getV( 0.0625F );
-		float f11 = backSpriteAtlas.getU0();
-		float f12 = backSpriteAtlas.getU( 0.0625F );
-		float f13 = backSpriteAtlas.getV0();
-		float f14 = backSpriteAtlas.getV1();
-		int i = width / 16;
-		int j = height / 16;
-		double d0 = 1.0D / i;
-		double d1 = 1.0D / j;
+		PoseStack.Pose pose = pPoseStack.last();
+		float f = -pWidth / 2.0F;
+		float f1 = -pHeight / 2.0F;
+		float f3 = pBackSprite.getU0();
+		float f4 = pBackSprite.getU1();
+		float f5 = pBackSprite.getV0();
+		float f6 = pBackSprite.getV1();
+		float f7 = pBackSprite.getU0();
+		float f8 = pBackSprite.getU1();
+		float f9 = pBackSprite.getV0();
+		float f10 = pBackSprite.getV( 0.0625F );
+		float f11 = pBackSprite.getU0();
+		float f12 = pBackSprite.getU( 0.0625F );
+		float f13 = pBackSprite.getV0();
+		float f14 = pBackSprite.getV1();
+		int i = pWidth / 16;
+		int j = pHeight / 16;
+		double d0 = 1.0 / i;
+		double d1 = 1.0 / j;
 		
-		for( int k = 0; k < i; ++k ) {
-			for( int l = 0; l < j; ++l ) {
+		for( int k = 0; k < i; k++ ) {
+			for( int l = 0; l < j; l++ ) {
 				float f15 = f + ( ( k + 1 ) << 4 );
 				float f16 = f + ( k << 4 );
 				float f17 = f1 + ( ( l + 1 ) << 4 );
 				float f18 = f1 + ( l << 4 );
-				int i1 = entity.getBlockX();
-				int j1 = Mth.floor( entity.getY() + ( ( f17 + f18 ) / 2.0F / 16.0F ) );
-				int k1 = entity.getBlockZ();
-				Direction direction = entity.getDirection();
+				int i1 = pPainting.getBlockX();
+				int j1 = Mth.floor( pPainting.getY() + ( ( f17 + f18 ) / 2.0F / 16.0F ) );
+				int k1 = pPainting.getBlockZ();
+				Direction direction = pPainting.getDirection();
 				if( direction == Direction.NORTH ) {
-					i1 = Mth.floor( entity.getX() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					i1 = Mth.floor( pPainting.getX() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
 				}
 				
 				if( direction == Direction.WEST ) {
-					k1 = Mth.floor( entity.getZ() - ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					k1 = Mth.floor( pPainting.getZ() - ( ( f15 + f16 ) / 2.0F / 16.0F ) );
 				}
 				
 				if( direction == Direction.SOUTH ) {
-					i1 = Mth.floor( entity.getX() - ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					i1 = Mth.floor( pPainting.getX() - ( ( f15 + f16 ) / 2.0F / 16.0F ) );
 				}
 				
 				if( direction == Direction.EAST ) {
-					k1 = Mth.floor( entity.getZ() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					k1 = Mth.floor( pPainting.getZ() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
 				}
 				
-				int l1 = LevelRenderer.getLightColor( entity.level(), new BlockPos( i1, j1, k1 ) );
-				float f19 = paintingAtlas.getU( (float)( d0 * ( i - k ) ) );
-				float f20 = paintingAtlas.getU( (float)( d0 * ( i - ( k + 1 ) ) ) );
-				float f21 = paintingAtlas.getV( (float)( d1 * ( j - l ) ) );
-				float f22 = paintingAtlas.getV( (float)( d1 * ( j - ( l + 1 ) ) ) );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f20, f21, -0.5F, 0, 0, -1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f19, f21, -0.5F, 0, 0, -1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f19, f22, -0.5F, 0, 0, -1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f20, f22, -0.5F, 0, 0, -1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f4, f5, 0.5F, 0, 0, 1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f3, f5, 0.5F, 0, 0, 1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f3, f6, 0.5F, 0, 0, 1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f4, f6, 0.5F, 0, 0, 1, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f7, f9, -0.5F, 0, 1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f8, f9, -0.5F, 0, 1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f8, f10, 0.5F, 0, 1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f7, f10, 0.5F, 0, 1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f7, f9, 0.5F, 0, -1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f8, f9, 0.5F, 0, -1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f8, f10, -0.5F, 0, -1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f7, f10, -0.5F, 0, -1, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f12, f13, 0.5F, -1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f12, f14, 0.5F, -1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f18, f11, f14, -0.5F, -1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f15, f17, f11, f13, -0.5F, -1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f12, f13, -0.5F, 1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f12, f14, -0.5F, 1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f18, f11, f14, 0.5F, 1, 0, 0, l1 );
-				this.vertex( matrix4f, matrix3f, vertexConsumer, f16, f17, f11, f13, 0.5F, 1, 0, 0, l1 );
+				int l1 = LevelRenderer.getLightColor( pPainting.level(), new BlockPos( i1, j1, k1 ) );
+				float f19 = pPaintingSprite.getU( (float)( d0 * ( i - k ) ) );
+				float f20 = pPaintingSprite.getU( (float)( d0 * ( i - ( k + 1 ) ) ) );
+				float f21 = pPaintingSprite.getV( (float)( d1 * ( j - l ) ) );
+				float f22 = pPaintingSprite.getV( (float)( d1 * ( j - ( l + 1 ) ) ) );
+				this.vertex( pose, pConsumer, f15, f18, f20, f21, -0.5F, 0, 0, -1, l1 );
+				this.vertex( pose, pConsumer, f16, f18, f19, f21, -0.5F, 0, 0, -1, l1 );
+				this.vertex( pose, pConsumer, f16, f17, f19, f22, -0.5F, 0, 0, -1, l1 );
+				this.vertex( pose, pConsumer, f15, f17, f20, f22, -0.5F, 0, 0, -1, l1 );
+				this.vertex( pose, pConsumer, f15, f17, f4, f5, 0.5F, 0, 0, 1, l1 );
+				this.vertex( pose, pConsumer, f16, f17, f3, f5, 0.5F, 0, 0, 1, l1 );
+				this.vertex( pose, pConsumer, f16, f18, f3, f6, 0.5F, 0, 0, 1, l1 );
+				this.vertex( pose, pConsumer, f15, f18, f4, f6, 0.5F, 0, 0, 1, l1 );
+				this.vertex( pose, pConsumer, f15, f17, f7, f9, -0.5F, 0, 1, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f17, f8, f9, -0.5F, 0, 1, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f17, f8, f10, 0.5F, 0, 1, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f17, f7, f10, 0.5F, 0, 1, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f18, f7, f9, 0.5F, 0, -1, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f18, f8, f9, 0.5F, 0, -1, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f18, f8, f10, -0.5F, 0, -1, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f18, f7, f10, -0.5F, 0, -1, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f17, f12, f13, 0.5F, -1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f18, f12, f14, 0.5F, -1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f18, f11, f14, -0.5F, -1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f15, f17, f11, f13, -0.5F, -1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f17, f12, f13, -0.5F, 1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f18, f12, f14, -0.5F, 1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f18, f11, f14, 0.5F, 1, 0, 0, l1 );
+				this.vertex( pose, pConsumer, f16, f17, f11, f13, 0.5F, 1, 0, 0, l1 );
 			}
 		}
-		
 	}
 	
 	private void vertex(
-		@NotNull Matrix4f matrix1,
-		@NotNull Matrix3f matrix2,
-		@NotNull VertexConsumer vertexConsumer,
-		float x1,
-		float y1,
-		float u,
-		float v,
-		float z1,
-		int x2,
-		int y2,
-		int z2,
-		int lightmapUV ) {
+		@NotNull PoseStack.Pose pPose,
+		@NotNull VertexConsumer pConsumer,
+		float pX,
+		float pY,
+		float pU,
+		float pV,
+		float pZ,
+		int pNormalX,
+		int pNormalY,
+		int pNormalZ,
+		int pPackedLight
+	) {
 		
-		vertexConsumer.vertex( matrix1, x1, y1, z1 )
+		pConsumer.vertex( pPose, pX, pY, pZ )
 			.color( 255, 255, 255, 255 )
-			.uv( u, v )
+			.uv( pU, pV )
 			.overlayCoords( OverlayTexture.NO_OVERLAY )
-			.uv2( lightmapUV )
-			.normal( matrix2, x2, y2, z2 )
+			.uv2( pPackedLight )
+			.normal( pPose, pNormalX, pNormalY, pNormalZ )
 			.endVertex();
 	}
 }

@@ -1,5 +1,6 @@
 package de.geheimagentnr1.selectable_painting.elements.items;
 
+import com.mojang.serialization.Codec;
 import de.geheimagentnr1.minecraft_forge_api.elements.items.ItemsRegisterFactory;
 import de.geheimagentnr1.minecraft_forge_api.registry.RegistryEntry;
 import de.geheimagentnr1.minecraft_forge_api.registry.RegistryHelper;
@@ -12,6 +13,7 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
@@ -50,6 +52,22 @@ public class ModItemsRegisterFactory extends ItemsRegisterFactory {
 		value = SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
 	public static EntityType<SelectablePaintingEntity> SELECTABLE_PAINTING_ENTITY;
 	
+	
+	@NotNull
+	public static final DataComponentType<Integer> SIZE_INDEX = DataComponentType.<Integer> builder()
+		.persistent( Codec.INT )
+		.build();
+	
+	@NotNull
+	public static final DataComponentType<Integer> PAINTING_INDEX = DataComponentType.<Integer> builder()
+		.persistent( Codec.INT )
+		.build();
+	
+	@NotNull
+	public static final DataComponentType<Boolean> RANDOM = DataComponentType.<Boolean> builder()
+		.persistent( Codec.BOOL )
+		.build();
+	
 	@SubscribeEvent
 	public void handleRegistryEvent( @NotNull RegisterEvent event ) {
 		
@@ -77,6 +95,25 @@ public class ModItemsRegisterFactory extends ItemsRegisterFactory {
 				IForgeMenuType.create(
 					( windowId, inv, data ) -> new SelectablePaintingMenu( windowId, data )
 				)
+			)
+		);
+	}
+	
+	@Override
+	protected @NotNull List<RegistryEntry<DataComponentType<?>>> dataComponentTypes() {
+		
+		return List.of(
+			RegistryEntry.create(
+				"size",
+				SIZE_INDEX
+			),
+			RegistryEntry.create(
+				"painting",
+				PAINTING_INDEX
+			),
+			RegistryEntry.create(
+				"random",
+				RANDOM
 			)
 		);
 	}

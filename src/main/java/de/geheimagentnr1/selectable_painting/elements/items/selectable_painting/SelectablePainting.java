@@ -5,7 +5,7 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,12 +17,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 
@@ -40,41 +41,43 @@ public class SelectablePainting extends Item {
 	
 	@Override
 	public void appendHoverText(
-		@NotNull ItemStack stack,
-		@Nullable Level level,
-		@NotNull List<Component> tooltip,
-		@NotNull TooltipFlag flag ) {
+		@NotNull ItemStack pStack,
+		@Nullable TooltipContext pContext,
+		@NotNull List<Component> pTooltipComponents,
+		@NotNull TooltipFlag pTooltipFlag ) {
 		
-		tooltip.add( Component.translatable( Util.makeDescriptionId(
+		pTooltipComponents.add( Component.translatable( Util.makeDescriptionId(
 			"message",
 			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
-		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( stack ) ) );
-		tooltip.add( Component.translatable( Util.makeDescriptionId(
+		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( pStack ) ) );
+		pTooltipComponents.add( Component.translatable( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
 			) ).append( ": " )
-			.append( SelectablePaintingItemStackHelper.getRandom( stack )
+			.append( SelectablePaintingItemStackHelper.getRandom( pStack )
 				? Component.translatable( Util.makeDescriptionId(
 				"message",
 				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
 			) )
-				: PaintingSelectionHelper.getPaintingName( stack ) ) );
+				: PaintingSelectionHelper.getPaintingName( pStack ) ) );
 	}
 	
 	@NotNull
 	@Override
 	public InteractionResultHolder<ItemStack> use(
-		@NotNull Level level,
-		@NotNull Player player,
-		@NotNull InteractionHand hand ) {
+		@NotNull Level pLevel,
+		@NotNull Player pPlayer,
+		@NotNull InteractionHand pUsedHand ) {
 		
-		ItemStack stack = player.getItemInHand( hand );
+		ItemStack stack = pPlayer.getItemInHand( pUsedHand );
 		
-		if( !level.isClientSide() ) {
-			if( player instanceof ServerPlayer serverPlayer ) {
+		if( !pLevel.isClientSide() ) {
+			if( pPlayer instanceof ServerPlayer serverPlayer ) {
 				serverPlayer.openMenu(
 					new SelectablePaintingNamedContainerProvider( stack ),
-					packetBuffer -> packetBuffer.writeItem( stack )
+					packetBuffer -> {
+						packetBuffer.writeJsonWithCodec( ItemStack.CODEC, stack );
+					}
 				);
 			}
 		}
@@ -83,13 +86,13 @@ public class SelectablePainting extends Item {
 	
 	@NotNull
 	@Override
-	public InteractionResult useOn( @NotNull UseOnContext context ) {
+	public InteractionResult useOn( @NotNull UseOnContext pContext ) {
 		
-		Direction direction = context.getClickedFace();
-		BlockPos pos = context.getClickedPos().relative( direction );
-		Player player = context.getPlayer();
-		ItemStack stack = context.getItemInHand();
-		Level level = context.getLevel();
+		Direction direction = pContext.getClickedFace();
+		BlockPos pos = pContext.getClickedPos().relative( direction );
+		Player player = pContext.getPlayer();
+		ItemStack stack = pContext.getItemInHand();
+		Level level = pContext.getLevel();
 		
 		if( direction.getAxis().isVertical() || player != null && !player.mayUseItemAt( pos, direction, stack ) ) {
 			return InteractionResult.FAIL;
@@ -104,10 +107,8 @@ public class SelectablePainting extends Item {
 				SelectablePaintingItemStackHelper.getRandom( stack )
 			);
 			
-			CompoundTag tag = stack.getTag();
-			if( tag != null ) {
-				EntityType.updateCustomEntityTag( level, player, selectablePaintingEntity, tag );
-			}
+			CustomData customdata = stack.getOrDefault( DataComponents.ENTITY_DATA, CustomData.EMPTY );
+			EntityType.updateCustomEntityTag( level, player, selectablePaintingEntity, customdata );
 			
 			if( selectablePaintingEntity.survives() ) {
 				if( !level.isClientSide() ) {

@@ -20,7 +20,7 @@ public class SelectablePaintingMenu extends AbstractContainerMenu {
 	
 	public SelectablePaintingMenu( int windowId, @NotNull FriendlyByteBuf buffer ) {
 		
-		this( windowId, buffer.readItem() );
+		this( windowId, buffer.readJsonWithCodec( ItemStack.CODEC ) );
 	}
 	
 	//package-private

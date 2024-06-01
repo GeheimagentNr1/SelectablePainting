@@ -25,13 +25,15 @@ public class UpdateSelectablePaintingItemStackMsg {
 	@NotNull
 	static UpdateSelectablePaintingItemStackMsg decode( @NotNull FriendlyByteBuf buffer ) {
 		
-		return new UpdateSelectablePaintingItemStackMsg( buffer.readItem() );
+		return new UpdateSelectablePaintingItemStackMsg(
+			buffer.readJsonWithCodec( ItemStack.CODEC )
+		);
 	}
 	
 	//package-private
 	void encode( @NotNull FriendlyByteBuf buffer ) {
 		
-		buffer.writeItem( stack );
+		buffer.writeJsonWithCodec( ItemStack.CODEC, stack );
 	}
 	
 	public static void sendToServer( @NotNull ItemStack stack ) {
