@@ -21,7 +21,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	
 	@NotNull
 	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
-		new ResourceLocation( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
+		ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
 		@NotNull SelectablePaintingMenu screenContainer,
@@ -43,7 +43,10 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			Checkbox.builder(
 					Component.translatable( Util.makeDescriptionId(
 						"message",
-						new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
+						ResourceLocation.fromNamespaceAndPath(
+							SelectablePaintingMod.MODID,
+							"selectable_painting_random_painting"
+						)
 					) ),
 					font
 				)
@@ -94,12 +97,14 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			PaintingVariant paintingType = menu.getCurrentMotive();
 			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
 			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlasLocation() );
+			int paintingWidth = paintingType.width() << 4;
+			int paintingHeight = paintingType.height() << 4;
 			guiGraphics.blit(
-				width / 2 - leftPos - paintingType.getWidth() / 2,
+				width / 2 - leftPos - paintingWidth / 2,
 				70,
 				0,
-				paintingType.getWidth(),
-				paintingType.getHeight(),
+				paintingWidth,
+				paintingHeight,
 				paintingTextureAtlasSprite
 			);
 		}

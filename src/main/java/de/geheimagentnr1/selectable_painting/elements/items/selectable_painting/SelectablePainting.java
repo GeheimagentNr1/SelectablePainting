@@ -3,8 +3,10 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingNamedContainerProvider;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class SelectablePainting extends Item {
@@ -36,7 +39,11 @@ public class SelectablePainting extends Item {
 	public SelectablePainting() {
 		
 		super( new Item.Properties() );
-		PaintingSelectionHelper.init();
+	}
+	
+	private RegistryAccess registryAccess() {
+		
+		return Objects.requireNonNull( Minecraft.getInstance().getConnection() ).registryAccess();
 	}
 	
 	@Override
@@ -48,18 +55,21 @@ public class SelectablePainting extends Item {
 		
 		pTooltipComponents.add( Component.translatable( Util.makeDescriptionId(
 			"message",
-			new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_size" )
-		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( pStack ) ) );
+			ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "selectable_painting_size" )
+		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( registryAccess(), pStack ) ) );
 		pTooltipComponents.add( Component.translatable( Util.makeDescriptionId(
 				"message",
-				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_painting" )
+				ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "selectable_painting_painting" )
 			) ).append( ": " )
 			.append( SelectablePaintingItemStackHelper.getRandom( pStack )
 				? Component.translatable( Util.makeDescriptionId(
 				"message",
-				new ResourceLocation( SelectablePaintingMod.MODID, "selectable_painting_random_painting" )
+				ResourceLocation.fromNamespaceAndPath(
+					SelectablePaintingMod.MODID,
+					"selectable_painting_random_painting"
+				)
 			) )
-				: PaintingSelectionHelper.getPaintingName( pStack ) ) );
+				: PaintingSelectionHelper.getPaintingName( registryAccess(), pStack ) ) );
 	}
 	
 	@NotNull
@@ -124,7 +134,7 @@ public class SelectablePainting extends Item {
 					player.sendSystemMessage(
 						Component.translatable( Util.makeDescriptionId(
 							"message",
-							new ResourceLocation(
+							ResourceLocation.fromNamespaceAndPath(
 								SelectablePaintingMod.MODID,
 								"selectable_painting_painting_to_big_error"
 							)

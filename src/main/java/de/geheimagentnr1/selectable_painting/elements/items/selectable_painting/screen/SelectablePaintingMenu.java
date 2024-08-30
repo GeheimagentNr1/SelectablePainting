@@ -4,12 +4,16 @@ import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFact
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.PaintingSelectionHelper;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingItemStackHelper;
 import de.geheimagentnr1.selectable_painting.network.UpdateSelectablePaintingItemStackMsg;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 
 public class SelectablePaintingMenu extends AbstractContainerMenu {
@@ -53,45 +57,50 @@ public class SelectablePaintingMenu extends AbstractContainerMenu {
 		);
 	}
 	
+	private RegistryAccess registryAccess() {
+		
+		return Objects.requireNonNull( Minecraft.getInstance().getConnection() ).registryAccess();
+	}
+	
 	@NotNull
 	public String getSizeText() {
 		
-		return PaintingSelectionHelper.getSizeName( stack );
+		return PaintingSelectionHelper.getSizeName( registryAccess(), stack );
 	}
 	
 	@NotNull
 	public String getPaintingText() {
 		
-		return PaintingSelectionHelper.getPaintingName( stack ).getString();
+		return PaintingSelectionHelper.getPaintingName( registryAccess(), stack ).getString();
 	}
 	
 	@NotNull
 	public PaintingVariant getCurrentMotive() {
 		
-		return PaintingSelectionHelper.getCurrentMotive( stack );
+		return PaintingSelectionHelper.getCurrentMotive( registryAccess(), stack );
 	}
 	
 	public void previousSize() {
 		
-		PaintingSelectionHelper.previousSize( stack );
+		PaintingSelectionHelper.previousSize( registryAccess(), stack );
 		UpdateSelectablePaintingItemStackMsg.sendToServer( stack );
 	}
 	
 	public void nextSize() {
 		
-		PaintingSelectionHelper.nextSize( stack );
+		PaintingSelectionHelper.nextSize( registryAccess(), stack );
 		UpdateSelectablePaintingItemStackMsg.sendToServer( stack );
 	}
 	
 	public void previousPainting() {
 		
-		PaintingSelectionHelper.previousPainting( stack );
+		PaintingSelectionHelper.previousPainting( registryAccess(), stack );
 		UpdateSelectablePaintingItemStackMsg.sendToServer( stack );
 	}
 	
 	public void nextPainting() {
 		
-		PaintingSelectionHelper.nextPainting( stack );
+		PaintingSelectionHelper.nextPainting( registryAccess(), stack );
 		UpdateSelectablePaintingItemStackMsg.sendToServer( stack );
 	}
 	

@@ -4,7 +4,7 @@ import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFact
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
@@ -14,6 +14,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -45,11 +47,26 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@NotNull
 	private static final ResourceKey<PaintingVariant> DEFAULT_VARIANT = PaintingVariants.KEBAB;
 	
-	private int size_index;
 	
-	private int motive_index;
+	@NotNull
+	private static final EntityDataAccessor<Integer> DATA_SIZE_INDEX = SynchedEntityData.defineId(
+		SelectablePaintingEntity.class,
+		EntityDataSerializers.INT
+	);
 	
-	private boolean randomVariant;
+	
+	@NotNull
+	private static final EntityDataAccessor<Integer> DATA_MOTIVE_INDEX = SynchedEntityData.defineId(
+		SelectablePaintingEntity.class,
+		EntityDataSerializers.INT
+	);
+	
+	
+	@NotNull
+	private static final EntityDataAccessor<Boolean> DATA_RANDOM_VARIANT = SynchedEntityData.defineId(
+		SelectablePaintingEntity.class,
+		EntityDataSerializers.BOOLEAN
+	);
 	
 	@SuppressWarnings( "unused" )
 	public SelectablePaintingEntity( @NotNull Level pLevel ) {
@@ -62,8 +79,6 @@ public class SelectablePaintingEntity extends HangingEntity {
 		@NotNull Level pLevel ) {
 		
 		super( entityType, pLevel );
-		size_index = 0;
-		motive_index = 0;
 	}
 	
 	public SelectablePaintingEntity(
@@ -76,11 +91,11 @@ public class SelectablePaintingEntity extends HangingEntity {
 		boolean _random ) {
 		
 		super( ModItemsRegisterFactory.SELECTABLE_PAINTING_ENTITY, pLevel, pPos );
-		setMotiveHolder( paintingType );
 		init( _direction );
-		size_index = _size_index;
-		motive_index = _painting_index;
-		randomVariant = _random;
+		setMotiveHolder( paintingType );
+		setSizeIndex( _size_index );
+		setMotiveIndex( _painting_index );
+		setRandomVariant( _random );
 	}
 	
 	private void init( @NotNull Direction _direction ) {
@@ -92,6 +107,9 @@ public class SelectablePaintingEntity extends HangingEntity {
 	protected void defineSynchedData( SynchedEntityData.Builder pBuilder ) {
 		
 		pBuilder.define( DATA_VARIANT_ID, getDefaultMotive() );
+		pBuilder.define( DATA_SIZE_INDEX, 0 );
+		pBuilder.define( DATA_MOTIVE_INDEX, 0 );
+		pBuilder.define( DATA_RANDOM_VARIANT, false );
 	}
 	
 	@Override
@@ -103,14 +121,14 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@NotNull
-	private static Holder<PaintingVariant> getDefaultMotive() {
+	private Holder<PaintingVariant> getDefaultMotive() {
 		
-		return BuiltInRegistries.PAINTING_VARIANT.getHolderOrThrow( DEFAULT_VARIANT );
+		return this.registryAccess().registryOrThrow( Registries.PAINTING_VARIANT ).getAny().orElseThrow();
 	}
 	
-	private void setMotiveHolder( @NotNull Holder<PaintingVariant> holder ) {
+	private void setMotiveHolder( @NotNull Holder<PaintingVariant> value ) {
 		
-		entityData.set( DATA_VARIANT_ID, holder );
+		entityData.set( DATA_VARIANT_ID, value );
 	}
 	
 	@NotNull
@@ -119,9 +137,42 @@ public class SelectablePaintingEntity extends HangingEntity {
 		return entityData.get( DATA_VARIANT_ID );
 	}
 	
+	private void setSizeIndex( @NotNull Integer value ) {
+		
+		entityData.set( DATA_SIZE_INDEX, value );
+	}
+	
+	@NotNull
+	private Integer getSizeIndex() {
+		
+		return entityData.get( DATA_SIZE_INDEX );
+	}
+	
+	private void setMotiveIndex( @NotNull Integer value ) {
+		
+		entityData.set( DATA_MOTIVE_INDEX, value );
+	}
+	
+	@NotNull
+	private Integer getMotiveIndex() {
+		
+		return entityData.get( DATA_MOTIVE_INDEX );
+	}
+	
+	private void setRandomVariant( @NotNull Boolean value ) {
+		
+		entityData.set( DATA_RANDOM_VARIANT, value );
+	}
+	
+	@NotNull
+	private Boolean getRandomVariant() {
+		
+		return entityData.get( DATA_RANDOM_VARIANT);
+	}
+	
 	@NotNull
 	@Override
-	public ItemStack getPickedResult( @NotNull HitResult target ) {
+	public ItemStack getPickResult() {
 		
 		return getItemStackOfEntity();
 	}
@@ -131,9 +182,9 @@ public class SelectablePaintingEntity extends HangingEntity {
 		
 		return SelectablePaintingItemStackHelper.writeDataToStack(
 			new ItemStack( ModItemsRegisterFactory.SELECTABLE_PAINTING ),
-			size_index,
-			motive_index,
-			randomVariant
+			getSizeIndex(),
+			getMotiveIndex(),
+			getRandomVariant()
 		);
 	}
 	
@@ -148,9 +199,9 @@ public class SelectablePaintingEntity extends HangingEntity {
 			getVariantHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString()
 		);
 		pCompound.putByte( "Facing", (byte)direction.get2DDataValue() );
-		pCompound.putInt( "size_index", size_index );
-		pCompound.putInt( "painting_index", motive_index );
-		pCompound.putBoolean( "random", randomVariant );
+		pCompound.putInt( "size_index", getSizeIndex() );
+		pCompound.putInt( "painting_index", getMotiveIndex() );
+		pCompound.putBoolean( "random", getRandomVariant() );
 		super.addAdditionalSaveData( pCompound );
 	}
 	
@@ -160,25 +211,34 @@ public class SelectablePaintingEntity extends HangingEntity {
 		setMotiveHolder(
 			Painting.VARIANT_CODEC.parse( NbtOps.INSTANCE, pCompound )
 				.result()
-				.orElseGet( SelectablePaintingEntity::getDefaultMotive )
+				.orElseGet( this::getDefaultMotive )
 		);
-		size_index = pCompound.getInt( "size_index" );
-		motive_index = pCompound.getInt( "painting_index" );
-		randomVariant = pCompound.getBoolean( "random" );
+		setSizeIndex(pCompound.getInt( "size_index" ));
+		setMotiveIndex( pCompound.getInt( "painting_index" ) );
+		setRandomVariant( pCompound.getBoolean( "random" ) );
 		super.readAdditionalSaveData( pCompound );
 		setDirection( Direction.from2DDataValue( pCompound.getByte( "Facing" ) ) );
 	}
 	
 	@Override
-	public int getWidth() {
+	protected AABB calculateBoundingBox( BlockPos blockPos, Direction pDirection ) {
 		
-		return getVariantHolder().value().getWidth();
+		Vec3 vec3 = Vec3.atCenterOf( blockPos ).relative( pDirection, -0.46875 );
+		PaintingVariant paintingvariant = this.getVariant();
+		double d0 = this.offsetForPaintingSize( paintingvariant.width() );
+		double d1 = this.offsetForPaintingSize( paintingvariant.height() );
+		Direction direction = pDirection.getCounterClockWise();
+		Vec3 vec31 = vec3.relative( direction, d0 ).relative( Direction.UP, d1 );
+		Direction.Axis direction$axis = pDirection.getAxis();
+		double d2 = direction$axis == Direction.Axis.X ? 0.0625 : paintingvariant.width();
+		double d3 = paintingvariant.height();
+		double d4 = direction$axis == Direction.Axis.Z ? 0.0625 : paintingvariant.width();
+		return AABB.ofSize( vec31, d2, d3, d4 );
 	}
 	
-	@Override
-	public int getHeight() {
+	private double offsetForPaintingSize( int size ) {
 		
-		return getVariantHolder().value().getHeight();
+		return size % 2 == 0 ? 0.5 : 0.0;
 	}
 	
 	@Override
@@ -228,7 +288,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	
 	@NotNull
 	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket( ServerEntity serverEntity ) {
 		
 		return new ClientboundAddEntityPacket( this, this.direction.get3DDataValue(), this.getPos() );
 	}
@@ -245,6 +305,8 @@ public class SelectablePaintingEntity extends HangingEntity {
 		return EntityType.Builder
 			.<SelectablePaintingEntity> of( SelectablePaintingEntity::new, MobCategory.MISC )
 			.sized( 0.5F, 0.5F )
+			.clientTrackingRange( 10 )
+			.updateInterval( Integer.MAX_VALUE )
 			.build( SelectablePainting.registry_name );
 	}
 	

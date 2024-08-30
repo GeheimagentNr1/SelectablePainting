@@ -15,7 +15,7 @@ class RightButton extends Button {
 	
 	
 	@NotNull
-	private static final ResourceLocation DIRECTION_BUTTONS_TEXTURE = new ResourceLocation(
+	private static final ResourceLocation DIRECTION_BUTTONS_TEXTURE = ResourceLocation.fromNamespaceAndPath(
 		SelectablePaintingMod.MODID,
 		"textures/gui/direction_buttons.png"
 	);

@@ -41,8 +41,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		
 		pPoseStack.pushPose();
 		pPoseStack.mulPose( Axis.YP.rotationDegrees( 180.0F - pEntityYaw ) );
-		PaintingVariant paintingVariant = pEntity.getVariant();
-		pPoseStack.scale( 0.0625F, 0.0625F, 0.0625F );
+		PaintingVariant paintingvariant = pEntity.getVariant();
 		VertexConsumer vertexconsumer =
 			pBuffer.getBuffer( RenderType.entitySolid( this.getTextureLocation( pEntity ) ) );
 		PaintingTextureManager paintingtexturemanager = Minecraft.getInstance().getPaintingTextures();
@@ -50,9 +49,9 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 			pPoseStack,
 			vertexconsumer,
 			pEntity,
-			paintingVariant.getWidth(),
-			paintingVariant.getHeight(),
-			paintingtexturemanager.get( paintingVariant ),
+			paintingvariant.width(),
+			paintingvariant.height(),
+			paintingtexturemanager.get( paintingvariant ),
 			paintingtexturemanager.getBackSprite()
 		);
 		pPoseStack.popPose();
@@ -76,8 +75,8 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 	) {
 		
 		PoseStack.Pose pose = pPoseStack.last();
-		float f = -pWidth / 2.0F;
-		float f1 = -pHeight / 2.0F;
+		float f = ( -pWidth ) / 2.0F;
+		float f1 = ( -pHeight ) / 2.0F;
 		float f3 = pBackSprite.getU0();
 		float f4 = pBackSprite.getU1();
 		float f5 = pBackSprite.getV0();
@@ -90,66 +89,64 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		float f12 = pBackSprite.getU( 0.0625F );
 		float f13 = pBackSprite.getV0();
 		float f14 = pBackSprite.getV1();
-		int i = pWidth / 16;
-		int j = pHeight / 16;
-		double d0 = 1.0 / i;
-		double d1 = 1.0 / j;
+		double d0 = 1.0 / pWidth;
+		double d1 = 1.0 / pHeight;
 		
-		for( int k = 0; k < i; k++ ) {
-			for( int l = 0; l < j; l++ ) {
-				float f15 = f + ( ( k + 1 ) << 4 );
-				float f16 = f + ( k << 4 );
-				float f17 = f1 + ( ( l + 1 ) << 4 );
-				float f18 = f1 + ( l << 4 );
-				int i1 = pPainting.getBlockX();
-				int j1 = Mth.floor( pPainting.getY() + ( ( f17 + f18 ) / 2.0F / 16.0F ) );
-				int k1 = pPainting.getBlockZ();
+		for( int i = 0; i < pWidth; i++ ) {
+			for( int j = 0; j < pHeight; j++ ) {
+				float f15 = f + ( i + 1 );
+				float f16 = f + i;
+				float f17 = f1 + ( j + 1 );
+				float f18 = f1 + j;
+				int k = pPainting.getBlockX();
+				int l = Mth.floor( pPainting.getY() + ( ( f17 + f18 ) / 2.0F ) );
+				int i1 = pPainting.getBlockZ();
 				Direction direction = pPainting.getDirection();
 				if( direction == Direction.NORTH ) {
-					i1 = Mth.floor( pPainting.getX() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					k = Mth.floor( pPainting.getX() + ( ( f15 + f16 ) / 2.0F ) );
 				}
 				
 				if( direction == Direction.WEST ) {
-					k1 = Mth.floor( pPainting.getZ() - ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					i1 = Mth.floor( pPainting.getZ() - ( ( f15 + f16 ) / 2.0F ) );
 				}
 				
 				if( direction == Direction.SOUTH ) {
-					i1 = Mth.floor( pPainting.getX() - ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					k = Mth.floor( pPainting.getX() - ( ( f15 + f16 ) / 2.0F ) );
 				}
 				
 				if( direction == Direction.EAST ) {
-					k1 = Mth.floor( pPainting.getZ() + ( ( f15 + f16 ) / 2.0F / 16.0F ) );
+					i1 = Mth.floor( pPainting.getZ() + ( ( f15 + f16 ) / 2.0F ) );
 				}
 				
-				int l1 = LevelRenderer.getLightColor( pPainting.level(), new BlockPos( i1, j1, k1 ) );
-				float f19 = pPaintingSprite.getU( (float)( d0 * ( i - k ) ) );
-				float f20 = pPaintingSprite.getU( (float)( d0 * ( i - ( k + 1 ) ) ) );
-				float f21 = pPaintingSprite.getV( (float)( d1 * ( j - l ) ) );
-				float f22 = pPaintingSprite.getV( (float)( d1 * ( j - ( l + 1 ) ) ) );
-				this.vertex( pose, pConsumer, f15, f18, f20, f21, -0.5F, 0, 0, -1, l1 );
-				this.vertex( pose, pConsumer, f16, f18, f19, f21, -0.5F, 0, 0, -1, l1 );
-				this.vertex( pose, pConsumer, f16, f17, f19, f22, -0.5F, 0, 0, -1, l1 );
-				this.vertex( pose, pConsumer, f15, f17, f20, f22, -0.5F, 0, 0, -1, l1 );
-				this.vertex( pose, pConsumer, f15, f17, f4, f5, 0.5F, 0, 0, 1, l1 );
-				this.vertex( pose, pConsumer, f16, f17, f3, f5, 0.5F, 0, 0, 1, l1 );
-				this.vertex( pose, pConsumer, f16, f18, f3, f6, 0.5F, 0, 0, 1, l1 );
-				this.vertex( pose, pConsumer, f15, f18, f4, f6, 0.5F, 0, 0, 1, l1 );
-				this.vertex( pose, pConsumer, f15, f17, f7, f9, -0.5F, 0, 1, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f17, f8, f9, -0.5F, 0, 1, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f17, f8, f10, 0.5F, 0, 1, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f17, f7, f10, 0.5F, 0, 1, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f18, f7, f9, 0.5F, 0, -1, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f18, f8, f9, 0.5F, 0, -1, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f18, f8, f10, -0.5F, 0, -1, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f18, f7, f10, -0.5F, 0, -1, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f17, f12, f13, 0.5F, -1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f18, f12, f14, 0.5F, -1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f18, f11, f14, -0.5F, -1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f15, f17, f11, f13, -0.5F, -1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f17, f12, f13, -0.5F, 1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f18, f12, f14, -0.5F, 1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f18, f11, f14, 0.5F, 1, 0, 0, l1 );
-				this.vertex( pose, pConsumer, f16, f17, f11, f13, 0.5F, 1, 0, 0, l1 );
+				int j1 = LevelRenderer.getLightColor( pPainting.level(), new BlockPos( k, l, i1 ) );
+				float f19 = pPaintingSprite.getU( (float)( d0 * ( pWidth - i ) ) );
+				float f20 = pPaintingSprite.getU( (float)( d0 * ( pWidth - ( i + 1 ) ) ) );
+				float f21 = pPaintingSprite.getV( (float)( d1 * ( pHeight - j ) ) );
+				float f22 = pPaintingSprite.getV( (float)( d1 * ( pHeight - ( j + 1 ) ) ) );
+				this.vertex( pose, pConsumer, f15, f18, f20, f21, -0.03125F, 0, 0, -1, j1 );
+				this.vertex( pose, pConsumer, f16, f18, f19, f21, -0.03125F, 0, 0, -1, j1 );
+				this.vertex( pose, pConsumer, f16, f17, f19, f22, -0.03125F, 0, 0, -1, j1 );
+				this.vertex( pose, pConsumer, f15, f17, f20, f22, -0.03125F, 0, 0, -1, j1 );
+				this.vertex( pose, pConsumer, f15, f17, f4, f5, 0.03125F, 0, 0, 1, j1 );
+				this.vertex( pose, pConsumer, f16, f17, f3, f5, 0.03125F, 0, 0, 1, j1 );
+				this.vertex( pose, pConsumer, f16, f18, f3, f6, 0.03125F, 0, 0, 1, j1 );
+				this.vertex( pose, pConsumer, f15, f18, f4, f6, 0.03125F, 0, 0, 1, j1 );
+				this.vertex( pose, pConsumer, f15, f17, f7, f9, -0.03125F, 0, 1, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f17, f8, f9, -0.03125F, 0, 1, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f17, f8, f10, 0.03125F, 0, 1, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f17, f7, f10, 0.03125F, 0, 1, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f18, f7, f9, 0.03125F, 0, -1, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f18, f8, f9, 0.03125F, 0, -1, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f18, f8, f10, -0.03125F, 0, -1, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f18, f7, f10, -0.03125F, 0, -1, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f17, f12, f13, 0.03125F, -1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f18, f12, f14, 0.03125F, -1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f18, f11, f14, -0.03125F, -1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f15, f17, f11, f13, -0.03125F, -1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f17, f12, f13, -0.03125F, 1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f18, f12, f14, -0.03125F, 1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f18, f11, f14, 0.03125F, 1, 0, 0, j1 );
+				this.vertex( pose, pConsumer, f16, f17, f11, f13, 0.03125F, 1, 0, 0, j1 );
 			}
 		}
 	}
@@ -165,15 +162,13 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		int pNormalX,
 		int pNormalY,
 		int pNormalZ,
-		int pPackedLight
-	) {
+		int pPackedLight ) {
 		
-		pConsumer.vertex( pPose, pX, pY, pZ )
-			.color( 255, 255, 255, 255 )
-			.uv( pU, pV )
-			.overlayCoords( OverlayTexture.NO_OVERLAY )
-			.uv2( pPackedLight )
-			.normal( pPose, pNormalX, pNormalY, pNormalZ )
-			.endVertex();
+		pConsumer.addVertex( pPose, pX, pY, pZ )
+			.setColor( -1 )
+			.setUv( pU, pV )
+			.setOverlay( OverlayTexture.NO_OVERLAY )
+			.setLight( pPackedLight )
+			.setNormal( pPose, pNormalX, pNormalY, pNormalZ );
 	}
 }
