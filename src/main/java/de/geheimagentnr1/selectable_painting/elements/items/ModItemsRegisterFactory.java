@@ -14,6 +14,7 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
@@ -56,16 +57,19 @@ public class ModItemsRegisterFactory extends ItemsRegisterFactory {
 	@NotNull
 	public static final DataComponentType<Integer> SIZE_INDEX = DataComponentType.<Integer> builder()
 		.persistent( Codec.INT )
+		.networkSynchronized( ByteBufCodecs.INT )
 		.build();
 	
 	@NotNull
 	public static final DataComponentType<Integer> PAINTING_INDEX = DataComponentType.<Integer> builder()
 		.persistent( Codec.INT )
+		.networkSynchronized( ByteBufCodecs.INT )
 		.build();
 	
 	@NotNull
 	public static final DataComponentType<Boolean> RANDOM = DataComponentType.<Boolean> builder()
 		.persistent( Codec.BOOL )
+		.networkSynchronized( ByteBufCodecs.BOOL )
 		.build();
 	
 	@SubscribeEvent
