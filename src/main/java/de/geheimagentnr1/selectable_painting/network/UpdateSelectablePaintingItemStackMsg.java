@@ -1,57 +1,48 @@
 package de.geheimagentnr1.selectable_painting.network;
 
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingMenu;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 
-
-public class UpdateSelectablePaintingItemStackMsg {
+public record UpdateSelectablePaintingItemStackMsg( @NotNull ItemStack stack ) implements CustomPacketPayload {
 	
 	
 	@NotNull
-	private final ItemStack stack;
+	public static final Type<UpdateSelectablePaintingItemStackMsg> TYPE = 
+		new Type<>( Network.createId( "update_selectable_painting_item_stack" ) );
 	
-	private UpdateSelectablePaintingItemStackMsg( @NotNull ItemStack _stack ) {
-		
-		stack = _stack;
-	}
-	
-	//package-private
 	@NotNull
-	static UpdateSelectablePaintingItemStackMsg decode( @NotNull FriendlyByteBuf buffer ) {
-		
-		return new UpdateSelectablePaintingItemStackMsg(
-			buffer.readJsonWithCodec( ItemStack.CODEC )
+	public static final StreamCodec<RegistryFriendlyByteBuf, UpdateSelectablePaintingItemStackMsg> STREAM_CODEC =
+		StreamCodec.composite(
+			ItemStack.STREAM_CODEC,
+			UpdateSelectablePaintingItemStackMsg::stack,
+			UpdateSelectablePaintingItemStackMsg::new
 		);
-	}
 	
-	//package-private
-	void encode( @NotNull FriendlyByteBuf buffer ) {
+	@NotNull
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
 		
-		buffer.writeJsonWithCodec( ItemStack.CODEC, stack );
+		return TYPE;
 	}
 	
 	public static void sendToServer( @NotNull ItemStack stack ) {
 		
-		Network.getInstance().getChannel().send(
-			new UpdateSelectablePaintingItemStackMsg( stack ),
-			PacketDistributor.SERVER.noArg()
-		);
+		PacketDistributor.sendToServer( new UpdateSelectablePaintingItemStackMsg( stack ) );
 	}
 	
-	//package-private
-	void handle( @NotNull CustomPayloadEvent.Context context ) {
+	public static void handle( @NotNull UpdateSelectablePaintingItemStackMsg msg, @NotNull IPayloadContext context ) {
 		
-		Optional.ofNullable( context.getSender() ).ifPresent( player -> {
-			if( player.containerMenu instanceof SelectablePaintingMenu selectablePaintingMenu ) {
-				selectablePaintingMenu.updateItemStack( stack );
+		context.enqueueWork( () -> {
+			if( context.player().containerMenu instanceof SelectablePaintingMenu selectablePaintingMenu ) {
+				selectablePaintingMenu.updateItemStack( msg.stack() );
 			}
 		} );
-		context.setPacketHandled( true );
 	}
 }

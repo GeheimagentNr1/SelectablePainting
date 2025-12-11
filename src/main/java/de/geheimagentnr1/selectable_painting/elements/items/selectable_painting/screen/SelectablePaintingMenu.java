@@ -6,8 +6,9 @@ import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.
 import de.geheimagentnr1.selectable_painting.network.UpdateSelectablePaintingItemStackMsg;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -22,9 +23,9 @@ public class SelectablePaintingMenu extends AbstractContainerMenu {
 	@NotNull
 	private final ItemStack stack;
 	
-	public SelectablePaintingMenu( int windowId, @NotNull FriendlyByteBuf buffer ) {
+	public SelectablePaintingMenu( int windowId, @NotNull Inventory inventory ) {
 		
-		this( windowId, buffer.readJsonWithCodec( ItemStack.CODEC ) );
+		this( windowId, inventory.player.getItemInHand( InteractionHand.MAIN_HAND ) );
 	}
 	
 	//package-private

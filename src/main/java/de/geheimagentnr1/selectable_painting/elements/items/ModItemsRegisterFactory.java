@@ -1,36 +1,34 @@
 package de.geheimagentnr1.selectable_painting.elements.items;
 
 import com.mojang.serialization.Codec;
-import de.geheimagentnr1.minecraft_forge_api.elements.items.ItemsRegisterFactory;
-import de.geheimagentnr1.minecraft_forge_api.registry.RegistryEntry;
-import de.geheimagentnr1.minecraft_forge_api.registry.RegistryHelper;
-import de.geheimagentnr1.minecraft_forge_api.registry.RegistryKeys;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePainting;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingEntity;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.SelectablePaintingRenderer;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingMenu;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingScreen;
-import net.minecraft.client.gui.screens.MenuScreens;
+import de.geheimagentnr1.selectable_painting.registry.RegistryEntry;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-import net.minecraftforge.registries.RegisterEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 @SuppressWarnings( "StaticNonFinalField" )
-public class ModItemsRegisterFactory extends ItemsRegisterFactory {
+public class ModItemsRegisterFactory {
 	
 	//TODO:
 	// F - Funktion fertig
@@ -41,16 +39,10 @@ public class ModItemsRegisterFactory extends ItemsRegisterFactory {
 	
 	//Selectable Painting
 	
-	@ObjectHolder( registryName = RegistryKeys.ITEMS,
-		value = SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
 	public static SelectablePainting SELECTABLE_PAINTING;
 	
-	@ObjectHolder( registryName = RegistryKeys.MENU_TYPES,
-		value = SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
 	public static MenuType<SelectablePaintingMenu> SELECTABLE_PAINTING_MENU;
 	
-	@ObjectHolder( registryName = RegistryKeys.ENTITY_TYPES,
-		value = SelectablePaintingMod.MODID + ":" + SelectablePainting.registry_name )
 	public static EntityType<SelectablePaintingEntity> SELECTABLE_PAINTING_ENTITY;
 	
 	
@@ -72,72 +64,50 @@ public class ModItemsRegisterFactory extends ItemsRegisterFactory {
 		.networkSynchronized( ByteBufCodecs.BOOL )
 		.build();
 	
+	@NotNull
+	private final List<RegistryEntry<Item>> items = new ArrayList<>();
+	
+	@NotNull
+	public List<RegistryEntry<Item>> getItems() {
+		
+		return items;
+	}
+	
 	@SubscribeEvent
 	public void handleRegistryEvent( @NotNull RegisterEvent event ) {
 		
-		super.handleRegistryEvent( event );
-		RegistryHelper.registerElements( event, ForgeRegistries.Keys.ENTITY_TYPES, this::entityTypes );
-	}
-	
-	@NotNull
-	@Override
-	protected List<RegistryEntry<Item>> items() {
+		event.register( Registries.ITEM, helper -> {
+			SELECTABLE_PAINTING = new SelectablePainting();
+			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING );
+			items.add( RegistryEntry.create( SelectablePainting.registry_name, SELECTABLE_PAINTING ) );
+		} );
 		
-		return List.of(//FINRT
-			//Selectable Painting
-			RegistryEntry.create( SelectablePainting.registry_name, new SelectablePainting() )//FINRT
-		);
-	}
-	
-	@NotNull
-	@Override
-	protected List<RegistryEntry<MenuType<?>>> menuTypes() {
+		event.register( Registries.MENU, helper -> {
+			SELECTABLE_PAINTING_MENU = new MenuType<>( ( windowId, inv ) -> new SelectablePaintingMenu( windowId, inv ), FeatureFlags.DEFAULT_FLAGS );
+			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING_MENU );
+		} );
 		
-		return List.of(
-			RegistryEntry.create(
-				SelectablePainting.registry_name,
-				IForgeMenuType.create(
-					( windowId, inv, data ) -> new SelectablePaintingMenu( windowId, data )
-				)
-			)
-		);
-	}
-	
-	@Override
-	protected @NotNull List<RegistryEntry<DataComponentType<?>>> dataComponentTypes() {
+		event.register( Registries.DATA_COMPONENT_TYPE, helper -> {
+			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "size" ), SIZE_INDEX );
+			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "painting" ), PAINTING_INDEX );
+			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "random" ), RANDOM );
+		} );
 		
-		return List.of(
-			RegistryEntry.create(
-				"size",
-				SIZE_INDEX
-			),
-			RegistryEntry.create(
-				"painting",
-				PAINTING_INDEX
-			),
-			RegistryEntry.create(
-				"random",
-				RANDOM
-			)
-		);
-	}
-	
-	@NotNull
-	private List<RegistryEntry<EntityType<?>>> entityTypes() {
-		
-		return List.of(
-			RegistryEntry.create(
-				SelectablePainting.registry_name,
-				SelectablePaintingEntity.buildEntityType()
-			)
-		);
+		event.register( Registries.ENTITY_TYPE, helper -> {
+			SELECTABLE_PAINTING_ENTITY = SelectablePaintingEntity.buildEntityType();
+			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING_ENTITY );
+		} );
 	}
 	
 	@SubscribeEvent
-	@Override
 	public void handleFMLClientSetupEvent( @NotNull FMLClientSetupEvent event ) {
 		
 		EntityRenderers.register( SELECTABLE_PAINTING_ENTITY, SelectablePaintingRenderer::new );
-		MenuScreens.register( SELECTABLE_PAINTING_MENU, SelectablePaintingScreen::new );
+	}
+	
+	@SubscribeEvent
+	public void handleRegisterMenuScreensEvent( @NotNull RegisterMenuScreensEvent event ) {
+		
+		event.register( SELECTABLE_PAINTING_MENU, SelectablePaintingScreen::new );
 	}
 }
