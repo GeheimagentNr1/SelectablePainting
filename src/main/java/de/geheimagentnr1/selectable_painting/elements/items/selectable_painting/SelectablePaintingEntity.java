@@ -225,15 +225,16 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@NotNull
 	private Optional<Holder<PaintingVariant>> readMotive( @NotNull ValueInput input ) {
 		
-		Optional<ValueInput> legacyVariant = input.child( "variant" );
-		if( legacyVariant.isEmpty() ) {
-			return VariantUtils.readVariant( input, Registries.PAINTING_VARIANT );
+		Optional<Holder<PaintingVariant>> variant = VariantUtils.readVariant( input, Registries.PAINTING_VARIANT );
+		if( variant.isPresent() ) {
+			return variant;
 		}
-		return legacyVariant.get().getString( "asset_id" )
+		return input.child( "variant" )
+			.flatMap( legacyVariant -> legacyVariant.getString( "asset_id" ) )
 			.map( ResourceLocation::tryParse )
 			.flatMap( assetId -> registryAccess().lookupOrThrow( Registries.PAINTING_VARIANT )
 				.listElements()
-				.filter( variant -> variant.value().assetId().equals( assetId ) )
+				.filter( paintingVariant -> paintingVariant.value().assetId().equals( assetId ) )
 				.findFirst() );
 	}
 	
