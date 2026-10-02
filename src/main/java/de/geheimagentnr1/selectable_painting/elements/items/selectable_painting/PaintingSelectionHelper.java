@@ -2,7 +2,7 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -27,38 +27,36 @@ public class PaintingSelectionHelper {
 	private static List<List<Holder<PaintingVariant>>> motives;
 	
 	
-	private static Registry<PaintingVariant> paintingVariantRegistry( RegistryAccess registryAccess ) {
-		
-		return registryAccess.registryOrThrow( Registries.PAINTING_VARIANT );
+	private static HolderLookup.RegistryLookup<PaintingVariant> paintingVariantRegistry( RegistryAccess registryAccess ) {
+
+		return registryAccess.lookupOrThrow( Registries.PAINTING_VARIANT );
 	}
 	
 	private static void init( @NotNull RegistryAccess registryAccess ) {
 		
-		Registry<PaintingVariant> paintingVariantRegistry = paintingVariantRegistry( registryAccess );
-		long current_painting_count = paintingVariantRegistry.size();
+		HolderLookup.RegistryLookup<PaintingVariant> paintingVariantRegistry = paintingVariantRegistry( registryAccess );
+		long current_painting_count = paintingVariantRegistry.listElements().count();
 		if( motivesCount() != current_painting_count || lastRegistryAccess != registryAccess ) {
 			lastRegistryAccess = registryAccess;
 			TreeSet<String> sizes = new TreeSet<>();
 			TreeMap<String, TreeSet<Holder<PaintingVariant>>> motivesMap = new TreeMap<>();
-			
-			paintingVariantRegistry.registryKeySet().forEach( paintingVariantResourceKey ->
-				paintingVariantRegistry.getHolder( paintingVariantResourceKey ).ifPresent( motiveHolder -> {
-					PaintingVariant motive = motiveHolder.value();
-					int widthSize = motive.width();
-					int heightSize = motive.height();
-					@SuppressWarnings( "StringConcatenationMissingWhitespace" )
-					String paintingSize = widthSize + "x" + heightSize;
-					if( sizes.add( paintingSize ) ) {
-						motivesMap.put(
-							paintingSize,
-							new TreeSet<>( Comparator.comparing(
-								motiveComparing -> motiveComparing.unwrapKey().orElseThrow().location().toString()
-							) )
-						);
-					}
-					motivesMap.get( paintingSize ).add( motiveHolder );
-				} )
-			);
+
+			paintingVariantRegistry.listElements().forEach( motiveHolder -> {
+				PaintingVariant motive = motiveHolder.value();
+				int widthSize = motive.width();
+				int heightSize = motive.height();
+				@SuppressWarnings( "StringConcatenationMissingWhitespace" )
+				String paintingSize = widthSize + "x" + heightSize;
+				if( sizes.add( paintingSize ) ) {
+					motivesMap.put(
+						paintingSize,
+						new TreeSet<>( Comparator.comparing(
+							motiveComparing -> motiveComparing.unwrapKey().orElseThrow().location().toString()
+						) )
+					);
+				}
+				motivesMap.get( paintingSize ).add( motiveHolder );
+			} );
 			painting_sizes = sizes.toArray( new String[0] );
 			motives = motivesMap.values().stream()
 				.map( holders -> holders.stream().toList() )
@@ -140,11 +138,9 @@ public class PaintingSelectionHelper {
 		init( registryAccess );
 		return Component.translatable( Util.makeDescriptionId(
 			"painting",
-			paintingVariantRegistry( registryAccess ).getKey(
-				motives.get( size_index >= motives.size() ? 0 : size_index )
-					.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
-					.value()
-			)
+			motives.get( size_index >= motives.size() ? 0 : size_index )
+				.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
+				.unwrapKey().orElseThrow().location()
 		) );
 	}
 	

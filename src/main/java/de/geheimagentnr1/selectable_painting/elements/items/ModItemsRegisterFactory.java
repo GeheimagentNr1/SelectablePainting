@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
@@ -77,7 +78,10 @@ public class ModItemsRegisterFactory {
 	public void handleRegistryEvent( @NotNull RegisterEvent event ) {
 		
 		event.register( Registries.ITEM, helper -> {
-			SELECTABLE_PAINTING = new SelectablePainting();
+			SELECTABLE_PAINTING = new SelectablePainting( new Item.Properties().setId( ResourceKey.create(
+				Registries.ITEM,
+				ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name )
+			) ) );
 			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING );
 			items.add( RegistryEntry.create( SelectablePainting.registry_name, SELECTABLE_PAINTING ) );
 		} );

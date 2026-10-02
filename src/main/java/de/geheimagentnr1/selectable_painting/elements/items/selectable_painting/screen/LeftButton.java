@@ -2,6 +2,7 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -30,9 +31,9 @@ class LeftButton extends Button {
 	public void renderWidget( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
 		
 		if( isHovered ) {
-			guiGraphics.blit( DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13, 21, 10, 15, 64, 64 );
+			guiGraphics.blit( RenderType.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13f, 21f, 10, 15, 64, 64 );
 		} else {
-			guiGraphics.blit( DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 1, 21, 10, 15, 64, 64 );
+			guiGraphics.blit( RenderType.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 1f, 21f, 10, 15, 64, 64 );
 		}
 	}
 }

@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -36,9 +35,9 @@ public class SelectablePainting extends Item {
 	@NotNull
 	public static final String registry_name = "selectable_painting";
 	
-	public SelectablePainting() {
+	public SelectablePainting( @NotNull Item.Properties properties ) {
 		
-		super( new Item.Properties() );
+		super( properties );
 	}
 	
 	private RegistryAccess registryAccess() {
@@ -74,13 +73,13 @@ public class SelectablePainting extends Item {
 	
 	@NotNull
 	@Override
-	public InteractionResultHolder<ItemStack> use(
+	public InteractionResult use(
 		@NotNull Level pLevel,
 		@NotNull Player pPlayer,
 		@NotNull InteractionHand pUsedHand ) {
-		
+
 		ItemStack stack = pPlayer.getItemInHand( pUsedHand );
-		
+
 		if( !pLevel.isClientSide() ) {
 			if( pPlayer instanceof ServerPlayer serverPlayer ) {
 				serverPlayer.openMenu(
@@ -91,7 +90,7 @@ public class SelectablePainting extends Item {
 				);
 			}
 		}
-		return new InteractionResultHolder<>( InteractionResult.SUCCESS, stack );
+		return InteractionResult.SUCCESS;
 	}
 	
 	@NotNull
@@ -128,10 +127,10 @@ public class SelectablePainting extends Item {
 				}
 				
 				stack.shrink( 1 );
-				return InteractionResult.sidedSuccess( level.isClientSide );
+				return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
 			} else {
-				if( !level.isClientSide() && player != null ) {
-					player.sendSystemMessage(
+				if( !level.isClientSide() && player instanceof ServerPlayer serverPlayer ) {
+					serverPlayer.sendSystemMessage(
 						Component.translatable( Util.makeDescriptionId(
 							"message",
 							ResourceLocation.fromNamespaceAndPath(

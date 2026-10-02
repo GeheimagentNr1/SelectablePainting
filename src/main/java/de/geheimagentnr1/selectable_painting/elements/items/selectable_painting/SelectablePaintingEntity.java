@@ -1,11 +1,13 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
+import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -15,6 +17,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -123,7 +126,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@NotNull
 	private Holder<PaintingVariant> getDefaultMotive() {
 		
-		return this.registryAccess().registryOrThrow( Registries.PAINTING_VARIANT ).getAny().orElseThrow();
+		return this.registryAccess().lookupOrThrow( Registries.PAINTING_VARIANT ).listElements().findAny().orElseThrow();
 	}
 	
 	private void setMotiveHolder( @NotNull Holder<PaintingVariant> value ) {
@@ -242,16 +245,16 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void dropItem( @Nullable Entity pBrokenEntity ) {
-		
-		if( level().getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
+	public void dropItem( @Nullable ServerLevel serverLevel, @Nullable Entity pBrokenEntity ) {
+
+		if( serverLevel != null && serverLevel.getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
 			playSound( SoundEvents.PAINTING_BREAK, 1.0F, 1.0F );
 			if( pBrokenEntity instanceof Player ) {
 				if( ( (Player)pBrokenEntity ).isCreative() ) {
 					return;
 				}
 			}
-			spawnAtLocation( getItemStackOfEntity() );
+			spawnAtLocation( serverLevel, getItemStackOfEntity(), 0.0f );
 		}
 	}
 	
@@ -307,7 +310,8 @@ public class SelectablePaintingEntity extends HangingEntity {
 			.sized( 0.5F, 0.5F )
 			.clientTrackingRange( 10 )
 			.updateInterval( Integer.MAX_VALUE )
-			.build( SelectablePainting.registry_name );
+			.build( ResourceKey.create( Registries.ENTITY_TYPE,
+				ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ) ) );
 	}
 	
 	@NotNull

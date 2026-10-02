@@ -1,7 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
@@ -67,7 +67,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	@Override
 	protected void renderBg( @NotNull GuiGraphics guiGraphics, float partialTick, int x, int y ) {
 		
-		guiGraphics.blit( SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight );
+		guiGraphics.blit( RenderType.GUI_TEXTURED, SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0f, 0f, imageWidth, imageHeight, 256, 256 );
 	}
 	
 	@Override
@@ -96,16 +96,15 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			Objects.requireNonNull( minecraft );
 			PaintingVariant paintingType = menu.getCurrentMotive();
 			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
-			RenderSystem.setShaderTexture( 0, paintingTextureAtlasSprite.atlasLocation() );
 			int paintingWidth = paintingType.width() << 4;
 			int paintingHeight = paintingType.height() << 4;
-			guiGraphics.blit(
+			guiGraphics.blitSprite(
+				RenderType::guiTextured,
+				paintingTextureAtlasSprite,
 				width / 2 - leftPos - paintingWidth / 2,
 				70,
-				0,
 				paintingWidth,
-				paintingHeight,
-				paintingTextureAtlasSprite
+				paintingHeight
 			);
 		}
 	}

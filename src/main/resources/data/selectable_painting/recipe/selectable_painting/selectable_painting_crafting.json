@@ -1,9 +1,7 @@
 {
 	"type":        "minecraft:crafting_shapeless",
 	"ingredients": [
-		{
-			"item": "minecraft:painting"
-		}
+		"minecraft:painting"
 	],
 	"result":      {
 		"id": "selectable_painting:selectable_painting"
