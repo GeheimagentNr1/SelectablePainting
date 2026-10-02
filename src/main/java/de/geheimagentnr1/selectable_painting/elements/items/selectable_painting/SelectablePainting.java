@@ -112,7 +112,7 @@ public class SelectablePainting extends Item {
 			);
 			
 			EntityType.<SelectablePaintingEntity> createDefaultStackConfig( level, stack, player )
-				.accept( selectablePaintingEntity );
+				.apply( selectablePaintingEntity );
 			
 			if( selectablePaintingEntity.survives() ) {
 				if( !level.isClientSide() ) {

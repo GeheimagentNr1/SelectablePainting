@@ -3,7 +3,6 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -18,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.level.Level;
@@ -26,7 +26,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 
-//Based on the vanilla PaintingRenderer of Minecraft 26.1.
+//Based on the vanilla PaintingRenderer of Minecraft 26.2.
 @OnlyIn( Dist.CLIENT )
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity, PaintingRenderState> {
 
@@ -53,7 +53,8 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 		PaintingVariant paintingVariant = pState.variant;
 		if( paintingVariant != null ) {
 			pPoseStack.pushPose();
-			pPoseStack.mulPose( Axis.YP.rotationDegrees( 180 - pState.direction.get2DDataValue() * 90 ) );
+			//PoseStack.mulPose(Quaternionfc) was removed in 26.3, it only delegated to Pose.rotate
+			pPoseStack.last().rotate( Axis.YP.rotationDegrees( 180 - pState.direction.get2DDataValue() * 90 ) );
 			TextureAtlasSprite paintingSprite = paintingsAtlas.getSprite( paintingVariant.assetId() );
 			TextureAtlasSprite backSprite = paintingsAtlas.getSprite( BACK_SPRITE_LOCATION );
 			renderPainting(
@@ -114,7 +115,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 					default -> {
 					}
 				}
-				pState.lightCoordsPerBlock[x + y * width] = LevelRenderer.getLightCoords(
+				pState.lightCoordsPerBlock[x + y * width] = LightCoordsUtil.getLightCoords(
 					level,
 					new BlockPos( blockX, blockY, blockZ )
 				);
