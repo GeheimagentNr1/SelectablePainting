@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -16,7 +16,7 @@ class RightButton extends Button {
 	
 	
 	@NotNull
-	private static final ResourceLocation DIRECTION_BUTTONS_TEXTURE = ResourceLocation.fromNamespaceAndPath(
+	private static final Identifier DIRECTION_BUTTONS_TEXTURE = Identifier.fromNamespaceAndPath(
 		SelectablePaintingMod.MODID,
 		"textures/gui/direction_buttons.png"
 	);
@@ -28,7 +28,7 @@ class RightButton extends Button {
 	}
 	
 	@Override
-	public void renderWidget( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial ) {
+	protected void renderContents( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial ) {
 		
 		if( isHovered ) {
 			guiGraphics.blit( RenderPipelines.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13f, 2f, 10, 15, 64, 64 );

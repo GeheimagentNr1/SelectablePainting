@@ -4,11 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.PaintingRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -16,22 +17,22 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.AtlasIds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 
-//Based on the vanilla PaintingRenderer of Minecraft 1.21.9.
+//Based on the vanilla PaintingRenderer of Minecraft 1.21.11.
 @OnlyIn( Dist.CLIENT )
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity, PaintingRenderState> {
 
 
 	@NotNull
-	private static final ResourceLocation BACK_SPRITE_LOCATION = ResourceLocation.withDefaultNamespace( "back" );
+	private static final Identifier BACK_SPRITE_LOCATION = Identifier.withDefaultNamespace( "back" );
 
 	@NotNull
 	private final TextureAtlas paintingsAtlas;
@@ -58,7 +59,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 			renderPainting(
 				pPoseStack,
 				pNodeCollector,
-				RenderType.entitySolidZOffsetForward( backSprite.atlasLocation() ),
+				RenderTypes.entitySolidZOffsetForward( backSprite.atlasLocation() ),
 				pState.lightCoordsPerBlock,
 				paintingVariant.width(),
 				paintingVariant.height(),

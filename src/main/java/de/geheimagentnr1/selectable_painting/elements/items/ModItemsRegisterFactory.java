@@ -14,7 +14,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -80,26 +80,26 @@ public class ModItemsRegisterFactory {
 		event.register( Registries.ITEM, helper -> {
 			SELECTABLE_PAINTING = new SelectablePainting( new Item.Properties().setId( ResourceKey.create(
 				Registries.ITEM,
-				ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name )
+				Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name )
 			) ) );
-			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING );
+			helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING );
 			items.add( RegistryEntry.create( SelectablePainting.registry_name, SELECTABLE_PAINTING ) );
 		} );
 		
 		event.register( Registries.MENU, helper -> {
 			SELECTABLE_PAINTING_MENU = new MenuType<>( ( windowId, inv ) -> new SelectablePaintingMenu( windowId, inv ), FeatureFlags.DEFAULT_FLAGS );
-			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING_MENU );
+			helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING_MENU );
 		} );
 		
 		event.register( Registries.DATA_COMPONENT_TYPE, helper -> {
-			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "size" ), SIZE_INDEX );
-			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "painting" ), PAINTING_INDEX );
-			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "random" ), RANDOM );
+			helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "size" ), SIZE_INDEX );
+			helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "painting" ), PAINTING_INDEX );
+			helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "random" ), RANDOM );
 		} );
 		
 		event.register( Registries.ENTITY_TYPE, helper -> {
 			SELECTABLE_PAINTING_ENTITY = SelectablePaintingEntity.buildEntityType();
-			helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING_ENTITY );
+			helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ), SELECTABLE_PAINTING_ENTITY );
 		} );
 	}
 	

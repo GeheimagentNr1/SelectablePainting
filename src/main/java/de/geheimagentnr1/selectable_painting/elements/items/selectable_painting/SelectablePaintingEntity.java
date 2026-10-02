@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -25,11 +25,11 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.variant.VariantUtils;
-import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.decoration.PaintingVariants;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
+import net.minecraft.world.entity.decoration.painting.PaintingVariants;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -200,7 +200,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 		VariantUtils.writeVariant( output, getVariantHolder() );
 		output.putString(
 			"Motive",
-			getVariantHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString()
+			getVariantHolder().unwrapKey().orElse( DEFAULT_VARIANT ).identifier().toString()
 		);
 		output.putByte( "Facing", (byte)getDirection().get2DDataValue() );
 		output.putInt( "size_index", getSizeIndex() );
@@ -230,7 +230,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 			return VariantUtils.readVariant( input, Registries.PAINTING_VARIANT );
 		}
 		return legacyVariant.get().getString( "asset_id" )
-			.map( ResourceLocation::tryParse )
+			.map( Identifier::tryParse )
 			.flatMap( assetId -> registryAccess().lookupOrThrow( Registries.PAINTING_VARIANT )
 				.listElements()
 				.filter( variant -> variant.value().assetId().equals( assetId ) )
@@ -275,7 +275,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void dropItem( @Nullable ServerLevel serverLevel, @Nullable Entity pBrokenEntity ) {
 
-		if( serverLevel != null && serverLevel.getGameRules().getBoolean( GameRules.RULE_DOENTITYDROPS ) ) {
+		if( serverLevel != null && serverLevel.getGameRules().get( GameRules.ENTITY_DROPS ) ) {
 			playSound( SoundEvents.PAINTING_BREAK, 1.0F, 1.0F );
 			if( pBrokenEntity instanceof Player ) {
 				if( ( (Player)pBrokenEntity ).isCreative() ) {
@@ -327,7 +327,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 			.clientTrackingRange( 10 )
 			.updateInterval( Integer.MAX_VALUE )
 			.build( ResourceKey.create( Registries.ENTITY_TYPE,
-				ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ) ) );
+				Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, SelectablePainting.registry_name ) ) );
 	}
 	
 	@NotNull

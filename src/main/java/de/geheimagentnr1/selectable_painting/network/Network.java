@@ -3,7 +3,7 @@ package de.geheimagentnr1.selectable_painting.network;
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -24,9 +24,9 @@ public class Network {
 	}
 	
 	@NotNull
-	public static ResourceLocation createId( @NotNull String name ) {
+	public static Identifier createId( @NotNull String name ) {
 		
-		return ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, name );
+		return Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, name );
 	}
 	
 	@SubscribeEvent

@@ -1,12 +1,12 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class PaintingSelectionHelper {
 					motivesMap.put(
 						paintingSize,
 						new TreeSet<>( Comparator.comparing(
-							motiveComparing -> motiveComparing.unwrapKey().orElseThrow().location().toString()
+							motiveComparing -> motiveComparing.unwrapKey().orElseThrow().identifier().toString()
 						) )
 					);
 				}
@@ -140,7 +140,7 @@ public class PaintingSelectionHelper {
 			"painting",
 			motives.get( size_index >= motives.size() ? 0 : size_index )
 				.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
-				.unwrapKey().orElseThrow().location()
+				.unwrapKey().orElseThrow().identifier()
 		) );
 	}
 	

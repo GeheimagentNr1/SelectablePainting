@@ -1,7 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
 import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFactory;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;

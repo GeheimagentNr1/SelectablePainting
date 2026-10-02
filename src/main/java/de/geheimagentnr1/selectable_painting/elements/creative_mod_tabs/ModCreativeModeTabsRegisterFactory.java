@@ -6,7 +6,7 @@ import de.geheimagentnr1.selectable_painting.registry.RegistryEntry;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -35,7 +35,7 @@ public class ModCreativeModeTabsRegisterFactory {
 						factory.getDisplayItems().forEach( entry -> output.accept( entry.value() ) );
 					} )
 					.build();
-				helper.register( ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, factory.getRegistryName() ), tab );
+				helper.register( Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, factory.getRegistryName() ), tab );
 			} );
 		} );
 	}

@@ -2,13 +2,13 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingNamedContainerProvider;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -54,16 +54,16 @@ public class SelectablePainting extends Item {
 		
 		pTooltipComponents.accept( Component.translatable( Util.makeDescriptionId(
 			"message",
-			ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "selectable_painting_size" )
+			Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "selectable_painting_size" )
 		) ).append( ": " ).append( PaintingSelectionHelper.getSizeName( registryAccess(), pStack ) ) );
 		pTooltipComponents.accept( Component.translatable( Util.makeDescriptionId(
 				"message",
-				ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "selectable_painting_painting" )
+				Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "selectable_painting_painting" )
 			) ).append( ": " )
 			.append( SelectablePaintingItemStackHelper.getRandom( pStack )
 				? Component.translatable( Util.makeDescriptionId(
 				"message",
-				ResourceLocation.fromNamespaceAndPath(
+				Identifier.fromNamespaceAndPath(
 					SelectablePaintingMod.MODID,
 					"selectable_painting_random_painting"
 				)
@@ -128,7 +128,7 @@ public class SelectablePainting extends Item {
 					serverPlayer.sendSystemMessage(
 						Component.translatable( Util.makeDescriptionId(
 							"message",
-							ResourceLocation.fromNamespaceAndPath(
+							Identifier.fromNamespaceAndPath(
 								SelectablePaintingMod.MODID,
 								"selectable_painting_painting_to_big_error"
 							)

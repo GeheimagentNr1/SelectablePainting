@@ -2,15 +2,15 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,8 +21,8 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	
 	
 	@NotNull
-	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
-		ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
+	private static final Identifier SELECTABLE_PAINTING_GUI_TEXTURE =
+		Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
 	public SelectablePaintingScreen(
 		@NotNull SelectablePaintingMenu screenContainer,
@@ -44,7 +44,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			Checkbox.builder(
 					Component.translatable( Util.makeDescriptionId(
 						"message",
-						ResourceLocation.fromNamespaceAndPath(
+						Identifier.fromNamespaceAndPath(
 							SelectablePaintingMod.MODID,
 							"selectable_painting_random_painting"
 						)
