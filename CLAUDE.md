@@ -5,7 +5,7 @@
 **Selectable Painting** ist ein NeoForge Minecraft Mod.
 - **Mod ID**: `selectable_painting`
 - **Package**: `de.geheimagentnr1.selectable_painting`
-- **Java Version**: 21
+- **Java Version**: 21 (`develop_26.1`/`develop_26.2`: 25, `jdk-25.0.4.7-hotspot`)
 - **NeoForge Version**: je Branch, siehe Tabelle
 
 Fügt das "Selectable Painting" hinzu, mit dem das zu platzierende Gemälde ausgewählt werden kann.
@@ -18,8 +18,10 @@ Fügt das "Selectable Painting" hinzu, mit dem das zu platzierende Gemälde ausg
 | `develop_1.21.6` | 1.21.6 - 1.21.8 | `[1.21.6,1.21.9)` | `21.6.20-beta` | `ValueInput`/`ValueOutput`, `super.defineSynchedData` (Richtung wird synchronisiert), Textfarben mit Alpha, Paket über `ServerboundCustomPayloadPacket` |
 | `develop_1.21.9` | 1.21.9 - 1.21.10 | `[1.21.9,1.21.11)` | `21.9.16-beta` | Renderer nach Vanilla `PaintingRenderer` (Submit, Painting-Atlas), `createDefaultStackConfig` |
 | `develop_1.21.11` | 1.21.11 | `[1.21.11,1.21.12)` | `21.11.45` | `Identifier`, `decoration.painting`, `RenderTypes`, `renderContents`, `ENTITY_DROPS` |
+| `develop_26.1` | 26.1 - 26.1.2 | `[26.1,26.2)` | `26.1.0.19-beta` (Java 25) | 26.x-Tooling, `GuiGraphicsExtractor` (`extract*`, `text`, `blit` ohne `RenderPipeline`), `LevelRenderer.getLightCoords` |
+| `develop_26.2` | 26.2 - 26.3 | `[26.2,27)` | `26.2.0.88` (Java 25) | `LightCoordsUtil.getLightCoords`, `createDefaultStackConfig(..).apply`, `last().rotate(..)` statt `mulPose` (26.3) |
 
-Alle 1.21.2+-Jars: Version `4.0.1`, released 2026-10-02. Lokaler Branch `wip_1.21.2_first_attempt_base` sichert den ersten, unfertigen 1.21.2-Versuch; `develop_1.21.3` ist ein alter Forge-Stand. Details: [`../Docs/migrations/1.21.1-to-1.21.2.md`](../Docs/migrations/1.21.1-to-1.21.2.md) 4f.
+Alle 1.21.2+-Jars inkl. 26.x: Version `4.0.1`, released 2026-10-02. Lokaler Branch `wip_1.21.2_first_attempt_base` sichert den ersten, unfertigen 1.21.2-Versuch; `develop_1.21.3` ist ein alter Forge-Stand. Details: [`../Docs/migrations/1.21.1-to-1.21.2.md`](../Docs/migrations/1.21.1-to-1.21.2.md) 4f, [`../Docs/migrations/1.21.11-to-26.1.md`](../Docs/migrations/1.21.11-to-26.1.md).
 
 **Offen:** Übersetzungen für die nach 1.21.1 hinzugekommenen Gemälde fehlen (siehe `MOD_KOMPATIBILITAET.md`).
 
