@@ -84,12 +84,7 @@ public class SelectablePainting extends Item {
 
 		if( !pLevel.isClientSide() ) {
 			if( pPlayer instanceof ServerPlayer serverPlayer ) {
-				serverPlayer.openMenu(
-					new SelectablePaintingNamedContainerProvider( stack ),
-					packetBuffer -> {
-						packetBuffer.writeJsonWithCodec( ItemStack.CODEC, stack );
-					}
-				);
+				serverPlayer.openMenu( new SelectablePaintingNamedContainerProvider( stack ) );
 			}
 		}
 		return InteractionResult.SUCCESS;

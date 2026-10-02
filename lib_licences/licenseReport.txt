@@ -5,10 +5,6 @@ Access Transformers (11.0.2) - MIT
 Transforms class member access based on specification files
 https://github.com/NeoForged/AccessTransformers
 
-Access Transformers project ':modlauncher' (11.0.2) - MIT
-Transforms class member access based on specification files
-https://github.com/NeoForged/AccessTransformers
-
 Access Transformers project ':parser' (11.0.2) - MIT
 Transforms class member access based on specification files
 https://github.com/NeoForged/AccessTransformers
@@ -101,9 +97,7 @@ authlib (6.0.58)
 
 blocklist (1.0.10)
 
-Bootstrap launcher (2.0.2)
-Allows bootstrapping a modularized environment from a classpath one
-https://github.com/McModLauncher/bootstraplauncher
+bootstraplauncher (9.0.2)
 
 brigadier (1.3.10)
 
@@ -115,15 +109,11 @@ Checker Qual (3.49.0) - The MIT License
 checker-qual contains annotations (type qualifiers) that a programmerwrites to specify Java code for type-checking by the Checker Framework.
 https://checkerframework.org/
 
-Core Mods (7.0.3) - LGPLv2.1
-Core modding framework for use with forge
-https://github.com/neoforged/coremods
-
 datafixerupper (8.0.16)
 
 DevLaunch (1.0.2)
 
-earlydisplay (7.0.13)
+earlydisplay (9.0.2)
 
 error-prone annotations (2.28.0) - Apache 2.0
 Error Prone is a static analysis tool for Java that catches common programming mistakes at compile-time.
@@ -257,7 +247,7 @@ https://urielch.github.io/
 
 jtracy (1.0.29)
 
-loader (7.0.13)
+loader (9.0.2)
 
 logging (1.5.10)
 
@@ -307,19 +297,15 @@ number of other development tools for reporting or the build
 process.
       https://maven.apache.org/ref/${project.version}/
 
-MergeTool (2.0.3) - LGPLv2.1
+MergeTool (2.0.7) - LGPLv2.1
 Merges two jar files together, useful for rebuilding Retroguard stripped jars.
 https://github.com/neoforged/MergeTool
 
-minecraft-dependencies (1.21.5)
+minecraft-dependencies (1.21.6)
 
-MixinExtras (0.5.3) - MIT License
+MixinExtras (0.4.1) - MIT License
 Companion library to Mixin with lots of features to improve the compatibility and concision of your mixins!
 https://github.com/LlamaLad7/MixinExtras
-
-Mod Launcher (11.0.4)
-Java 21 mod launcher
-https://github.com/McModLauncher/modlauncher
 
         msal4j (1.17.2) - MIT License
         Microsoft Authentication Library for Java gives you the ability to obtain tokens from Azure AD v2 (work and school
@@ -327,11 +313,11 @@ accounts, MSA) and Azure AD B2C, gaining access to Microsoft Cloud API and any o
 identities
         https://github.com/AzureAD/microsoft-authentication-library-for-java
 
-neoforge (21.5.98) - LGPL 2.1
+neoforge (21.6.20-beta) - LGPL 2.1
 Modifactions to Minecraft to enable mod developers.
 https://github.com/NeoForged/NeoForge
 
-NeoForm (1.21.5-20250325.162830) - All Rights Reserved, No redistribution.
+NeoForm (1.21.6-20250617.151856) - All Rights Reserved, No redistribution.
 Configuration files used for deobfuscating and modding Minecraft.
 https://github.com/NeoForged/NeoForm
 
@@ -411,10 +397,6 @@ https://noexception.machinezoo.com/
 and server applications.
         https://bitbucket.org/connect2id/oauth-2.0-sdk-with-openid-connect-extensions
 
-OpenJDK Nashorn (15.4) - GPL v2 with the Classpath exception
-Nashorn is an Open Source JavaScript (ECMAScript 5.1 and some 6 features) engine for the JVM.
-https://github.com/openjdk/nashorn
-
   oshi-core (6.6.5) - SPDX-License-Identifier: MIT
   A JNA-based (native) operating system information library for Java that aims to provide a
 cross-platform implementation to retrieve system information, such as version, memory, CPU, disk, battery, etc.
@@ -435,9 +417,7 @@ Pure Java Ogg Vorbis Decoder (0.0.17) - GNU Lesser General Public License
 JOrbis accepts Ogg Vorbis bitstreams and decodes them to raw PCM.
 http://www.jcraft.com/jorbis
 
-Secure Modular Jar handler (3.0.8) - MIT
-Making the Java modular system provide security information
-https://github.com/McModLauncher/SecureJarHandler
+securejarhandler (9.0.2)
 
       SLF4J 2 Provider for Log4j API (2.24.1) - Apache-2.0
       SLF4J 2 provider (binding) for the Apache Log4j API.

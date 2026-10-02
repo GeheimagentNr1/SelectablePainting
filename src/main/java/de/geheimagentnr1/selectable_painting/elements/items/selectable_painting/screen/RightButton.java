@@ -2,7 +2,7 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -31,9 +31,9 @@ class RightButton extends Button {
 	public void renderWidget( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partial ) {
 		
 		if( isHovered ) {
-			guiGraphics.blit( RenderType.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13f, 2f, 10, 15, 64, 64 );
+			guiGraphics.blit( RenderPipelines.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13f, 2f, 10, 15, 64, 64 );
 		} else {
-			guiGraphics.blit( RenderType.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 1f, 2f, 10, 15, 64, 64 );
+			guiGraphics.blit( RenderPipelines.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 1f, 2f, 10, 15, 64, 64 );
 		}
 	}
 }

@@ -3,10 +3,12 @@ package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
 import de.geheimagentnr1.selectable_painting.elements.items.ModItemsRegisterFactory;
 import net.minecraft.core.BlockPos;
+import java.util.Optional;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -108,6 +110,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	protected void defineSynchedData( SynchedEntityData.Builder pBuilder ) {
 		
+		super.defineSynchedData( pBuilder );
 		pBuilder.define( DATA_VARIANT_ID, getDefaultMotive() );
 		pBuilder.define( DATA_SIZE_INDEX, 0 );
 		pBuilder.define( DATA_MOTIVE_INDEX, 0 );
@@ -117,6 +120,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void onSyncedDataUpdated( @NotNull EntityDataAccessor<?> pKey ) {
 		
+		super.onSyncedDataUpdated( pKey );
 		if( pKey.equals( DATA_VARIANT_ID ) ) {
 			recalculateBoundingBox();
 		}
@@ -191,56 +195,60 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void addAdditionalSaveData( @NotNull CompoundTag pCompound ) {
+	protected void addAdditionalSaveData( @NotNull ValueOutput output ) {
 		
-		VariantUtils.writeVariant( pCompound, getVariantHolder() );
-		pCompound.putString(
+		VariantUtils.writeVariant( output, getVariantHolder() );
+		output.putString(
 			"Motive",
 			getVariantHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString()
 		);
-		pCompound.putByte( "Facing", (byte)direction.get2DDataValue() );
-		pCompound.putInt( "size_index", getSizeIndex() );
-		pCompound.putInt( "painting_index", getMotiveIndex() );
-		pCompound.putBoolean( "random", getRandomVariant() );
-		super.addAdditionalSaveData( pCompound );
+		output.putByte( "Facing", (byte)getDirection().get2DDataValue() );
+		output.putInt( "size_index", getSizeIndex() );
+		output.putInt( "painting_index", getMotiveIndex() );
+		output.putBoolean( "random", getRandomVariant() );
+		super.addAdditionalSaveData( output );
 	}
 	
 	@Override
-	public void readAdditionalSaveData( @NotNull CompoundTag pCompound ) {
+	protected void readAdditionalSaveData( @NotNull ValueInput input ) {
 		
-		migrateLegacySaveData( pCompound );
-		setMotiveHolder(
-			VariantUtils.readVariant( pCompound, registryAccess(), Registries.PAINTING_VARIANT )
-				.orElseGet( this::getDefaultMotive )
-		);
-		setSizeIndex( pCompound.getIntOr( "size_index", 0 ) );
-		setMotiveIndex( pCompound.getIntOr( "painting_index", 0 ) );
-		setRandomVariant( pCompound.getBooleanOr( "random", false ) );
-		super.readAdditionalSaveData( pCompound );
-		setDirection( Direction.from2DDataValue( pCompound.getByteOr( "Facing", (byte)0 ) ) );
+		setMotiveHolder( readMotive( input ).orElseGet( this::getDefaultMotive ) );
+		setSizeIndex( input.getIntOr( "size_index", 0 ) );
+		setMotiveIndex( input.getIntOr( "painting_index", 0 ) );
+		setRandomVariant( input.getBooleanOr( "random", false ) );
+		readPosition( input );
+		setDirection( Direction.from2DDataValue( input.getByteOr( "Facing", (byte)0 ) ) );
 	}
 	
-	//Paintings saved before 1.21.5 store the position as TileX/TileY/TileZ and the variant inline (without registry
-	//context). Vanilla converts its own paintings with a data fixer, mod entities have to do it themselves.
-	private void migrateLegacySaveData( @NotNull CompoundTag pCompound ) {
+	//Paintings saved before 1.21.5 store the variant inline (without registry context) instead of its registry id.
+	//Vanilla converts its own paintings with a data fixer, mod entities have to do it themselves.
+	@NotNull
+	private Optional<Holder<PaintingVariant>> readMotive( @NotNull ValueInput input ) {
 		
-		if( !pCompound.contains( "block_pos" ) && pCompound.contains( "TileX" ) ) {
-			pCompound.store( "block_pos", BlockPos.CODEC, new BlockPos(
-				pCompound.getIntOr( "TileX", 0 ),
-				pCompound.getIntOr( "TileY", 0 ),
-				pCompound.getIntOr( "TileZ", 0 )
-			) );
+		Optional<ValueInput> legacyVariant = input.child( "variant" );
+		if( legacyVariant.isEmpty() ) {
+			return VariantUtils.readVariant( input, Registries.PAINTING_VARIANT );
 		}
-		pCompound.getCompound( "variant" ).ifPresent( legacyVariant -> {
-			pCompound.remove( "variant" );
-			legacyVariant.getString( "asset_id" )
-				.map( ResourceLocation::tryParse )
-				.flatMap( assetId -> registryAccess().lookupOrThrow( Registries.PAINTING_VARIANT )
-					.listElements()
-					.filter( variant -> variant.value().assetId().equals( assetId ) )
-					.findFirst() )
-				.ifPresent( variant -> VariantUtils.writeVariant( pCompound, variant ) );
-		} );
+		return legacyVariant.get().getString( "asset_id" )
+			.map( ResourceLocation::tryParse )
+			.flatMap( assetId -> registryAccess().lookupOrThrow( Registries.PAINTING_VARIANT )
+				.listElements()
+				.filter( variant -> variant.value().assetId().equals( assetId ) )
+				.findFirst() );
+	}
+	
+	//Paintings saved before 1.21.5 store the position as TileX/TileY/TileZ instead of block_pos.
+	private void readPosition( @NotNull ValueInput input ) {
+		
+		Optional<Integer> legacyX = input.getInt( "TileX" );
+		if( input.read( "block_pos", BlockPos.CODEC ).isEmpty() && legacyX.isPresent() ) {
+			BlockPos legacyPos = new BlockPos( legacyX.get(), input.getIntOr( "TileY", 0 ), input.getIntOr( "TileZ", 0 ) );
+			if( legacyPos.closerThan( blockPosition(), 16.0 ) ) {
+				pos = legacyPos;
+			}
+		} else {
+			super.readAdditionalSaveData( input );
+		}
 	}
 	
 	@Override
@@ -301,7 +309,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket( ServerEntity serverEntity ) {
 		
-		return new ClientboundAddEntityPacket( this, this.direction.get3DDataValue(), this.getPos() );
+		return new ClientboundAddEntityPacket( this, getDirection().get3DDataValue(), this.getPos() );
 	}
 	
 	public void recreateFromPacket( @NotNull ClientboundAddEntityPacket pPacket ) {

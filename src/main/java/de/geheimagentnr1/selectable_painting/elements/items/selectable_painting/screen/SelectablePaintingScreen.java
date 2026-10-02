@@ -1,7 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
@@ -60,14 +60,13 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	@Override
 	public void render( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
 		
-		renderBackground( guiGraphics, mouseX, mouseY, partialTick );
 		super.render( guiGraphics, mouseX, mouseY, partialTick );
 	}
 	
 	@Override
 	protected void renderBg( @NotNull GuiGraphics guiGraphics, float partialTick, int x, int y ) {
 		
-		guiGraphics.blit( RenderType.GUI_TEXTURED, SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0f, 0f, imageWidth, imageHeight, 256, 256 );
+		guiGraphics.blit( RenderPipelines.GUI_TEXTURED, SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0f, 0f, imageWidth, imageHeight, 256, 256 );
 	}
 	
 	@Override
@@ -99,7 +98,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			int paintingWidth = paintingType.width() << 4;
 			int paintingHeight = paintingType.height() << 4;
 			guiGraphics.blitSprite(
-				RenderType::guiTextured,
+				RenderPipelines.GUI_TEXTURED,
 				paintingTextureAtlasSprite,
 				width / 2 - leftPos - paintingWidth / 2,
 				70,

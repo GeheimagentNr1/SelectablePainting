@@ -1,13 +1,16 @@
 package de.geheimagentnr1.selectable_painting.network;
 
 import de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen.SelectablePaintingMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 
 public record UpdateSelectablePaintingItemStackMsg( @NotNull ItemStack stack ) implements CustomPacketPayload {
@@ -34,7 +37,9 @@ public record UpdateSelectablePaintingItemStackMsg( @NotNull ItemStack stack ) i
 	
 	public static void sendToServer( @NotNull ItemStack stack ) {
 		
-		PacketDistributor.sendToServer( new UpdateSelectablePaintingItemStackMsg( stack ) );
+		//PacketDistributor.sendToServer was removed in NeoForge 21.7, its replacement only exists from 21.7 on.
+		Objects.requireNonNull( Minecraft.getInstance().getConnection() )
+			.send( new ServerboundCustomPayloadPacket( new UpdateSelectablePaintingItemStackMsg( stack ) ) );
 	}
 	
 	public static void handle( @NotNull UpdateSelectablePaintingItemStackMsg msg, @NotNull IPayloadContext context ) {
