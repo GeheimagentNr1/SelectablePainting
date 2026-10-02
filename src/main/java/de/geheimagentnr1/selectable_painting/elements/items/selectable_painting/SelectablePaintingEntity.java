@@ -8,7 +8,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -23,7 +22,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.decoration.HangingEntity;
-import net.minecraft.world.entity.decoration.Painting;
+import net.minecraft.world.entity.variant.VariantUtils;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.decoration.PaintingVariants;
 import net.minecraft.world.entity.player.Player;
@@ -194,9 +193,7 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void addAdditionalSaveData( @NotNull CompoundTag pCompound ) {
 		
-		Painting.VARIANT_CODEC.encodeStart( NbtOps.INSTANCE, getVariantHolder() ).ifSuccess( tag -> {
-			pCompound.merge( (CompoundTag)tag );
-		} );
+		VariantUtils.writeVariant( pCompound, getVariantHolder() );
 		pCompound.putString(
 			"Motive",
 			getVariantHolder().unwrapKey().orElse( DEFAULT_VARIANT ).location().toString()
@@ -211,16 +208,39 @@ public class SelectablePaintingEntity extends HangingEntity {
 	@Override
 	public void readAdditionalSaveData( @NotNull CompoundTag pCompound ) {
 		
+		migrateLegacySaveData( pCompound );
 		setMotiveHolder(
-			Painting.VARIANT_CODEC.parse( NbtOps.INSTANCE, pCompound )
-				.result()
+			VariantUtils.readVariant( pCompound, registryAccess(), Registries.PAINTING_VARIANT )
 				.orElseGet( this::getDefaultMotive )
 		);
-		setSizeIndex(pCompound.getInt( "size_index" ));
-		setMotiveIndex( pCompound.getInt( "painting_index" ) );
-		setRandomVariant( pCompound.getBoolean( "random" ) );
+		setSizeIndex( pCompound.getIntOr( "size_index", 0 ) );
+		setMotiveIndex( pCompound.getIntOr( "painting_index", 0 ) );
+		setRandomVariant( pCompound.getBooleanOr( "random", false ) );
 		super.readAdditionalSaveData( pCompound );
-		setDirection( Direction.from2DDataValue( pCompound.getByte( "Facing" ) ) );
+		setDirection( Direction.from2DDataValue( pCompound.getByteOr( "Facing", (byte)0 ) ) );
+	}
+	
+	//Paintings saved before 1.21.5 store the position as TileX/TileY/TileZ and the variant inline (without registry
+	//context). Vanilla converts its own paintings with a data fixer, mod entities have to do it themselves.
+	private void migrateLegacySaveData( @NotNull CompoundTag pCompound ) {
+		
+		if( !pCompound.contains( "block_pos" ) && pCompound.contains( "TileX" ) ) {
+			pCompound.store( "block_pos", BlockPos.CODEC, new BlockPos(
+				pCompound.getIntOr( "TileX", 0 ),
+				pCompound.getIntOr( "TileY", 0 ),
+				pCompound.getIntOr( "TileZ", 0 )
+			) );
+		}
+		pCompound.getCompound( "variant" ).ifPresent( legacyVariant -> {
+			pCompound.remove( "variant" );
+			legacyVariant.getString( "asset_id" )
+				.map( ResourceLocation::tryParse )
+				.flatMap( assetId -> registryAccess().lookupOrThrow( Registries.PAINTING_VARIANT )
+					.listElements()
+					.filter( variant -> variant.value().assetId().equals( assetId ) )
+					.findFirst() )
+				.ifPresent( variant -> VariantUtils.writeVariant( pCompound, variant ) );
+		} );
 	}
 	
 	@Override
@@ -265,21 +285,9 @@ public class SelectablePaintingEntity extends HangingEntity {
 	}
 	
 	@Override
-	public void moveTo( double x, double y, double z, float yaw, float pitch ) {
+	public void snapTo( double x, double y, double z, float yaw, float pitch ) {
 		
 		setPos( x, y, z );
-	}
-	
-	@Override
-	public void lerpTo(
-		double pX,
-		double pY,
-		double pZ,
-		float pYRot,
-		float pXRot,
-		int pSteps ) {
-		
-		setPos( pX, pY, pZ );
 	}
 	
 	@NotNull
