@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.PaintingRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,7 +26,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 
-//Based on the vanilla PaintingRenderer of Minecraft 1.21.11.
+//Based on the vanilla PaintingRenderer of Minecraft 26.1.
 @OnlyIn( Dist.CLIENT )
 public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintingEntity, PaintingRenderState> {
 
@@ -114,7 +114,7 @@ public class SelectablePaintingRenderer extends EntityRenderer<SelectablePaintin
 					default -> {
 					}
 				}
-				pState.lightCoordsPerBlock[x + y * width] = LevelRenderer.getLightColor(
+				pState.lightCoordsPerBlock[x + y * width] = LevelRenderer.getLightCoords(
 					level,
 					new BlockPos( blockX, blockY, blockZ )
 				);

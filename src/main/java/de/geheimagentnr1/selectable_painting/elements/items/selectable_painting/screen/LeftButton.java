@@ -1,8 +1,7 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -28,12 +27,12 @@ class LeftButton extends Button {
 	}
 	
 	@Override
-	protected void renderContents( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
+	protected void extractContents( @NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick ) {
 		
 		if( isHovered ) {
-			guiGraphics.blit( RenderPipelines.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 13f, 21f, 10, 15, 64, 64 );
+			graphics.blit( DIRECTION_BUTTONS_TEXTURE, getX(), getY(), getX() + 10, getY() + 15, 13f / 64f, 23f / 64f, 21f / 64f, 36f / 64f );
 		} else {
-			guiGraphics.blit( RenderPipelines.GUI_TEXTURED, DIRECTION_BUTTONS_TEXTURE, getX(), getY(), 1f, 21f, 10, 15, 64, 64 );
+			graphics.blit( DIRECTION_BUTTONS_TEXTURE, getX(), getY(), getX() + 10, getY() + 15, 1f / 64f, 11f / 64f, 21f / 64f, 36f / 64f );
 		}
 	}
 }

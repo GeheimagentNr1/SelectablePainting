@@ -1,9 +1,8 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting.screen;
 
 import de.geheimagentnr1.selectable_painting.SelectablePaintingMod;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.Util;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -59,23 +58,29 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	}
 	
 	@Override
-	public void render( @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick ) {
+	public void extractBackground( @NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick ) {
 		
-		super.render( guiGraphics, mouseX, mouseY, partialTick );
+		super.extractBackground( graphics, mouseX, mouseY, partialTick );
+		//Overload without RenderPipeline: the RenderPipeline class moved to com.mojang.renderpearl in 26.3
+		graphics.blit(
+			SELECTABLE_PAINTING_GUI_TEXTURE,
+			leftPos,
+			topPos,
+			leftPos + imageWidth,
+			topPos + imageHeight,
+			0.0F,
+			imageWidth / 256.0F,
+			0.0F,
+			imageHeight / 256.0F
+		);
 	}
 	
 	@Override
-	protected void renderBg( @NotNull GuiGraphics guiGraphics, float partialTick, int x, int y ) {
-		
-		guiGraphics.blit( RenderPipelines.GUI_TEXTURED, SELECTABLE_PAINTING_GUI_TEXTURE, leftPos, topPos, 0f, 0f, imageWidth, imageHeight, 256, 256 );
-	}
-	
-	@Override
-	protected void renderLabels( @NotNull GuiGraphics guiGraphics, int x, int y ) {
+	protected void extractLabels( @NotNull GuiGraphicsExtractor graphics, int x, int y ) {
 		
 		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
-		guiGraphics.drawString( font, title.getString(), titleStartX, 5, 0xFF404040, false );
-		guiGraphics.drawString(
+		graphics.text( font, title.getString(), titleStartX, 5, 0xFF404040, false );
+		graphics.text(
 			font,
 			menu.getSizeText(),
 			width / 2 - leftPos - font.width( menu.getSizeText() ) / 2,
@@ -83,7 +88,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			0xFFFFFFFF,
 			false
 		);
-		guiGraphics.drawString(
+		graphics.text(
 			font,
 			menu.getPaintingText(),
 			width / 2 - leftPos - font.width( menu.getPaintingText() ) / 2,
@@ -100,13 +105,17 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 				.getSprite( paintingType.assetId() );
 			int paintingWidth = paintingType.width() << 4;
 			int paintingHeight = paintingType.height() << 4;
-			guiGraphics.blitSprite(
-				RenderPipelines.GUI_TEXTURED,
-				paintingTextureAtlasSprite,
-				width / 2 - leftPos - paintingWidth / 2,
+			int paintingX = width / 2 - leftPos - paintingWidth / 2;
+			graphics.blit(
+				paintingTextureAtlasSprite.atlasLocation(),
+				paintingX,
 				70,
-				paintingWidth,
-				paintingHeight
+				paintingX + paintingWidth,
+				70 + paintingHeight,
+				paintingTextureAtlasSprite.getU0(),
+				paintingTextureAtlasSprite.getU1(),
+				paintingTextureAtlasSprite.getV0(),
+				paintingTextureAtlasSprite.getV1()
 			);
 		}
 	}
