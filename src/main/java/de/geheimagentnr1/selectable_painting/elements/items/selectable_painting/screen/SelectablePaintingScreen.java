@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.decoration.PaintingVariant;
@@ -94,7 +95,9 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
 			PaintingVariant paintingType = menu.getCurrentMotive();
-			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getPaintingTextures().get( paintingType );
+			TextureAtlasSprite paintingTextureAtlasSprite = minecraft.getAtlasManager()
+				.getAtlasOrThrow( AtlasIds.PAINTINGS )
+				.getSprite( paintingType.assetId() );
 			int paintingWidth = paintingType.width() << 4;
 			int paintingHeight = paintingType.height() << 4;
 			guiGraphics.blitSprite(

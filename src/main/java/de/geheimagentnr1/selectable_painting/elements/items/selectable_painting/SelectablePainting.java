@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -113,8 +111,8 @@ public class SelectablePainting extends Item {
 				SelectablePaintingItemStackHelper.getRandom( stack )
 			);
 			
-			CustomData customdata = stack.getOrDefault( DataComponents.ENTITY_DATA, CustomData.EMPTY );
-			EntityType.updateCustomEntityTag( level, player, selectablePaintingEntity, customdata );
+			EntityType.<SelectablePaintingEntity> createDefaultStackConfig( level, stack, player )
+				.accept( selectablePaintingEntity );
 			
 			if( selectablePaintingEntity.survives() ) {
 				if( !level.isClientSide() ) {
@@ -124,7 +122,7 @@ public class SelectablePainting extends Item {
 				}
 				
 				stack.shrink( 1 );
-				return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+				return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
 			} else {
 				if( !level.isClientSide() && player instanceof ServerPlayer serverPlayer ) {
 					serverPlayer.sendSystemMessage(
