@@ -74,13 +74,13 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	protected void renderLabels( @NotNull GuiGraphics guiGraphics, int x, int y ) {
 		
 		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
-		guiGraphics.drawString( font, title.getString(), titleStartX, 5, 4210752, false );
+		guiGraphics.drawString( font, title.getString(), titleStartX, 5, 0xFF404040, false );
 		guiGraphics.drawString(
 			font,
 			menu.getSizeText(),
 			width / 2 - leftPos - font.width( menu.getSizeText() ) / 2,
 			19,
-			16777215,
+			0xFFFFFFFF,
 			false
 		);
 		guiGraphics.drawString(
@@ -88,7 +88,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			menu.getPaintingText(),
 			width / 2 - leftPos - font.width( menu.getPaintingText() ) / 2,
 			37,
-			16777215,
+			0xFFFFFFFF,
 			false
 		);
 		
