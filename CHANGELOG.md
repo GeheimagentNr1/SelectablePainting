@@ -1,1 +1,1 @@
-﻿Add compatibility for minecraft version 1.21.11
+﻿Painting names in the selection now use the titles of Minecraft itself: all paintings (including the ones added since 1.21) are shown in every language Minecraft supports. Paintings from other mods or data packs show their own title or a readable name instead of a translation key.
