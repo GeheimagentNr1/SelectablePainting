@@ -1,11 +1,11 @@
 package de.geheimagentnr1.selectable_painting.elements.items.selectable_painting;
 
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -136,12 +136,30 @@ public class PaintingSelectionHelper {
 		int painting_index ) {
 		
 		init( registryAccess );
-		return Component.translatable( Util.makeDescriptionId(
-			"painting",
-			motives.get( size_index >= motives.size() ? 0 : size_index )
-				.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index )
-				.unwrapKey().orElseThrow().location()
-		) );
+		Holder<PaintingVariant> motive = motives.get( size_index >= motives.size() ? 0 : size_index )
+			.get( painting_index >= motives.get( size_index ).size() ? 0 : painting_index );
+		ResourceLocation paintingId = motive.unwrapKey().orElseThrow().location();
+		return motive.value().title()
+			.<Component>map( Component::plainCopy )
+			.orElseGet( () -> Component.translatableWithFallback(
+				paintingId.toLanguageKey( "painting", "title" ),
+				buildReadableName( paintingId )
+			) );
+	}
+	
+	@NotNull
+	private static String buildReadableName( @NotNull ResourceLocation paintingId ) {
+		
+		StringBuilder name = new StringBuilder();
+		for( String word : paintingId.getPath().split( "[_/]" ) ) {
+			if( !word.isEmpty() ) {
+				if( !name.isEmpty() ) {
+					name.append( ' ' );
+				}
+				name.append( Character.toUpperCase( word.charAt( 0 ) ) ).append( word.substring( 1 ) );
+			}
+		}
+		return name.toString();
 	}
 	
 	@NotNull
