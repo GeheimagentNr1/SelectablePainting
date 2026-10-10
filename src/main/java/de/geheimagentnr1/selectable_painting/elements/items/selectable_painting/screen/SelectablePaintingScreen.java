@@ -23,6 +23,10 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
 		ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
+	private static final int PAINTING_TEXT_MIN_X = 19;
+	
+	private static final int PAINTING_TEXT_MAX_X = 154;
+	
 	public SelectablePaintingScreen(
 		@NotNull SelectablePaintingMenu screenContainer,
 		@NotNull Inventory inventory,
@@ -62,6 +66,7 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 		
 		renderBackground( guiGraphics, mouseX, mouseY, partialTick );
 		super.render( guiGraphics, mouseX, mouseY, partialTick );
+		renderPaintingText( guiGraphics );
 	}
 	
 	@Override
@@ -83,14 +88,6 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			16777215,
 			false
 		);
-		guiGraphics.drawString(
-			font,
-			menu.getPaintingText(),
-			width / 2 - leftPos - font.width( menu.getPaintingText() ) / 2,
-			37,
-			16777215,
-			false
-		);
 		
 		if( !menu.getRandom() ) {
 			Objects.requireNonNull( minecraft );
@@ -108,5 +105,28 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 				paintingTextureAtlasSprite
 			);
 		}
+	}
+	
+	//Long painting names (e.g. "Ziel erfolgreich bombardiert") scroll back and forth between the buttons like the
+	//labels of vanilla buttons. Drawn in screen coordinates and not in the labels, because enableScissor ignores the
+	//translation of the labels in some versions (1.21.2 - 1.21.3) and uses it in others (1.21.4+).
+	private void renderPaintingText( @NotNull GuiGraphics guiGraphics ) {
+		
+		String paintingText = menu.getPaintingText();
+		int minX = leftPos + PAINTING_TEXT_MIN_X;
+		int maxX = leftPos + PAINTING_TEXT_MAX_X;
+		int y = topPos + 37;
+		int textWidth = font.width( paintingText );
+		int overflow = textWidth - ( maxX - minX );
+		if( overflow <= 0 ) {
+			guiGraphics.drawString( font, paintingText, width / 2 - textWidth / 2, y, 16777215, false );
+			return;
+		}
+		double seconds = System.currentTimeMillis() / 1000.0;
+		double period = Math.max( overflow * 0.5, 3.0 );
+		double progress = Math.sin( Math.PI / 2 * Math.cos( Math.PI * 2 * seconds / period ) ) / 2.0 + 0.5;
+		guiGraphics.enableScissor( minX, y - 1, maxX, y + font.lineHeight );
+		guiGraphics.drawString( font, paintingText, minX - (int)Math.round( progress * overflow ), y, 16777215, false );
+		guiGraphics.disableScissor();
 	}
 }
