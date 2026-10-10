@@ -23,6 +23,10 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	private static final Identifier SELECTABLE_PAINTING_GUI_TEXTURE =
 		Identifier.fromNamespaceAndPath( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
+	private static final int PAINTING_TEXT_MIN_X = 19;
+	
+	private static final int PAINTING_TEXT_MAX_X = 154;
+	
 	public SelectablePaintingScreen(
 		@NotNull SelectablePaintingMenu screenContainer,
 		@NotNull Inventory inventory,
@@ -76,6 +80,13 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	}
 	
 	@Override
+	public void extractContents( @NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick ) {
+		
+		super.extractContents( graphics, mouseX, mouseY, partialTick );
+		extractPaintingText( graphics );
+	}
+	
+	@Override
 	protected void extractLabels( @NotNull GuiGraphicsExtractor graphics, int x, int y ) {
 		
 		int titleStartX = width / 2 - leftPos - font.width( title.getString() ) / 2;
@@ -85,14 +96,6 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 			menu.getSizeText(),
 			width / 2 - leftPos - font.width( menu.getSizeText() ) / 2,
 			19,
-			0xFFFFFFFF,
-			false
-		);
-		graphics.text(
-			font,
-			menu.getPaintingText(),
-			width / 2 - leftPos - font.width( menu.getPaintingText() ) / 2,
-			37,
 			0xFFFFFFFF,
 			false
 		);
@@ -118,5 +121,28 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 				paintingTextureAtlasSprite.getV1()
 			);
 		}
+	}
+	
+	//Long painting names (e.g. "Ziel erfolgreich bombardiert") scroll back and forth between the buttons like the
+	//labels of vanilla buttons. Drawn in screen coordinates and not in the labels, because enableScissor ignores the
+	//translation of the labels in some versions (1.21.2 - 1.21.3) and uses it in others (1.21.4+).
+	private void extractPaintingText( @NotNull GuiGraphicsExtractor graphics ) {
+		
+		String paintingText = menu.getPaintingText();
+		int minX = leftPos + PAINTING_TEXT_MIN_X;
+		int maxX = leftPos + PAINTING_TEXT_MAX_X;
+		int y = topPos + 37;
+		int textWidth = font.width( paintingText );
+		int overflow = textWidth - ( maxX - minX );
+		if( overflow <= 0 ) {
+			graphics.text( font, paintingText, width / 2 - textWidth / 2, y, 0xFFFFFFFF, false );
+			return;
+		}
+		double seconds = System.currentTimeMillis() / 1000.0;
+		double period = Math.max( overflow * 0.5, 3.0 );
+		double progress = Math.sin( Math.PI / 2 * Math.cos( Math.PI * 2 * seconds / period ) ) / 2.0 + 0.5;
+		graphics.enableScissor( minX, y - 1, maxX, y + font.lineHeight );
+		graphics.text( font, paintingText, minX - (int)Math.round( progress * overflow ), y, 0xFFFFFFFF, false );
+		graphics.disableScissor();
 	}
 }
