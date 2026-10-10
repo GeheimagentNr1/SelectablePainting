@@ -23,9 +23,9 @@ public class SelectablePaintingScreen extends AbstractContainerScreen<Selectable
 	private static final ResourceLocation SELECTABLE_PAINTING_GUI_TEXTURE =
 		ResourceLocation.fromNamespaceAndPath( SelectablePaintingMod.MODID, "textures/gui/select_painting_gui.png" );
 	
-	private static final int PAINTING_TEXT_MIN_X = 19;
+	private static final int PAINTING_TEXT_MIN_X = 21;
 	
-	private static final int PAINTING_TEXT_MAX_X = 154;
+	private static final int PAINTING_TEXT_MAX_X = 155;
 	
 	public SelectablePaintingScreen(
 		@NotNull SelectablePaintingMenu screenContainer,
