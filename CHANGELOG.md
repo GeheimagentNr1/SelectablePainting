@@ -1,1 +1,2 @@
 ﻿Painting names in the selection now use the titles of Minecraft itself: all paintings (including the ones added since 1.21) are shown in every language Minecraft supports. Paintings from other mods or data packs show their own title or a readable name instead of a translation key.
+Long painting names scroll back and forth in the selection like the labels of Minecraft buttons instead of overflowing the selection field
